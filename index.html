@@ -155,11 +155,14 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .ss-upload-btn:hover { color: var(--text); background: var(--bg4); }
 
 /* Lightbox */
-.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
 .lightbox.open { display: flex; }
-.lightbox img { max-width: 92vw; max-height: 92vh; border-radius: var(--radius); box-shadow: 0 20px 80px rgba(0,0,0,0.6); }
-.lightbox-close { position: fixed; top: 20px; right: 24px; font-size: 28px; color: #fff; cursor: pointer; line-height: 1; opacity: 0.7; }
+.lightbox-inner { position: relative; max-width: 96vw; max-height: 96vh; }
+.lightbox img { max-width: 96vw; max-height: 90vh; border-radius: var(--radius); box-shadow: 0 24px 100px rgba(0,0,0,0.7); display: block; object-fit: contain; }
+.lightbox-close { position: fixed; top: 18px; right: 22px; font-size: 30px; color: #fff; cursor: pointer; line-height: 1; opacity: 0.6; transition: opacity 0.15s; z-index: 10000; }
 .lightbox-close:hover { opacity: 1; }
+.lightbox-caption { text-align: center; color: rgba(255,255,255,0.55); font-size: 12px; font-family: var(--font-mono); margin-top: 10px; font-style: italic; }
+.lightbox-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.3); font-size: 11px; font-family: var(--font-mono); }
 
 /* ── BUTTONS ── */
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font-display); border: none; transition: all 0.15s; }
@@ -272,7 +275,7 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .canvas-action-btn.danger:hover { color: var(--red); border-color: var(--red); background: rgba(239,68,68,0.08); }
 
 /* Block canvas */
-.study-blocks { flex: 1; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.study-blocks { flex: 1; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
 .block {
   position: relative; border-radius: var(--radius);
   border: 1px solid transparent; transition: border-color 0.15s;
@@ -293,7 +296,8 @@ tr.trade-row:hover > td { background: var(--bg3); }
 
 /* Image block */
 .block-image { background: var(--bg3); border-radius: var(--radius); overflow: hidden; }
-.block-image img { width: 100%; display: block; border-radius: var(--radius); cursor: pointer; max-height: 500px; object-fit: contain; background: var(--bg4); }
+.block-image img { width: 100%; display: block; border-radius: var(--radius); cursor: zoom-in; object-fit: contain; background: var(--bg4); transition: opacity 0.15s; }
+.block-image img:hover { opacity: 0.9; }
 .block-image-drop {
   border: 2px dashed var(--border2); border-radius: var(--radius);
   padding: 32px; text-align: center; cursor: pointer; transition: all 0.15s;
@@ -608,6 +612,17 @@ tr.trade-row:hover > td { background: var(--bg3); }
             </div>
           </div>
           <div class="canvas-header-actions">
+            <div style="position:relative;display:inline-block" id="pdfDropWrap">
+              <button class="canvas-action-btn" onclick="togglePdfMenu()" id="pdfMenuBtn">
+                ↓ Export PDF ▾
+              </button>
+              <div id="pdfMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);min-width:160px;z-index:100;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.3)">
+                <button onclick="exportPDF('note')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📄 This note</button>
+                <button onclick="exportPDF('daily')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📅 All notes this day</button>
+                <button onclick="exportPDF('weekly')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📆 Weekly summary</button>
+                <button onclick="exportPDF('monthly')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">🗓️ Monthly summary</button>
+              </div>
+            </div>
             <button class="canvas-action-btn danger" onclick="deleteActiveNote()">Delete note</button>
           </div>
         </div>
@@ -642,9 +657,13 @@ tr.trade-row:hover > td { background: var(--bg3); }
 </div>
 
 <!-- Lightbox -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <span class="lightbox-close">✕</span>
-  <img id="lightboxImg" src="" alt="Screenshot">
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox(event)">
+  <span class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</span>
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="Screenshot">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+  <div class="lightbox-hint">Click outside image or press ESC to close</div>
 </div>
 
 <script>
@@ -915,11 +934,131 @@ function setupDropZone(id) {
 }
 
 // Lightbox
-function openLightbox(src) {
+function openLightbox(src, caption) {
   document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxCaption').textContent = caption || '';
   document.getElementById('lightbox').classList.add('open');
+  document.addEventListener('keydown', lightboxKeyHandler);
 }
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && e.target !== document.querySelector('.lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightboxImg').src = '';
+  document.removeEventListener('keydown', lightboxKeyHandler);
+}
+function lightboxKeyHandler(e) { if (e.key === 'Escape') { document.getElementById('lightbox').classList.remove('open'); document.removeEventListener('keydown', lightboxKeyHandler); } }
+
+// PDF export menu toggle
+function togglePdfMenu() {
+  const menu = document.getElementById('pdfMenu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  if (menu.style.display === 'block') {
+    setTimeout(() => document.addEventListener('click', closePdfMenuOutside), 10);
+  }
+}
+function closePdfMenuOutside(e) {
+  const wrap = document.getElementById('pdfDropWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('pdfMenu').style.display = 'none';
+    document.removeEventListener('click', closePdfMenuOutside);
+  }
+}
+
+// ── PDF EXPORT ────────────────────────────────────────────────────────────────
+async function exportPDF(scope) {
+  document.getElementById('pdfMenu').style.display = 'none';
+
+  // Gather notes to include
+  const noteIndex = getNoteIndex();
+  const tradeItems = trades.map(t => ({ id: 'trade_' + t.id, title: ((t.symbol||'Trade').toUpperCase()+' '+(t.direction||'')).trim(), date: t.date||'' }));
+  const allItems = [...noteIndex.map(n=>({id:n.id,title:n.title||'Untitled',date:n.date||''})), ...tradeItems];
+
+  let filtered = [];
+  const activeDate = document.getElementById('noteDate').value;
+  const m = parseInt(document.getElementById('monthSel').value);
+  const y = parseInt(document.getElementById('yearSel').value);
+
+  if (scope === 'note') {
+    filtered = activeNoteId ? [allItems.find(i => i.id === activeNoteId)].filter(Boolean) : [];
+  } else if (scope === 'daily') {
+    filtered = allItems.filter(i => i.date === activeDate);
+  } else if (scope === 'weekly') {
+    // Get the ISO week of the active note date
+    const refDate = activeDate ? new Date(activeDate) : new Date(y, m-1, 1);
+    const weekStart = new Date(refDate); weekStart.setDate(refDate.getDate() - refDate.getDay() + 1);
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+    filtered = allItems.filter(i => { if (!i.date) return false; const d = new Date(i.date); return d >= weekStart && d <= weekEnd; });
+  } else if (scope === 'monthly') {
+    filtered = allItems.filter(i => { if (!i.date) return false; const [iy,im] = i.date.split('-').map(Number); return iy === y && im === m; });
+  }
+
+  if (!filtered.length) { alert('No notes found for the selected scope.'); return; }
+
+  // Build HTML content for PDF
+  let sections = [];
+  for (const item of filtered) {
+    const data = getNoteData(item.id);
+    if (!data) continue;
+    let blockHtml = '';
+    for (const block of (data.blocks || [])) {
+      if (block.type === 'text' && block.content && block.content.trim()) {
+        blockHtml += `<div style="background:#f5f6f8;border-radius:6px;padding:14px 16px;margin-bottom:12px;font-size:13px;line-height:1.75;color:#1a1c22;white-space:pre-wrap;">${escHtml(block.content)}</div>`;
+      } else if (block.type === 'image' && block.content) {
+        let imgSrc = block.content;
+        if (imgSrc === '__idb__') { imgSrc = await dbGet('img_' + block.blockId) || ''; }
+        if (imgSrc) {
+          blockHtml += `<div style="margin-bottom:12px;text-align:center;">
+            <img src="${imgSrc}" style="max-width:100%;border-radius:6px;border:1px solid #e0e2e8;" alt="screenshot">
+            ${block.caption ? `<div style="font-size:11px;color:#888;margin-top:6px;font-style:italic;">${escHtml(block.caption)}</div>` : ''}
+          </div>`;
+        }
+      }
+    }
+    if (!blockHtml) continue;
+    sections.push(`
+      <div style="margin-bottom:36px;page-break-inside:avoid;">
+        <div style="border-bottom:2px solid #3b82f6;padding-bottom:8px;margin-bottom:16px;">
+          <div style="font-size:18px;font-weight:700;color:#111318;letter-spacing:-0.3px;">${escHtml(data.title||'Untitled')}</div>
+          <div style="font-size:11px;color:#888;margin-top:4px;font-family:monospace;">${data.date ? fmtStudyDate(data.date) : ''}</div>
+        </div>
+        ${blockHtml}
+      </div>`);
+  }
+
+  if (!sections.length) { alert('No content found in the selected notes.'); return; }
+
+  const scopeLabels = { note: 'Note', daily: 'Daily — '+fmtStudyDate(activeDate), weekly: 'Weekly Summary', monthly: MONTHS[m-1]+' '+y+' — Monthly Summary' };
+  const periodLabel = document.getElementById('monthSel').options[document.getElementById('monthSel').selectedIndex].text + ' ' + y;
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>BackTest Journal — ${scopeLabels[scope]}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1c22; background: #fff; padding: 40px; font-size: 14px; line-height: 1.6; }
+  .pdf-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid #e0e2e8; }
+  .pdf-logo { font-size: 18px; font-weight: 800; color: #3b82f6; letter-spacing: -0.5px; }
+  .pdf-meta { font-size: 11px; color: #888; font-family: monospace; text-align: right; }
+  .pdf-scope { font-size: 13px; font-weight: 600; color: #1a1c22; }
+  @media print { body { padding: 20px; } .pdf-header { margin-bottom: 20px; } }
+</style>
+</head><body>
+<div class="pdf-header">
+  <div class="pdf-logo">📈 BackTest Journal</div>
+  <div class="pdf-meta">
+    <div class="pdf-scope">${scopeLabels[scope]}</div>
+    <div>${periodLabel} · Exported ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
+  </div>
+</div>
+${sections.join('\n')}
+</body></html>`;
+
+  // Open in new window and trigger print dialog
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => { setTimeout(() => win.print(), 300); };
+}
 
 // ── Render journal table ──────────────────────────────────────────────────────
 function renderJournal() {
@@ -1349,7 +1488,7 @@ async function buildBlockEl(block, index) {
       const img = document.createElement('img');
       img.src = imgSrc || '';
       img.alt = block.caption || 'Screenshot';
-      img.onclick = () => openLightbox(img.src);
+      img.onclick = () => openLightbox(img.src, block.caption);
       const capWrap = document.createElement('div');
       capWrap.className = 'block-image-caption';
       const capInput = document.createElement('input');
