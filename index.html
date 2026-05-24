@@ -197,13 +197,145 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .insights-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
 
 /* ── STUDY NOTES PAGE ── */
-.study-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 16px; }
-.study-heading { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
-.study-meta { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 14px; }
-.study-notes-text { font-size: 13px; color: var(--text2); line-height: 1.7; white-space: pre-wrap; margin-bottom: 14px; background: var(--bg3); padding: 12px; border-radius: var(--radius); border-left: 3px solid var(--accent); }
-.study-thumbs { display: flex; flex-wrap: wrap; gap: 10px; }
-.study-thumb { width: 120px; height: 90px; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border2); transition: transform 0.15s; }
-.study-thumb:hover { transform: scale(1.04); }
+.study-layout { display: flex; height: calc(100vh - 120px); gap: 0; overflow: hidden; }
+
+/* Left panel – trade list */
+.study-list-panel {
+  width: 280px; min-width: 280px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.study-list-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.study-list-title { font-size: 13px; font-weight: 700; }
+.study-search { margin: 10px 12px; }
+.study-search input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text); border-radius: var(--radius); padding: 7px 10px 7px 30px;
+  font-family: var(--font-display); font-size: 12px;
+}
+.study-search input:focus { outline: none; border-color: var(--accent); }
+.study-search { position: relative; }
+.study-search::before { content: '⌕'; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; pointer-events: none; }
+.study-items { flex: 1; overflow-y: auto; padding: 6px 8px; }
+.study-item {
+  padding: 11px 12px; border-radius: var(--radius); cursor: pointer;
+  border: 1px solid transparent; margin-bottom: 3px;
+  transition: all 0.12s; display: flex; align-items: center; justify-content: space-between;
+}
+.study-item:hover { background: var(--bg3); }
+.study-item.active { background: var(--bg3); border-color: var(--border2); border-left: 3px solid var(--accent); }
+.study-item-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.study-item-date { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+.study-item-arrow { color: var(--text3); font-size: 14px; }
+.study-list-empty { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 12px; line-height: 1.8; }
+.study-new-btn {
+  margin: 10px 12px 12px; padding: 8px; background: var(--accent);
+  color: #fff; border: none; border-radius: var(--radius); font-family: var(--font-display);
+  font-size: 12px; font-weight: 600; cursor: pointer; width: calc(100% - 24px);
+  display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.15s;
+}
+.study-new-btn:hover { opacity: 0.85; }
+.study-trash { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text3); cursor: pointer; transition: color 0.15s; }
+.study-trash:hover { color: var(--red); }
+
+/* Right panel – canvas */
+.study-canvas-panel {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  margin-left: 16px;
+}
+.study-canvas-empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text3); font-size: 13px; line-height: 2; text-align: center;
+}
+.study-canvas-empty-icon { font-size: 40px; margin-bottom: 12px; }
+.study-canvas-header {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.study-canvas-title-input {
+  font-size: 20px; font-weight: 700; background: transparent; border: none;
+  color: var(--text); font-family: var(--font-display); flex: 1; letter-spacing: -0.4px;
+  border-bottom: 1px dashed transparent; transition: border-color 0.15s;
+}
+.study-canvas-title-input:focus { outline: none; border-bottom-color: var(--border2); }
+.study-canvas-date { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+.study-canvas-date input[type=date] { background: transparent; border: none; color: var(--text3); font-family: var(--font-mono); font-size: 11px; cursor: pointer; }
+.study-canvas-date input[type=date]:focus { outline: none; }
+.canvas-header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.canvas-action-btn {
+  background: var(--bg3); border: 1px solid var(--border2); color: var(--text2);
+  padding: 6px 12px; border-radius: var(--radius); font-size: 12px; cursor: pointer;
+  font-family: var(--font-display); transition: all 0.15s;
+}
+.canvas-action-btn:hover { color: var(--text); background: var(--bg4); }
+.canvas-action-btn.danger:hover { color: var(--red); border-color: var(--red); background: rgba(239,68,68,0.08); }
+
+/* Block canvas */
+.study-blocks { flex: 1; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.block {
+  position: relative; border-radius: var(--radius);
+  border: 1px solid transparent; transition: border-color 0.15s;
+}
+.block:hover { border-color: var(--border); }
+.block:hover .block-drag { opacity: 1; }
+.block:hover .block-del { opacity: 1; }
+
+/* Text block */
+.block-text textarea {
+  width: 100%; background: var(--bg3); border: 1px solid transparent;
+  color: var(--text); border-radius: var(--radius); padding: 12px 14px;
+  font-family: var(--font-display); font-size: 13px; line-height: 1.75;
+  resize: vertical; min-height: 80px; transition: border-color 0.15s;
+}
+.block-text textarea:focus { outline: none; border-color: var(--accent); background: var(--bg3); }
+.block-text textarea::placeholder { color: var(--text3); }
+
+/* Image block */
+.block-image { background: var(--bg3); border-radius: var(--radius); overflow: hidden; }
+.block-image img { width: 100%; display: block; border-radius: var(--radius); cursor: pointer; max-height: 500px; object-fit: contain; background: var(--bg4); }
+.block-image-drop {
+  border: 2px dashed var(--border2); border-radius: var(--radius);
+  padding: 32px; text-align: center; cursor: pointer; transition: all 0.15s;
+  color: var(--text3); font-size: 12px; line-height: 2;
+}
+.block-image-drop:hover, .block-image-drop.dragover { border-color: var(--accent); background: var(--accent-glow, rgba(59,130,246,0.05)); color: var(--text2); }
+.block-image-drop-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.block-image-caption input {
+  width: 100%; background: transparent; border: none; border-top: 1px solid var(--border);
+  color: var(--text2); padding: 8px 12px; font-family: var(--font-display); font-size: 11px;
+  font-style: italic;
+}
+.block-image-caption input:focus { outline: none; background: var(--bg4); }
+.block-image-caption input::placeholder { color: var(--text3); }
+
+/* Block controls */
+.block-controls {
+  position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; opacity: 0;
+  transition: opacity 0.15s;
+}
+.block:hover .block-controls { opacity: 1; }
+.block-ctrl-btn {
+  background: var(--bg4); border: 1px solid var(--border2); color: var(--text2);
+  width: 24px; height: 24px; border-radius: 4px; font-size: 11px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.block-ctrl-btn:hover { color: var(--text); background: var(--bg3); }
+.block-ctrl-btn.del:hover { color: var(--red); border-color: var(--red); }
+
+/* Add block bar */
+.add-block-bar {
+  display: flex; gap: 8px; padding: 12px 0 4px; align-items: center;
+}
+.add-block-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius);
+  color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font-display);
+  transition: all 0.15s;
+}
+.add-block-btn:hover { color: var(--text); background: var(--bg4); border-color: var(--border2); }
+.add-block-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
 
 /* ── MISC ── */
 .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 13px; line-height: 1.8; }
@@ -432,12 +564,72 @@ tr.trade-row:hover > td { background: var(--bg3); }
 </div>
 
 <!-- ══ STUDY NOTES ══ -->
-<div id="page-study" class="page">
-  <div class="page-header">
+<div id="page-study" class="page" style="padding-bottom:0">
+  <div class="page-header" style="margin-bottom:16px">
     <div><div class="page-title">Study Notes</div><div class="page-sub" id="study-period-sub">February 2019 · trade review</div></div>
   </div>
-  <div id="study-empty" class="empty-state"><span class="empty-icon">📖</span>No notes yet. Expand a trade row in the Journal and write notes to see them here.</div>
-  <div id="study-list"></div>
+
+  <div class="study-layout">
+    <!-- Left: trade list -->
+    <div class="study-list-panel">
+      <div class="study-list-header">
+        <span class="study-list-title">Trades</span>
+      </div>
+      <div class="study-search">
+        <input type="text" id="studySearch" placeholder="Search trades..." oninput="filterStudyList()">
+      </div>
+      <div class="study-items" id="studyItems">
+        <div class="study-list-empty">No trades yet.<br>Add trades in the Journal<br>to study them here.</div>
+      </div>
+      <button class="study-new-btn" onclick="newStudyNote()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+        New Note
+      </button>
+      <div class="study-trash" onclick="showTrash()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path stroke-linecap="round" d="M19 6l-1 14H6L5 6m5 0V4h4v2"/></svg>
+        Trash
+      </div>
+    </div>
+
+    <!-- Right: canvas -->
+    <div class="study-canvas-panel" id="studyCanvasPanel">
+      <div class="study-canvas-empty" id="studyCanvasEmpty">
+        <div class="study-canvas-empty-icon">📝</div>
+        Select a trade from the list<br>or create a new note<br>to start writing.
+      </div>
+      <div id="studyCanvasActive" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden">
+        <!-- Header -->
+        <div class="study-canvas-header">
+          <div style="flex:1">
+            <input class="study-canvas-title-input" id="noteTitle" type="text" placeholder="Note title…" oninput="saveActiveNote()">
+            <div class="study-canvas-date">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path stroke-linecap="round" d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <input type="date" id="noteDate" onchange="saveActiveNote()">
+            </div>
+          </div>
+          <div class="canvas-header-actions">
+            <button class="canvas-action-btn danger" onclick="deleteActiveNote()">Delete note</button>
+          </div>
+        </div>
+
+        <!-- Blocks -->
+        <div class="study-blocks" id="studyBlocks"></div>
+
+        <!-- Add block bar -->
+        <div class="add-block-bar">
+          <span class="add-block-label">Add block:</span>
+          <button class="add-block-btn" onclick="addBlock('text')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h10M4 18h16"/></svg>
+            Text
+          </button>
+          <button class="add-block-btn" onclick="addBlock('image')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" d="M21 15l-5-5L5 21"/></svg>
+            Screenshot
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </main>
@@ -992,37 +1184,348 @@ function renderAnalytics() {
 }
 
 // ─── STUDY NOTES ─────────────────────────────────────────────────────────────
-async function renderStudy() {
-  const list = document.getElementById('study-list');
-  const empty = document.getElementById('study-empty');
-  const tradesWithNotes = [];
-  for (const t of trades) {
-    const notes = localStorage.getItem(notesKey(t.id)) || '';
-    const shots = await dbGet(shotsKey(t.id)) || [];
-    if (notes.trim() || shots.length) tradesWithNotes.push({ t, notes, shots });
+// Notes are stored as: { id, title, date, blocks: [{type:'text'|'image', content, caption}] }
+// Key: btj_note_{id}  — index: btj_note_index_{month_key}
+// Images stored in IndexedDB keyed by blockId
+
+let activeNoteId = null;
+let activeNoteBlocks = []; // live working copy of blocks
+
+function noteIndexKey() { return `btj_note_index_${getKey()}`; }
+function noteDataKey(id) { return `btj_note_data_${id}`; }
+
+function getNoteIndex() {
+  try { return JSON.parse(localStorage.getItem(noteIndexKey()) || '[]'); } catch(e) { return []; }
+}
+function saveNoteIndex(index) { localStorage.setItem(noteIndexKey(), JSON.stringify(index)); }
+
+function getNoteData(id) {
+  try { return JSON.parse(localStorage.getItem(noteDataKey(id)) || 'null'); } catch(e) { return null; }
+}
+function saveNoteData(id, data) { localStorage.setItem(noteDataKey(id), JSON.stringify(data)); }
+function deleteNoteData(id) { localStorage.removeItem(noteDataKey(id)); }
+
+// Build the left-panel list from: standalone notes + journal trades
+function renderStudy() {
+  const index = getNoteIndex();   // standalone notes created in Study
+  // Also pull from journal trades for quick linking
+  const tradeItems = trades.map(t => ({
+    id: 'trade_' + t.id,
+    title: ((t.symbol || 'Trade').toUpperCase()) + ' ' + (t.direction || ''),
+    date: t.date || '',
+    source: 'trade',
+    tradeRef: t
+  }));
+  const noteItems = index.map(n => ({ id: n.id, title: n.title || 'Untitled', date: n.date || '', source: 'note' }));
+  const all = [...noteItems, ...tradeItems].sort((a,b) => b.date.localeCompare(a.date));
+
+  renderStudyList(all);
+  // If there's an active note, keep it open
+  if (activeNoteId) openNote(activeNoteId);
+}
+
+function filterStudyList() {
+  const q = document.getElementById('studySearch').value.toLowerCase();
+  const index = getNoteIndex();
+  const tradeItems = trades.map(t => ({
+    id: 'trade_' + t.id,
+    title: ((t.symbol || 'Trade').toUpperCase()) + ' ' + (t.direction || ''),
+    date: t.date || '',
+    source: 'trade'
+  }));
+  const noteItems = index.map(n => ({ id: n.id, title: n.title || 'Untitled', date: n.date || '', source: 'note' }));
+  const all = [...noteItems, ...tradeItems].sort((a,b) => b.date.localeCompare(a.date));
+  const filtered = q ? all.filter(i => i.title.toLowerCase().includes(q) || i.date.includes(q)) : all;
+  renderStudyList(filtered);
+}
+
+function renderStudyList(items) {
+  const container = document.getElementById('studyItems');
+  if (!items.length) {
+    container.innerHTML = '<div class="study-list-empty">No trades yet.<br>Add trades in the Journal<br>to see them here, or<br>create a new note.</div>';
+    return;
   }
-  if (!tradesWithNotes.length) { empty.style.display='block'; list.innerHTML=''; return; }
-  empty.style.display='none';
-  list.innerHTML = tradesWithNotes.map(({ t, notes, shots }) => {
-    const sym = (t.symbol||'Unknown').toUpperCase();
-    const dateLabel = t.date ? new Date(t.date).toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) : '—';
-    const pnl = parseFloat(t.pnl)||0;
-    const pnlStr = pnl!==0?(pnl>0?'<span class="c-green">+$'+pnl.toFixed(2)+'</span>':'<span class="c-red">$'+pnl.toFixed(2)+'</span>'):'';
-    const sessCls = sessionClass(t.session);
-    const sessTag = t.session&&t.session!=='—'?`<span class="${sessCls}" style="font-size:11px">${t.session}</span>`:'';
-    const thumbsHtml = shots.map(src=>`<img class="study-thumb" src="${src}" alt="screenshot" onclick="openLightbox('${src}')">`).join('');
-    return `<div class="study-card">
-      <div class="study-heading">
-        <span>${sym}</span>
-        ${sessTag}
-        ${t.direction==='Long'?'<span style="background:rgba(34,197,94,0.15);color:var(--green);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">Long</span>':'<span style="background:rgba(239,68,68,0.15);color:var(--red);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">Short</span>'}
-        ${pnlStr}
+  container.innerHTML = items.map(item => {
+    const dateLabel = item.date ? fmtStudyDate(item.date) : '';
+    const isActive = item.id === activeNoteId;
+    return `<div class="study-item ${isActive?'active':''}" onclick="openNote('${item.id}')">
+      <div>
+        <div class="study-item-title">${escHtml(item.title)}</div>
+        <div class="study-item-date">${dateLabel}</div>
       </div>
-      <div class="study-meta">${dateLabel} · ${t.setup&&t.setup!=='—'?t.setup+' · ':''} ${t.outcome&&t.outcome!=='—'?t.outcome:''}</div>
-      ${notes.trim()?`<div class="study-notes-text">${notes}</div>`:''}
-      ${thumbsHtml?`<div class="study-thumbs">${thumbsHtml}</div>`:''}
+      <span class="study-item-arrow">›</span>
     </div>`;
   }).join('');
+}
+
+function fmtStudyDate(d) {
+  if (!d) return '';
+  try {
+    const [y,m,day] = d.split('-').map(Number);
+    return new Date(y,m-1,day).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  } catch(e) { return d; }
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function openNote(id) {
+  activeNoteId = id;
+
+  // Determine note data
+  let noteData;
+  if (id.startsWith('trade_')) {
+    // Load from trade + existing note storage
+    const tradeId = parseInt(id.replace('trade_',''));
+    const trade = trades.find(t => t.id === tradeId);
+    const stored = getNoteData(id);
+    if (stored) {
+      noteData = stored;
+    } else {
+      // Bootstrap from trade data
+      const sym = trade ? ((trade.symbol||'').toUpperCase() + ' ' + (trade.direction||'')) : 'Trade Note';
+      noteData = { id, title: sym.trim(), date: trade ? trade.date : '', blocks: [{type:'text',content:'',blockId:'b'+Date.now()}] };
+    }
+  } else {
+    noteData = getNoteData(id) || { id, title: 'Untitled', date: '', blocks: [{type:'text',content:'',blockId:'b'+Date.now()}] };
+  }
+
+  activeNoteBlocks = noteData.blocks || [];
+
+  // Show canvas
+  document.getElementById('studyCanvasEmpty').style.display = 'none';
+  const active = document.getElementById('studyCanvasActive');
+  active.style.display = 'flex';
+  active.style.flexDirection = 'column';
+  active.style.overflow = 'hidden';
+
+  document.getElementById('noteTitle').value = noteData.title || '';
+  document.getElementById('noteDate').value = noteData.date || '';
+
+  await renderBlocks();
+  // Refresh list to show active highlight
+  filterStudyList();
+}
+
+async function renderBlocks() {
+  const container = document.getElementById('studyBlocks');
+  container.innerHTML = '';
+  for (let i = 0; i < activeNoteBlocks.length; i++) {
+    const block = activeNoteBlocks[i];
+    const el = await buildBlockEl(block, i);
+    container.appendChild(el);
+  }
+}
+
+async function buildBlockEl(block, index) {
+  const wrap = document.createElement('div');
+  wrap.className = 'block block-' + block.type;
+  wrap.dataset.blockId = block.blockId;
+
+  // Controls (move up/down + delete)
+  const ctrl = document.createElement('div');
+  ctrl.className = 'block-controls';
+  ctrl.innerHTML = `
+    ${index > 0 ? `<button class="block-ctrl-btn" onclick="moveBlock('${block.blockId}',-1)" title="Move up">↑</button>` : ''}
+    ${index < activeNoteBlocks.length-1 ? `<button class="block-ctrl-btn" onclick="moveBlock('${block.blockId}',1)" title="Move down">↓</button>` : ''}
+    <button class="block-ctrl-btn del" onclick="deleteBlock('${block.blockId}')" title="Delete block">✕</button>
+  `;
+
+  if (block.type === 'text') {
+    const ta = document.createElement('textarea');
+    ta.placeholder = 'Write your analysis here… (Higher TF bias, key levels, entry reasoning…)';
+    ta.value = block.content || '';
+    ta.oninput = () => { block.content = ta.value; autoResizeTA(ta); saveActiveNote(); };
+    ta.onkeydown = (e) => handleTextKeydown(e, block.blockId);
+    wrap.appendChild(ta);
+    wrap.appendChild(ctrl);
+    // Auto-resize after render
+    setTimeout(() => autoResizeTA(ta), 10);
+  } else if (block.type === 'image') {
+    if (block.content) {
+      // Has image — show it
+      const imgSrc = await resolveImageSrc(block);
+      const img = document.createElement('img');
+      img.src = imgSrc || '';
+      img.alt = block.caption || 'Screenshot';
+      img.onclick = () => openLightbox(img.src);
+      const capWrap = document.createElement('div');
+      capWrap.className = 'block-image-caption';
+      const capInput = document.createElement('input');
+      capInput.type = 'text';
+      capInput.placeholder = 'Add caption (e.g. H4 structure, HTF bias…)';
+      capInput.value = block.caption || '';
+      capInput.oninput = () => { block.caption = capInput.value; saveActiveNote(); };
+      capWrap.appendChild(capInput);
+      wrap.appendChild(img);
+      wrap.appendChild(capWrap);
+      wrap.appendChild(ctrl);
+    } else {
+      // Drop zone
+      const drop = buildDropZone(block);
+      wrap.appendChild(drop);
+      wrap.appendChild(ctrl);
+    }
+  }
+
+  return wrap;
+}
+
+async function resolveImageSrc(block) {
+  if (!block.content) return null;
+  if (block.content.startsWith('data:') || block.content.startsWith('http')) return block.content;
+  // Try IndexedDB
+  const fromDb = await dbGet('img_' + block.blockId);
+  return fromDb || block.content;
+}
+
+function buildDropZone(block) {
+  const drop = document.createElement('div');
+  drop.className = 'block-image-drop';
+  drop.innerHTML = `<span class="block-image-drop-icon">🖼️</span>Drag & drop screenshot here<br>or click to upload`;
+  drop.onclick = () => triggerImageUpload(block.blockId);
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add('dragover'); };
+  drop.ondragleave = () => drop.classList.remove('dragover');
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove('dragover'); handleImageFile(e.dataTransfer.files[0], block.blockId); };
+  return drop;
+}
+
+function triggerImageUpload(blockId) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = (e) => handleImageFile(e.target.files[0], blockId);
+  input.click();
+}
+
+async function handleImageFile(file, blockId) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    const block = activeNoteBlocks.find(b => b.blockId === blockId);
+    if (!block) return;
+    // Store large images in IndexedDB, save marker in block
+    try {
+      await dbSet('img_' + blockId, dataUrl);
+      block.content = '__idb__'; // marker indicating stored in IndexedDB
+    } catch(err) {
+      block.content = dataUrl; // fallback to inline
+    }
+    saveActiveNote();
+    await renderBlocks();
+  };
+  reader.readAsDataURL(file);
+}
+
+function autoResizeTA(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.max(80, ta.scrollHeight) + 'px';
+}
+
+function handleTextKeydown(e, blockId) {
+  // Enter at end of block → add new text block below
+  if (e.key === 'Enter' && e.shiftKey) {
+    e.preventDefault();
+    addBlockAfter(blockId, 'text');
+  }
+}
+
+function addBlock(type, afterId) {
+  const newBlock = { type, blockId: 'b' + Date.now(), content: '', caption: '' };
+  if (afterId) {
+    const idx = activeNoteBlocks.findIndex(b => b.blockId === afterId);
+    activeNoteBlocks.splice(idx + 1, 0, newBlock);
+  } else {
+    activeNoteBlocks.push(newBlock);
+  }
+  saveActiveNote();
+  renderBlocks().then(() => {
+    // Focus newly added text block
+    if (type === 'text') {
+      const el = document.querySelector(`[data-block-id="${newBlock.blockId}"] textarea`);
+      if (el) el.focus();
+    }
+    // Scroll to bottom
+    const blocks = document.getElementById('studyBlocks');
+    blocks.scrollTop = blocks.scrollHeight;
+  });
+}
+
+function addBlockAfter(afterId, type) { addBlock(type, afterId); }
+
+function deleteBlock(blockId) {
+  if (activeNoteBlocks.length <= 1) {
+    // Don't delete last block, just clear it
+    activeNoteBlocks[0].content = '';
+    renderBlocks(); return;
+  }
+  activeNoteBlocks = activeNoteBlocks.filter(b => b.blockId !== blockId);
+  dbDel('img_' + blockId);
+  saveActiveNote();
+  renderBlocks();
+}
+
+function moveBlock(blockId, dir) {
+  const idx = activeNoteBlocks.findIndex(b => b.blockId === blockId);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= activeNoteBlocks.length) return;
+  [activeNoteBlocks[idx], activeNoteBlocks[newIdx]] = [activeNoteBlocks[newIdx], activeNoteBlocks[idx]];
+  saveActiveNote();
+  renderBlocks();
+}
+
+function saveActiveNote() {
+  if (!activeNoteId) return;
+  const title = document.getElementById('noteTitle').value;
+  const date = document.getElementById('noteDate').value;
+  const data = { id: activeNoteId, title, date, blocks: activeNoteBlocks };
+  saveNoteData(activeNoteId, data);
+
+  // Update index for standalone notes
+  if (!activeNoteId.startsWith('trade_')) {
+    const index = getNoteIndex();
+    const existing = index.find(n => n.id === activeNoteId);
+    if (existing) { existing.title = title; existing.date = date; }
+    else index.unshift({ id: activeNoteId, title, date });
+    saveNoteIndex(index);
+  }
+  // Refresh list title live
+  const itemEl = document.querySelector(`.study-item[onclick="openNote('${activeNoteId}')"] .study-item-title`);
+  if (itemEl) itemEl.textContent = title || 'Untitled';
+}
+
+function newStudyNote() {
+  const id = 'note_' + Date.now();
+  const m = document.getElementById('monthSel').value.padStart(2,'0');
+  const y = document.getElementById('yearSel').value;
+  const data = { id, title: '', date: `${y}-${m}-01`, blocks: [{ type:'text', blockId:'b'+Date.now(), content:'', caption:'' }] };
+  saveNoteData(id, data);
+  const index = getNoteIndex();
+  index.unshift({ id, title: '', date: data.date });
+  saveNoteIndex(index);
+  renderStudy();
+  openNote(id);
+  setTimeout(() => document.getElementById('noteTitle').focus(), 50);
+}
+
+function deleteActiveNote() {
+  if (!activeNoteId || !confirm('Delete this note? This cannot be undone.')) return;
+  // Remove from index if standalone note
+  if (!activeNoteId.startsWith('trade_')) {
+    const index = getNoteIndex().filter(n => n.id !== activeNoteId);
+    saveNoteIndex(index);
+  }
+  deleteNoteData(activeNoteId);
+  activeNoteId = null;
+  activeNoteBlocks = [];
+  document.getElementById('studyCanvasEmpty').style.display = 'flex';
+  document.getElementById('studyCanvasActive').style.display = 'none';
+  renderStudy();
+}
+
+function showTrash() {
+  alert('Deleted notes are permanently removed. Use the Export JSON button in the sidebar to back up your data before deleting.');
 }
 
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
@@ -1071,6 +1574,7 @@ function renderAll() {
     if(ap.id==='page-analytics') setTimeout(renderAnalytics,60);
     if(ap.id==='page-metrics') setTimeout(renderCharts,60);
     if(ap.id==='page-study') renderStudy();
+
   }
 }
 function refreshAll() { renderAll(); }
