@@ -347,6 +347,63 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .toolbar-info { font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
 .section { margin-bottom: 20px; }
+/* ── NEWS TRACKER ── */
+.news-layout { display: flex; height: calc(100vh - 140px); gap: 16px; overflow: hidden; }
+.news-list-panel { width: 280px; min-width: 280px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
+.news-list-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.news-list-title { font-size: 13px; font-weight: 700; }
+.news-list-items { flex: 1; overflow-y: auto; padding: 6px 8px; }
+.news-list-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; border: 1px solid transparent; margin-bottom: 3px; transition: all 0.12s; }
+.news-list-item:hover { background: var(--bg3); }
+.news-list-item.active { background: var(--bg3); border-color: var(--border2); border-left: 3px solid var(--amber); }
+.news-list-item-title { font-size: 12px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.news-list-item-meta { font-size: 10px; color: var(--text3); font-family: var(--font-mono); display: flex; gap: 6px; align-items: center; }
+.news-pill { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 20px; font-size: 9px; font-weight: 700; font-family: var(--font-mono); letter-spacing: 0.3px; }
+.news-pill-eur { background: rgba(59,130,246,0.18); color: #60a5fa; }
+.news-pill-usd { background: rgba(34,197,94,0.15); color: #4ade80; }
+.news-add-btn { margin: 10px 12px 12px; padding: 8px; background: var(--amber); color: #000; border: none; border-radius: var(--radius); font-family: var(--font-display); font-size: 12px; font-weight: 700; cursor: pointer; width: calc(100% - 24px); display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.15s; }
+.news-add-btn:hover { opacity: 0.85; }
+.news-detail-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.news-detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text3); font-size: 13px; line-height: 2; text-align: center; }
+.news-form { flex: 1; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; gap: 20px; min-height: 0; }
+.news-form-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.nf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.nf-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.nf-row-1 { grid-template-columns: 1fr; }
+.nf-group { display: flex; flex-direction: column; gap: 5px; }
+.nf-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); font-family: var(--font-mono); }
+.nf-input, .nf-select, .nf-textarea { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); border-radius: var(--radius); padding: 8px 10px; font-family: var(--font-display); font-size: 13px; width: 100%; transition: border-color 0.15s; }
+.nf-input:focus, .nf-select:focus, .nf-textarea:focus { outline: none; border-color: var(--amber); }
+.nf-textarea { resize: vertical; min-height: 80px; line-height: 1.65; }
+.nf-figures { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.nf-fig { display: flex; flex-direction: column; gap: 4px; }
+.nf-fig-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-mono); }
+.nf-fig-label.forecast { color: #60a5fa; }
+.nf-fig-label.actual { color: var(--green); }
+.nf-fig-label.previous { color: var(--text3); }
+.nf-fig input { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); border-radius: var(--radius); padding: 7px 10px; font-family: var(--font-mono); font-size: 13px; width: 100%; }
+.nf-fig input:focus { outline: none; border-color: var(--amber); }
+.nf-reaction-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.nf-reaction-btn { padding: 8px 6px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 11px; font-family: var(--font-display); cursor: pointer; text-align: center; transition: all 0.15s; font-weight: 500; }
+.nf-reaction-btn:hover { border-color: var(--amber); color: var(--text); }
+.nf-reaction-btn.selected { font-weight: 700; }
+.nf-reaction-btn.bull.selected { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
+.nf-reaction-btn.bear.selected { background: rgba(239,68,68,0.15); border-color: var(--red); color: var(--red); }
+.nf-reaction-btn.mixed.selected { background: rgba(245,158,11,0.15); border-color: var(--amber); color: var(--amber); }
+.nf-reaction-btn.none.selected { background: rgba(100,116,139,0.2); border-color: var(--text3); color: var(--text3); }
+.news-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; }
+.na-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; }
+.na-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
+.na-value { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.na-sub { font-size: 11px; color: var(--text2); font-family: var(--font-mono); margin-top: 3px; }
+.news-rank-list { display: flex; flex-direction: column; gap: 8px; }
+.news-rank-item { display: flex; align-items: center; gap: 10px; }
+.news-rank-num { font-size: 11px; color: var(--text3); font-family: var(--font-mono); width: 16px; text-align: right; flex-shrink: 0; }
+.news-rank-label { font-size: 12px; flex: 1; }
+.news-rank-bar-wrap { width: 80px; height: 4px; background: var(--bg4); border-radius: 2px; flex-shrink: 0; }
+.news-rank-bar { height: 100%; border-radius: 2px; }
+.news-rank-val { font-size: 11px; font-family: var(--font-mono); font-weight: 600; min-width: 50px; text-align: right; flex-shrink: 0; }
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
 
@@ -398,6 +455,9 @@ tr.trade-row:hover > td { background: var(--bg3); }
     </button>
     <button class="nav-item" onclick="showPage('study',this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>Study Notes
+    </button>
+    <button class="nav-item" onclick="showPage('news',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>News Tracker
     </button>
   </nav>
   <div class="sidebar-footer">
@@ -647,6 +707,214 @@ tr.trade-row:hover > td { background: var(--bg3); }
   </div>
 </div>
 
+
+<!-- ══ NEWS TRACKER ══ -->
+<div id="page-news" class="page">
+  <div class="page-header" style="margin-bottom:16px">
+    <div>
+      <div class="page-title">News Tracker</div>
+      <div class="page-sub" id="news-period-sub">Track high-impact news &amp; EURUSD reactions</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn btn-ghost" onclick="showNewsAnalytics()" id="newsAnalyticsBtn">📊 Analytics</button>
+    </div>
+  </div>
+
+  <!-- Analytics Summary Banner (hidden by default) -->
+  <div id="newsAnalyticsPanel" style="display:none;margin-bottom:20px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+      <div class="na-card"><div class="na-label">Total Events Logged</div><div class="na-value" id="na-total">0</div></div>
+      <div class="na-card"><div class="na-label">Most Bullish News</div><div class="na-value c-green" id="na-bull" style="font-size:13px;line-height:1.3">—</div></div>
+      <div class="na-card"><div class="na-label">Most Bearish News</div><div class="na-value c-red" id="na-bear" style="font-size:13px;line-height:1.3">—</div></div>
+      <div class="na-card"><div class="na-label">Avg Pip Move</div><div class="na-value c-amber" id="na-avgpip">—</div><div class="na-sub">across all events</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="card card-sm">
+        <div class="news-section-title">Reaction by News Event (ranked)</div>
+        <div class="news-rank-list" id="na-event-rank"></div>
+      </div>
+      <div class="card card-sm">
+        <div class="news-section-title">Beat vs Miss vs In-Line</div>
+        <div style="height:180px"><canvas id="naOutcomeChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card card-sm" style="margin-bottom:16px">
+      <div class="news-section-title">Average Pip Move by Event</div>
+      <div style="height:160px"><canvas id="naPipChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="news-layout">
+    <!-- Left list -->
+    <div class="news-list-panel">
+      <div class="news-list-header">
+        <span class="news-list-title">Events</span>
+        <span id="news-count" style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">0</span>
+      </div>
+      <div class="news-list-items" id="newsListItems">
+        <div style="text-align:center;padding:30px 12px;color:var(--text3);font-size:12px;line-height:1.8">No events yet.<br>Click &ldquo;+ Add Event&rdquo;<br>to log your first news entry.</div>
+      </div>
+      <button class="news-add-btn" onclick="addNewsEvent()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+        Add Event
+      </button>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="news-detail-panel">
+      <div class="news-detail-empty" id="newsDetailEmpty">
+        <div style="font-size:40px;margin-bottom:12px">📰</div>
+        Select an event or add a new one<br>to start tracking news reactions.
+      </div>
+      <div id="newsDetailForm" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="news-form">
+
+          <!-- Header row -->
+          <div class="news-form-header">
+            <div>
+              <div style="font-size:18px;font-weight:700;letter-spacing:-0.3px" id="nf-event-heading">New Event</div>
+              <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:3px" id="nf-event-date-label"></div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="canvas-action-btn danger" onclick="deleteNewsEvent()">Delete</button>
+            </div>
+          </div>
+
+          <!-- Row 1: Date · Time · Currency · Event -->
+          <div>
+            <div class="news-section-title">Event Details</div>
+            <div class="nf-row nf-row-3" style="grid-template-columns:140px 120px 100px 1fr">
+              <div class="nf-group">
+                <label class="nf-label">Date</label>
+                <input type="date" class="nf-input" id="nf-date" onchange="saveActiveNews()">
+              </div>
+              <div class="nf-group">
+                <label class="nf-label">Time (local)</label>
+                <input type="time" class="nf-input" id="nf-time" onchange="saveActiveNews()">
+              </div>
+              <div class="nf-group">
+                <label class="nf-label">Currency</label>
+                <select class="nf-select" id="nf-currency" onchange="updateNewsEventDropdown();saveActiveNews()">
+                  <option>EUR</option>
+                  <option>USD</option>
+                </select>
+              </div>
+              <div class="nf-group">
+                <label class="nf-label">News Event</label>
+                <select class="nf-select" id="nf-event" onchange="saveActiveNews()"></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Figures -->
+          <div>
+            <div class="news-section-title">Release Figures</div>
+            <div class="nf-figures">
+              <div class="nf-fig">
+                <div class="nf-fig-label forecast">Forecast</div>
+                <input type="text" id="nf-forecast" placeholder="e.g. 0.3%" oninput="saveActiveNews()">
+              </div>
+              <div class="nf-fig">
+                <div class="nf-fig-label actual">Actual</div>
+                <input type="text" id="nf-actual" placeholder="e.g. 0.5%" oninput="saveActiveNews()">
+              </div>
+              <div class="nf-fig">
+                <div class="nf-fig-label previous">Previous</div>
+                <input type="text" id="nf-previous" placeholder="e.g. 0.2%" oninput="saveActiveNews()">
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <div class="news-section-title">Result vs Forecast</div>
+              <div style="display:flex;gap:8px">
+                <button class="nf-reaction-btn bull" data-beat="beat" onclick="selectBeat(this,'beat')">✅ Beat</button>
+                <button class="nf-reaction-btn bear" data-beat="miss" onclick="selectBeat(this,'miss')">❌ Missed</button>
+                <button class="nf-reaction-btn none" data-beat="inline" onclick="selectBeat(this,'inline')">➖ In-Line</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Price Reaction -->
+          <div>
+            <div class="news-section-title">EURUSD Price Reaction</div>
+            <div class="nf-row" style="grid-template-columns:120px 120px 1fr">
+              <div class="nf-group">
+                <label class="nf-label">Price Before</label>
+                <input type="number" step="0.00001" class="nf-input" id="nf-price-before" placeholder="1.08500" oninput="calcPipMove();saveActiveNews()">
+              </div>
+              <div class="nf-group">
+                <label class="nf-label">Price After (5–15m)</label>
+                <input type="number" step="0.00001" class="nf-input" id="nf-price-after" placeholder="1.08750" oninput="calcPipMove();saveActiveNews()">
+              </div>
+              <div class="nf-group">
+                <label class="nf-label">Pip Move (auto)</label>
+                <input type="text" class="nf-input" id="nf-pip-move" placeholder="auto-calculated" readonly style="background:var(--bg4);cursor:default">
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="news-section-title">Initial Reaction Direction</div>
+              <div class="nf-reaction-grid">
+                <button class="nf-reaction-btn bull" data-react="strong-bull" onclick="selectReaction(this)">🚀 Strong Bullish</button>
+                <button class="nf-reaction-btn bull" data-react="bull" onclick="selectReaction(this)">📈 Bullish</button>
+                <button class="nf-reaction-btn bear" data-react="bear" onclick="selectReaction(this)">📉 Bearish</button>
+                <button class="nf-reaction-btn bear" data-react="strong-bear" onclick="selectReaction(this)">💥 Strong Bearish</button>
+                <button class="nf-reaction-btn mixed" data-react="spike-up" onclick="selectReaction(this)">⚡ Spike Up → Reverse</button>
+                <button class="nf-reaction-btn mixed" data-react="spike-down" onclick="selectReaction(this)">⚡ Spike Down → Reverse</button>
+                <button class="nf-reaction-btn mixed" data-react="mixed" onclick="selectReaction(this)">↕️ Mixed / Choppy</button>
+                <button class="nf-reaction-btn none" data-react="none" onclick="selectReaction(this)">— No Reaction</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Continuation -->
+          <div class="nf-row">
+            <div class="nf-group">
+              <label class="nf-label">Did price continue the initial direction? (1H later)</label>
+              <select class="nf-select" id="nf-continuation" onchange="saveActiveNews()">
+                <option value="">— Select —</option>
+                <option value="yes">Yes — Continued</option>
+                <option value="no">No — Reversed</option>
+                <option value="partial">Partial continuation</option>
+                <option value="na">N/A — Couldn't determine</option>
+              </select>
+            </div>
+            <div class="nf-group">
+              <label class="nf-label">Session at time of release</label>
+              <select class="nf-select" id="nf-session" onchange="saveActiveNews()">
+                <option value="">— Select —</option>
+                <option>Asian</option>
+                <option>London</option>
+                <option>New York</option>
+                <option>London / NY Overlap</option>
+                <option>Pre-market</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 5: Notes -->
+          <div class="nf-row-1 nf-row">
+            <div class="nf-group">
+              <label class="nf-label">Analysis Notes</label>
+              <textarea class="nf-textarea" id="nf-notes" placeholder="Describe the context, market structure before the news, how price reacted, what you learned…" oninput="saveActiveNews()" style="min-height:100px"></textarea>
+            </div>
+          </div>
+
+          <!-- Row 6: Screenshot upload -->
+          <div>
+            <div class="news-section-title">Chart Screenshots</div>
+            <div id="nf-screenshots" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px"></div>
+            <div class="block-image-drop" id="nf-drop-zone" onclick="triggerNewsScreenshot()" style="padding:20px">
+              <span class="block-image-drop-icon">🖼️</span>
+              Drag &amp; drop chart screenshots here or click to upload
+            </div>
+            <input type="file" id="nf-screenshot-input" accept="image/*" multiple style="display:none" onchange="handleNewsScreenshots(event)">
+          </div>
+
+        </div><!-- /news-form -->
+      </div>
+    </div><!-- /detail panel -->
+  </div>
+</div>
+
 </main>
 </div>
 
@@ -756,6 +1024,7 @@ function updatePeriod() {
   ['metrics-title','j-period-sub','cal-sub-header'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=label; });
   document.getElementById('a-period-sub').textContent = label + ' · performance breakdown';
   document.getElementById('study-period-sub').textContent = label + ' · trade review';
+  if (document.getElementById('page-news').classList.contains('active')) renderNewsPage();
 }
 
 function showPage(id, btn) {
@@ -768,6 +1037,7 @@ function showPage(id, btn) {
   if (id==='calendar') renderCalendar();
   if (id==='analytics') setTimeout(renderAnalytics, 60);
   if (id==='study') renderStudy();
+  if (id==='news') renderNewsPage();
 }
 
 // ─── JOURNAL ─────────────────────────────────────────────────────────────────
@@ -1713,6 +1983,7 @@ function renderAll() {
     if(ap.id==='page-analytics') setTimeout(renderAnalytics,60);
     if(ap.id==='page-metrics') setTimeout(renderCharts,60);
     if(ap.id==='page-study') renderStudy();
+    if(ap.id==='page-news') renderNewsPage();
 
   }
 }
@@ -1724,6 +1995,475 @@ openDB().then(() => {
   updatePeriod();
   setTimeout(renderCharts, 100);
 });
+
+// ─── NEWS TRACKER ─────────────────────────────────────────────────────────────
+
+const EUR_NEWS = [
+  // ── ECB Policy & Officials ──
+  "ECB Interest Rate Decision",
+  "ECB Deposit Facility Rate Decision",
+  "ECB Marginal Lending Rate Decision",
+  "ECB Monetary Policy Statement",
+  "ECB Press Conference",
+  "ECB Meeting Accounts (Minutes)",
+  "ECB Economic Bulletin",
+  "ECB Financial Stability Review",
+  "ECB President Lagarde Speech",
+  "ECB Vice President de Guindos Speech",
+  "ECB Chief Economist Lane Speech",
+  "ECB Executive Board Member Speech",
+  "ECB Governing Council Member Speech",
+  "ECB Asset Purchase Programme (APP)",
+  "ECB Pandemic Emergency Purchase Programme (PEPP)",
+  "ECB Transmission Protection Instrument (TPI)",
+  "ECB Targeted LTRO (TLTRO)",
+  "ECB Balance Sheet Data",
+  "ECB Bank Lending Survey",
+
+  // ── Eurozone Inflation ──
+  "Eurozone CPI y/y",
+  "Eurozone CPI m/m",
+  "Eurozone Core CPI y/y",
+  "Eurozone CPI Flash Estimate y/y",
+  "Eurozone Core CPI Flash Estimate y/y",
+  "Eurozone PPI m/m",
+  "Eurozone PPI y/y",
+  "Eurozone HICP y/y",
+
+  // ── Eurozone Growth ──
+  "Eurozone GDP q/q Flash",
+  "Eurozone GDP q/q Revised",
+  "Eurozone GDP y/y",
+  "Eurozone Economic Sentiment",
+  "Eurozone Industrial Confidence",
+  "Eurozone Services Confidence",
+  "Eurozone Consumer Confidence Flash",
+  "Eurozone Industrial Production m/m",
+  "Eurozone Industrial Production y/y",
+  "Eurozone Retail Sales m/m",
+  "Eurozone Retail Sales y/y",
+  "Eurozone Trade Balance",
+  "Eurozone Current Account",
+  "Eurozone Business Climate",
+
+  // ── Eurozone Labour ──
+  "Eurozone Unemployment Rate",
+  "Eurozone Employment Change q/q",
+  "Eurozone Employment Change y/y",
+
+  // ── Eurozone PMIs ──
+  "Eurozone Manufacturing PMI Flash",
+  "Eurozone Manufacturing PMI Final",
+  "Eurozone Services PMI Flash",
+  "Eurozone Services PMI Final",
+  "Eurozone Composite PMI Flash",
+  "Eurozone Composite PMI Final",
+  "Sentix Investor Confidence",
+  "ZEW Economic Sentiment (Eurozone)",
+
+  // ── Germany ──
+  "German GDP q/q Flash",
+  "German GDP q/q Final",
+  "German GDP y/y",
+  "German CPI m/m",
+  "German CPI y/y",
+  "German HICP m/m",
+  "German Unemployment Change",
+  "German Unemployment Rate",
+  "German Employment Change",
+  "German IFO Business Climate",
+  "German IFO Current Assessment",
+  "German IFO Expectations",
+  "German ZEW Economic Sentiment",
+  "German ZEW Current Conditions",
+  "German Manufacturing PMI Flash",
+  "German Manufacturing PMI Final",
+  "German Services PMI Flash",
+  "German Services PMI Final",
+  "German Composite PMI Flash",
+  "German Composite PMI Final",
+  "German Industrial Production m/m",
+  "German Industrial Orders m/m",
+  "German Trade Balance",
+  "German Current Account",
+  "German Retail Sales m/m",
+  "German Construction PMI",
+  "German Buba President Speech",
+  "German Buba Monthly Report",
+  "German 10-Year Bund Auction",
+  "German 30-Year Bund Auction",
+
+  // ── France ──
+  "French GDP q/q Flash",
+  "French GDP q/q Final",
+  "French CPI m/m",
+  "French CPI y/y",
+  "French HICP m/m",
+  "French Unemployment Rate",
+  "French Manufacturing PMI Flash",
+  "French Manufacturing PMI Final",
+  "French Services PMI Flash",
+  "French Services PMI Final",
+  "French Composite PMI Flash",
+  "French Industrial Production m/m",
+  "French Trade Balance",
+  "French Consumer Spending m/m",
+  "French Business Survey",
+  "French 10-Year OAT Auction",
+
+  // ── Italy ──
+  "Italian GDP q/q Flash",
+  "Italian GDP q/q Final",
+  "Italian CPI m/m",
+  "Italian CPI y/y",
+  "Italian HICP m/m",
+  "Italian Unemployment Rate",
+  "Italian Manufacturing PMI",
+  "Italian Services PMI",
+  "Italian Retail Sales m/m",
+  "Italian Industrial Production m/m",
+  "Italian Trade Balance",
+  "Italian 10-Year BTP Auction",
+  "Italian 3-Year BTP Auction",
+
+  // ── Spain ──
+  "Spanish GDP q/q Flash",
+  "Spanish GDP q/q Final",
+  "Spanish CPI m/m",
+  "Spanish CPI y/y",
+  "Spanish HICP m/m",
+  "Spanish Unemployment Rate",
+  "Spanish Manufacturing PMI",
+  "Spanish Services PMI",
+  "Spanish Retail Sales y/y",
+  "Spanish Industrial Production",
+  "Spanish 10-Year Bonos Auction",
+
+  // ── Netherlands / Belgium / Others ──
+  "Dutch GDP q/q",
+  "Dutch CPI m/m",
+  "Dutch Manufacturing PMI",
+  "Belgian CPI m/m",
+  "Belgian NBB Business Climate",
+  "Irish GDP q/q",
+  "Greek GDP q/q",
+  "Portuguese CPI m/m",
+  "Austrian CPI m/m",
+  "Finnish GDP q/q",
+
+  // ── European Institutions ──
+  "EU Economic Forecasts (Spring/Autumn)",
+  "European Commission Economic Sentiment",
+  "European Parliament Vote",
+  "EU Summit / Eurogroup Meeting",
+  "ESM/EFSF Statement",
+  "EU Retail PMI"
+];
+
+const USD_NEWS = [
+  "FOMC Interest Rate Decision","FOMC Statement","FOMC Meeting Minutes",
+  "FOMC Press Conference","Fed Chair Powell Speech","Fed Member Speech",
+  "Non-Farm Payrolls (NFP)","Unemployment Rate (USD)","ADP Non-Farm Employment",
+  "Average Hourly Earnings m/m","Average Hourly Earnings y/y",
+  "CPI m/m (USD)","CPI y/y (USD)","Core CPI m/m","Core CPI y/y",
+  "PPI m/m (USD)","Core PPI m/m","PCE Price Index m/m","Core PCE Price Index m/m",
+  "GDP q/q (USD)","GDP Flash q/q","GDP Final q/q",
+  "Retail Sales m/m","Core Retail Sales m/m",
+  "ISM Manufacturing PMI","ISM Services PMI","ISM Non-Manufacturing PMI",
+  "Manufacturing PMI (USD)","Services PMI (USD)","Composite PMI (USD)",
+  "Trade Balance (USD)","Current Account (USD)",
+  "Consumer Confidence (USD)","Michigan Consumer Sentiment",
+  "Existing Home Sales","New Home Sales","Building Permits","Housing Starts",
+  "Durable Goods Orders m/m","Core Durable Goods Orders m/m",
+  "Industrial Production m/m (USD)","Capacity Utilization Rate",
+  "Philly Fed Manufacturing Index","Empire State Manufacturing Index",
+  "Jobless Claims (Initial)","Jobless Claims (Continuing)",
+  "Treasury Secretary Speech","US Budget Statement",
+  "US 10-Year Bond Auction","US 30-Year Bond Auction"
+];
+
+function newsStorageKey() { return `btj_news_${getKey()}`; }
+let newsEvents = [];
+let activeNewsId = null;
+let newsCharts = {};
+
+function loadNewsData() {
+  try { newsEvents = JSON.parse(localStorage.getItem(newsStorageKey()) || '[]'); } catch(e) { newsEvents = []; }
+}
+function saveNewsData() { localStorage.setItem(newsStorageKey(), JSON.stringify(newsEvents)); }
+
+function renderNewsList() {
+  loadNewsData();
+  const container = document.getElementById('newsListItems');
+  document.getElementById('news-count').textContent = newsEvents.length;
+  if (!newsEvents.length) {
+    container.innerHTML = '<div style="text-align:center;padding:30px 12px;color:var(--text3);font-size:12px;line-height:1.8">No events yet.<br>Click &ldquo;+ Add Event&rdquo;<br>to log your first news entry.</div>';
+    return;
+  }
+  const sorted = [...newsEvents].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  container.innerHTML = sorted.map(ev => {
+    const pill = `<span class="news-pill ${ev.currency==='EUR'?'news-pill-eur':'news-pill-usd'}">${ev.currency||'?'}</span>`;
+    const reactionIcon = {bull:'📈','strong-bull':'🚀',bear:'📉','strong-bear':'💥','spike-up':'⚡','spike-down':'⚡',mixed:'↕️',none:'—'}[ev.reaction]||'';
+    const pipStr = ev.pipMove ? (parseFloat(ev.pipMove)>0?'+':'')+ev.pipMove+'p' : '';
+    return `<div class="news-list-item${ev.id===activeNewsId?' active':''}" onclick="openNewsEvent('${ev.id}')">
+      <div class="news-list-item-title">${ev.event||'Untitled Event'}</div>
+      <div class="news-list-item-meta">${pill}<span>${ev.date||''}</span>${reactionIcon?`<span>${reactionIcon}</span>`:''}${pipStr?`<span style="color:${parseFloat(pipStr)>0?'var(--green)':'var(--red)'}">${pipStr}</span>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+function addNewsEvent() {
+  const m = document.getElementById('monthSel').value.padStart(2,'0');
+  const y = document.getElementById('yearSel').value;
+  const id = 'news_' + Date.now();
+  const ev = { id, date:`${y}-${m}-01`, time:'', currency:'USD', event:'Non-Farm Payrolls (NFP)', forecast:'', actual:'', previous:'', beat:'', reaction:'', continuation:'', session:'', pipMove:'', notes:'', screenshots:[] };
+  newsEvents.push(ev);
+  saveNewsData();
+  renderNewsList();
+  openNewsEvent(id);
+}
+
+function openNewsEvent(id) {
+  activeNewsId = id;
+  loadNewsData();
+  const ev = newsEvents.find(e => e.id === id);
+  if (!ev) return;
+
+  document.getElementById('newsDetailEmpty').style.display = 'none';
+  const form = document.getElementById('newsDetailForm');
+  form.style.display = 'flex';
+  form.style.flexDirection = 'column';
+  form.style.overflow = 'hidden';
+  form.style.flex = '1';
+
+  document.getElementById('nf-event-heading').textContent = ev.event || 'New Event';
+  document.getElementById('nf-event-date-label').textContent = ev.date ? fmtStudyDate(ev.date) : '';
+  document.getElementById('nf-date').value = ev.date || '';
+  document.getElementById('nf-time').value = ev.time || '';
+  document.getElementById('nf-currency').value = ev.currency || 'USD';
+  updateNewsEventDropdown(ev.event);
+  document.getElementById('nf-forecast').value = ev.forecast || '';
+  document.getElementById('nf-actual').value = ev.actual || '';
+  document.getElementById('nf-previous').value = ev.previous || '';
+  document.getElementById('nf-price-before').value = ev.priceBefore || '';
+  document.getElementById('nf-price-after').value = ev.priceAfter || '';
+  document.getElementById('nf-pip-move').value = ev.pipMove || '';
+  document.getElementById('nf-continuation').value = ev.continuation || '';
+  document.getElementById('nf-session').value = ev.session || '';
+  document.getElementById('nf-notes').value = ev.notes || '';
+
+  // Beat buttons
+  document.querySelectorAll('[data-beat]').forEach(b => {
+    b.classList.remove('selected');
+    if (b.dataset.beat === ev.beat) b.classList.add('selected');
+  });
+  // Reaction buttons
+  document.querySelectorAll('[data-react]').forEach(b => {
+    b.classList.remove('selected');
+    if (b.dataset.react === ev.reaction) b.classList.add('selected');
+  });
+
+  renderNewsScreenshots(ev);
+  // Setup drag/drop on drop zone
+  const dz = document.getElementById('nf-drop-zone');
+  dz.ondragover = e => { e.preventDefault(); dz.classList.add('dragover'); };
+  dz.ondragleave = () => dz.classList.remove('dragover');
+  dz.ondrop = e => { e.preventDefault(); dz.classList.remove('dragover'); handleNewsFileDrop(e.dataTransfer.files); };
+
+  renderNewsList();
+}
+
+function updateNewsEventDropdown(selectedVal) {
+  const cur = document.getElementById('nf-currency').value;
+  const list = cur === 'EUR' ? EUR_NEWS : USD_NEWS;
+  const sel = document.getElementById('nf-event');
+  const current = selectedVal || sel.value;
+  sel.innerHTML = list.map(n => `<option${n===current?' selected':''}>${n}</option>`).join('');
+}
+
+function selectBeat(btn, val) {
+  document.querySelectorAll('[data-beat]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const ev = newsEvents.find(e => e.id === activeNewsId);
+  if (ev) { ev.beat = val; saveNewsData(); }
+}
+
+function selectReaction(btn) {
+  document.querySelectorAll('[data-react]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const ev = newsEvents.find(e => e.id === activeNewsId);
+  if (ev) { ev.reaction = btn.dataset.react; saveNewsData(); renderNewsList(); }
+}
+
+function calcPipMove() {
+  const before = parseFloat(document.getElementById('nf-price-before').value);
+  const after = parseFloat(document.getElementById('nf-price-after').value);
+  if (!isNaN(before) && !isNaN(after)) {
+    const pips = Math.round((after - before) * 10000);
+    document.getElementById('nf-pip-move').value = (pips >= 0 ? '+' : '') + pips;
+    const ev = newsEvents.find(e => e.id === activeNewsId);
+    if (ev) { ev.pipMove = (pips >= 0 ? '+' : '') + pips; }
+  }
+}
+
+function saveActiveNews() {
+  if (!activeNewsId) return;
+  const ev = newsEvents.find(e => e.id === activeNewsId);
+  if (!ev) return;
+  ev.date = document.getElementById('nf-date').value;
+  ev.time = document.getElementById('nf-time').value;
+  ev.currency = document.getElementById('nf-currency').value;
+  ev.event = document.getElementById('nf-event').value;
+  ev.forecast = document.getElementById('nf-forecast').value;
+  ev.actual = document.getElementById('nf-actual').value;
+  ev.previous = document.getElementById('nf-previous').value;
+  ev.priceBefore = document.getElementById('nf-price-before').value;
+  ev.priceAfter = document.getElementById('nf-price-after').value;
+  ev.continuation = document.getElementById('nf-continuation').value;
+  ev.session = document.getElementById('nf-session').value;
+  ev.notes = document.getElementById('nf-notes').value;
+  saveNewsData();
+  document.getElementById('nf-event-heading').textContent = ev.event || 'New Event';
+  document.getElementById('nf-event-date-label').textContent = ev.date ? fmtStudyDate(ev.date) : '';
+  // Refresh list label live
+  const item = document.querySelector(`.news-list-item[onclick="openNewsEvent('${activeNewsId}')"] .news-list-item-title`);
+  if (item) item.textContent = ev.event || 'Untitled Event';
+}
+
+function deleteNewsEvent() {
+  if (!activeNewsId || !confirm('Delete this news event? This cannot be undone.')) return;
+  // Remove screenshots from IDB
+  const ev = newsEvents.find(e => e.id === activeNewsId);
+  if (ev && ev.screenshots) ev.screenshots.forEach(sid => dbDel('nshot_'+sid));
+  newsEvents = newsEvents.filter(e => e.id !== activeNewsId);
+  saveNewsData();
+  activeNewsId = null;
+  document.getElementById('newsDetailEmpty').style.display = 'flex';
+  document.getElementById('newsDetailForm').style.display = 'none';
+  renderNewsList();
+}
+
+// Screenshots for news events
+function triggerNewsScreenshot() { document.getElementById('nf-screenshot-input').click(); }
+
+async function handleNewsScreenshots(e) { await handleNewsFileDrop(e.target.files); e.target.value=''; }
+
+async function handleNewsFileDrop(files) {
+  const ev = newsEvents.find(e => e.id === activeNewsId);
+  if (!ev || !files.length) return;
+  for (const file of Array.from(files)) {
+    if (!file.type.startsWith('image/')) continue;
+    const sid = 's' + Date.now() + Math.random().toString(36).slice(2,6);
+    const dataUrl = await new Promise(res => { const r = new FileReader(); r.onload = e2 => res(e2.target.result); r.readAsDataURL(file); });
+    await dbSet('nshot_'+sid, dataUrl);
+    ev.screenshots = ev.screenshots || [];
+    ev.screenshots.push(sid);
+  }
+  saveNewsData();
+  renderNewsScreenshots(ev);
+}
+
+async function renderNewsScreenshots(ev) {
+  const wrap = document.getElementById('nf-screenshots');
+  if (!ev.screenshots || !ev.screenshots.length) { wrap.innerHTML=''; return; }
+  wrap.innerHTML = '';
+  for (const sid of ev.screenshots) {
+    const src = await dbGet('nshot_'+sid);
+    if (!src) continue;
+    const div = document.createElement('div');
+    div.style.cssText = 'position:relative;display:inline-block';
+    const img = document.createElement('img');
+    img.src = src;
+    img.style.cssText = 'width:140px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--border2);cursor:zoom-in';
+    img.onclick = () => openLightbox(src, ev.event);
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.style.cssText = 'position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center';
+    del.onclick = async () => {
+      await dbDel('nshot_'+sid);
+      ev.screenshots = ev.screenshots.filter(s => s !== sid);
+      saveNewsData();
+      renderNewsScreenshots(ev);
+    };
+    div.appendChild(img); div.appendChild(del); wrap.appendChild(div);
+  }
+}
+
+// Analytics
+let naChartsBuilt = false;
+function showNewsAnalytics() {
+  const panel = document.getElementById('newsAnalyticsPanel');
+  const btn = document.getElementById('newsAnalyticsBtn');
+  const visible = panel.style.display !== 'none';
+  panel.style.display = visible ? 'none' : 'block';
+  btn.textContent = visible ? '📊 Analytics' : '📊 Hide Analytics';
+  if (!visible) buildNewsAnalytics();
+}
+
+function buildNewsAnalytics() {
+  loadNewsData();
+  const dark = { gridColor:'rgba(255,255,255,0.05)', tickColor:'rgba(255,255,255,0.35)', font:{family:"'DM Mono',monospace",size:10} };
+
+  document.getElementById('na-total').textContent = newsEvents.length;
+
+  const pips = newsEvents.map(e => parseFloat(e.pipMove)||0).filter(p => p!==0);
+  const avgPip = pips.length ? (pips.reduce((a,b)=>a+b,0)/pips.length).toFixed(1) : '—';
+  document.getElementById('na-avgpip').textContent = avgPip !== '—' ? avgPip+'p' : '—';
+
+  // Most bullish / bearish event by avg pip
+  const byEvent = {};
+  newsEvents.forEach(e => {
+    if (!e.event || !e.pipMove) return;
+    if (!byEvent[e.event]) byEvent[e.event] = [];
+    byEvent[e.event].push(parseFloat(e.pipMove)||0);
+  });
+  const eventAvgs = Object.entries(byEvent).map(([name,vals]) => ({ name, avg: vals.reduce((a,b)=>a+b,0)/vals.length, count: vals.length }));
+  const sorted = [...eventAvgs].sort((a,b)=>b.avg-a.avg);
+  document.getElementById('na-bull').textContent = sorted[0] ? sorted[0].name.split(' ').slice(0,3).join(' ') : '—';
+  document.getElementById('na-bear').textContent = sorted[sorted.length-1] ? sorted[sorted.length-1].name.split(' ').slice(0,3).join(' ') : '—';
+
+  // Event rank list
+  const topEvents = [...eventAvgs].sort((a,b)=>Math.abs(b.avg)-Math.abs(a.avg)).slice(0,8);
+  const maxAbs = Math.max(...topEvents.map(e=>Math.abs(e.avg)),1);
+  document.getElementById('na-event-rank').innerHTML = topEvents.map((e,i) => {
+    const pct = Math.abs(e.avg)/maxAbs*100;
+    const col = e.avg >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<div class="news-rank-item">
+      <div class="news-rank-num">${i+1}</div>
+      <div class="news-rank-label">${e.name.length>28?e.name.slice(0,28)+'…':e.name}<div style="font-size:10px;color:var(--text3)">${e.count} event${e.count!==1?'s':''}</div></div>
+      <div class="news-rank-bar-wrap"><div class="news-rank-bar" style="width:${pct}%;background:${col}"></div></div>
+      <div class="news-rank-val" style="color:${col}">${e.avg>=0?'+':''}${e.avg.toFixed(1)}p</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--text3);font-size:12px">Not enough data yet</div>';
+
+  // Beat/Miss/Inline donut
+  const beats = { beat:0, miss:0, inline:0 };
+  newsEvents.forEach(e => { if (e.beat && beats[e.beat]!==undefined) beats[e.beat]++; });
+  if (newsCharts.outcome) { newsCharts.outcome.destroy(); }
+  newsCharts.outcome = new Chart(document.getElementById('naOutcomeChart'), {
+    type: 'doughnut',
+    data: { labels:['Beat','Missed','In-Line'], datasets:[{ data:[beats.beat,beats.miss,beats.inline], backgroundColor:['rgba(34,197,94,0.8)','rgba(239,68,68,0.8)','rgba(100,116,139,0.6)'], borderWidth:0 }] },
+    options: { responsive:true, maintainAspectRatio:false, cutout:'60%', plugins:{ legend:{ position:'right', labels:{ color:dark.tickColor, font:dark.font, boxWidth:10, padding:8 } } } }
+  });
+
+  // Avg pip move by event bar
+  const top6 = [...eventAvgs].sort((a,b)=>Math.abs(b.avg)-Math.abs(a.avg)).slice(0,6);
+  if (newsCharts.pip) { newsCharts.pip.destroy(); }
+  newsCharts.pip = new Chart(document.getElementById('naPipChart'), {
+    type: 'bar',
+    data: { labels: top6.map(e=>e.name.length>18?e.name.slice(0,18)+'…':e.name), datasets:[{ data:top6.map(e=>parseFloat(e.avg.toFixed(1))), backgroundColor:top6.map(e=>e.avg>=0?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'), borderRadius:4 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:dark.tickColor,font:dark.font},grid:{display:false}}, y:{ticks:{color:dark.tickColor,font:dark.font},grid:{color:dark.gridColor}} } }
+  });
+}
+
+function renderNewsPage() {
+  loadNewsData();
+  renderNewsList();
+  const m = parseInt(document.getElementById('monthSel').value);
+  const y = document.getElementById('yearSel').value;
+  document.getElementById('news-period-sub').textContent = MONTHS[m-1] + ' ' + y + ' · high-impact EURUSD news events';
+}
+
 </script>
 </body>
 </html>
