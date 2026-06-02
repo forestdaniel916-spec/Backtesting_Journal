@@ -347,6 +347,40 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .toolbar-info { font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
 .section { margin-bottom: 20px; }
+/* ── ACCOUNTS ── */
+.mode-toggle { display:flex; margin:12px 20px 0; gap:0; background:var(--bg3); border-radius:var(--radius); padding:3px; border:1px solid var(--border); }
+.mode-btn { flex:1; padding:5px 6px; border:none; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font-display); background:none; color:var(--text3); transition:all 0.15s; }
+.mode-btn.active { background:var(--accent); color:#fff; }
+.mode-btn.live.active { background:var(--green); color:#fff; }
+.account-selector { padding:10px 20px 0; }
+.account-selector label { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text3); display:block; margin-bottom:6px; }
+.account-row { display:flex; gap:6px; align-items:center; }
+.account-row select { flex:1; background:var(--bg3); color:var(--text); border:1px solid var(--border2); border-radius:var(--radius); padding:6px 8px; font-family:var(--font-display); font-size:12px; cursor:pointer; appearance:none; }
+.account-row select:focus { outline:none; border-color:var(--accent); }
+.add-account-btn { background:var(--bg3); border:1px solid var(--border2); color:var(--text2); padding:6px 8px; border-radius:var(--radius); font-size:14px; cursor:pointer; line-height:1; transition:all 0.15s; flex-shrink:0; }
+.add-account-btn:hover { color:var(--text); border-color:var(--accent); }
+.account-badge { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; border-radius:20px; font-size:10px; font-weight:700; font-family:var(--font-mono); }
+.badge-live { background:rgba(34,197,94,0.15); color:var(--green); }
+.badge-backtest { background:rgba(59,130,246,0.15); color:var(--accent); }
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); display:inline-block; animation:pulse-dot 1.5s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* Account modal */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:none; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--bg2); border:1px solid var(--border2); border-radius:var(--radius-lg); padding:24px; width:360px; max-width:90vw; }
+.modal-title { font-size:16px; font-weight:700; margin-bottom:16px; }
+.modal-field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+.modal-field label { font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text3); font-family:var(--font-mono); }
+.modal-field input, .modal-field select { background:var(--bg3); border:1px solid var(--border2); color:var(--text); border-radius:var(--radius); padding:8px 10px; font-family:var(--font-display); font-size:13px; }
+.modal-field input:focus, .modal-field select:focus { outline:none; border-color:var(--accent); }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+.modal-list { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; max-height:200px; overflow-y:auto; }
+.modal-account-item { display:flex; align-items:center; justify-content:space-between; background:var(--bg3); border-radius:var(--radius); padding:10px 12px; }
+.modal-account-name { font-size:13px; font-weight:600; }
+.modal-account-meta { font-size:10px; color:var(--text3); font-family:var(--font-mono); margin-top:2px; }
+.modal-del-btn { background:none; border:none; color:var(--text3); cursor:pointer; font-size:14px; padding:2px 4px; border-radius:3px; }
+.modal-del-btn:hover { color:var(--red); }
+
 /* ── NEWS TRACKER ── */
 .news-layout { display: flex; height: calc(100vh - 140px); gap: 16px; overflow: hidden; }
 .news-list-panel { width: 280px; min-width: 280px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
@@ -421,10 +455,23 @@ tr.trade-row:hover > td { background: var(--bg3); }
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-brand">
-    <div class="logo"><div class="logo-mark">BT</div><div class="logo-text">BackTest</div></div>
-    <div class="logo-sub">trading journal v2.0</div>
+    <div class="logo"><div class="logo-mark" id="logoMark">BT</div><div class="logo-text" id="logoText">BackTest</div></div>
+    <div class="logo-sub" id="logoSub">trading journal v3.0</div>
   </div>
-  <div class="month-selector">
+  <!-- Mode toggle: Backtest / Live -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeBacktest" onclick="setMode('backtest')">📊 Backtest</button>
+    <button class="mode-btn live" id="modeLive" onclick="setMode('live')">🔴 Live</button>
+  </div>
+  <!-- Account selector -->
+  <div class="account-selector" id="accountSelectorWrap">
+    <label>Account</label>
+    <div class="account-row">
+      <select id="accountSel" onchange="updateAccount()"></select>
+      <button class="add-account-btn" onclick="openAccountModal()" title="Manage accounts">⚙</button>
+    </div>
+  </div>
+  <div class="month-selector" style="margin-top:10px">
     <label>Period</label>
     <select id="monthSel" onchange="updatePeriod()">
       <option value="1">January</option><option value="2" selected>February</option>
@@ -536,9 +583,12 @@ tr.trade-row:hover > td { background: var(--bg3); }
           <th>TP</th>
           <th>Size</th>
           <th>PnL ($)</th>
+          <th>Commission ($)</th>
+          <th>Net PnL</th>
           <th>Setup</th>
           <th>Outcome</th>
           <th>R:R</th>
+          <th>Account</th>
           <th>Rules</th>
           <th style="width:36px"></th>
         </tr>
@@ -1006,7 +1056,7 @@ function loadTheme() {
 }
 
 // ─── KEY HELPERS ─────────────────────────────────────────────────────────────
-function getKey() { return `btj-${document.getElementById('yearSel').value}-${document.getElementById('monthSel').value}`; }
+// getKey() is now defined in the Accounts section above
 function notesKey(id) { return `btj_notes_${id}`; }
 function shotsKey(id) { return `btj_shots_${id}`; }
 function rulesKey(id) { return `btj_rules_${id}`; }
@@ -1044,7 +1094,7 @@ function showPage(id, btn) {
 function addTrade() {
   const m = document.getElementById('monthSel').value.padStart(2,'0');
   const y = document.getElementById('yearSel').value;
-  trades.push({ id: Date.now(), date:`${y}-${m}-01`, timeIn:'', timeOut:'', symbol:'', direction:'Long', session:'—', entry:'', exit:'', sl:'', tp:'', size:'', pnl:'', setup:'—', outcome:'—' });
+  trades.push({ id: Date.now(), date:`${y}-${m}-01`, timeIn:'', timeOut:'', symbol:'', direction:'Long', session:'—', entry:'', exit:'', sl:'', tp:'', size:'', pnl:'', commission:'', setup:'—', outcome:'—', account: getActiveAccount() });
   saveData(); renderJournal();
 }
 
@@ -1061,6 +1111,12 @@ function updateField(id, field, val) {
   const t = trades.find(t => t.id === id);
   if (t) { t[field] = val; saveData(); }
   if (['pnl','date','outcome','direction','session','setup'].includes(field)) refreshAll();
+}
+
+function getAccountName(id) {
+  if (!id || id === 'all') return '—';
+  const acc = getAccounts().find(a => a.id === id);
+  return acc ? acc.name : '—';
 }
 
 function calcRR(t) {
@@ -1321,6 +1377,32 @@ async function exportPDF(scope) {
   </div>
 </div>
 ${sections.join('\n')}
+
+<!-- Account Manager Modal -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal-box">
+    <div class="modal-title">Manage Accounts</div>
+    <div class="modal-list" id="accountModalList"></div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:4px">
+      <div style="font-size:11px;font-weight:600;margin-bottom:10px;color:var(--text2)">Add New Account</div>
+      <div class="modal-field"><label>Account Name</label><input type="text" id="newAccName" placeholder="e.g. FTMO Challenge, Live MT4, Demo 01"></div>
+      <div class="modal-field"><label>Type</label>
+        <select id="newAccType">
+          <option value="live">Live</option>
+          <option value="prop">Prop Firm Challenge</option>
+          <option value="demo">Demo</option>
+          <option value="backtest">Backtest Only</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Broker / Platform</label><input type="text" id="newAccBroker" placeholder="e.g. FTMO, IC Markets, Pepperstone"></div>
+      <div class="modal-field"><label>Starting Balance ($)</label><input type="number" id="newAccBalance" value="10000"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAccountModal()">Close</button>
+      <button class="btn btn-primary" onclick="saveNewAccount()">Add Account</button>
+    </div>
+  </div>
+</div>
 </body></html>`;
 
   // Open in new window and trigger print dialog
@@ -1366,9 +1448,14 @@ function renderJournal() {
   <td><input type="number" value="${t.tp}" placeholder="0.0000" onchange="updateField(${t.id},'tp',this.value)" style="min-width:75px"></td>
   <td><input type="number" value="${t.size}" placeholder="0.01" onchange="updateField(${t.id},'size',this.value)" style="min-width:60px"></td>
   <td><input type="number" value="${t.pnl}" placeholder="0.00" onchange="updateField(${t.id},'pnl',this.value)" style="min-width:70px;color:${pnlColor}"></td>
+  <td><input type="number" value="${t.commission||''}" placeholder="0.00" onchange="updateField(${t.id},'commission',this.value)" style="min-width:65px;color:var(--red)"></td>
+  <td style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:${(parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0)>0?'var(--green)':(parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0)<0?'var(--red)':'var(--text2)'}">
+    ${((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))!==0?(((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))>0?'+':'')+(((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))).toFixed(2):'—'}
+  </td>
   <td><select onchange="updateField(${t.id},'setup',this.value)">${mkOpt(SETUPS,t.setup)}</select></td>
   <td><select onchange="updateField(${t.id},'outcome',this.value)">${mkOpt(OUTCOMES,t.outcome)}</select></td>
   <td style="font-family:var(--font-mono);font-size:11px;color:var(--text2)">${rr!==null?rr.toFixed(2)+'R':'—'}</td>
+  <td style="font-size:10px;color:var(--text3);font-family:var(--font-mono);white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${getAccountName(t.account)}">${getAccountName(t.account)}</td>
   <td>${rulesFraction(t.id)}</td>
   <td><button class="del-btn" onclick="delTrade(${t.id})" title="Delete">✕</button></td>
 </tr>
@@ -1937,6 +2024,164 @@ function showTrash() {
   alert('Deleted notes are permanently removed. Use the Export JSON button in the sidebar to back up your data before deleting.');
 }
 
+
+// ─── ACCOUNTS & MODE ──────────────────────────────────────────────────────────
+
+const ACCOUNTS_KEY = 'btj_accounts';
+const ACTIVE_ACCOUNT_KEY = 'btj_active_account';
+const MODE_KEY = 'btj_mode';
+
+function getAccounts() {
+  try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveAccounts(arr) { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(arr)); }
+function getActiveAccount() { return localStorage.getItem(ACTIVE_ACCOUNT_KEY) || 'all'; }
+function setActiveAccount(id) { localStorage.setItem(ACTIVE_ACCOUNT_KEY, id); }
+function getMode() { return localStorage.getItem(MODE_KEY) || 'backtest'; }
+function saveMode(m) { localStorage.setItem(MODE_KEY, m); }
+
+function initAccounts() {
+  let accounts = getAccounts();
+  if (!accounts.length) {
+    // Seed default accounts
+    accounts = [
+      { id:'acc_backtest', name:'Backtest', type:'backtest', broker:'Simulation', balance:10000 },
+      { id:'acc_live_01', name:'Live Account 01', type:'live', broker:'', balance:10000 }
+    ];
+    saveAccounts(accounts);
+  }
+  renderAccountSelector();
+  applyMode(getMode());
+}
+
+function renderAccountSelector() {
+  const accounts = getAccounts();
+  const sel = document.getElementById('accountSel');
+  const active = getActiveAccount();
+  sel.innerHTML = '<option value="all">— All Accounts —</option>' +
+    accounts.map(a => `<option value="${a.id}"${a.id===active?' selected':''}>${a.name}${a.type==='live'?' 🔴':a.type==='prop'?' 🏆':a.type==='demo'?' 🔵':' 📊'}</option>`).join('');
+  // Render modal list too if open
+  renderModalList();
+}
+
+function updateAccount() {
+  setActiveAccount(document.getElementById('accountSel').value);
+  refreshAll();
+}
+
+function setMode(mode) {
+  saveMode(mode);
+  applyMode(mode);
+  refreshAll();
+}
+
+function applyMode(mode) {
+  const btnBT = document.getElementById('modeBacktest');
+  const btnLive = document.getElementById('modeLive');
+  const logoMark = document.getElementById('logoMark');
+  const logoText = document.getElementById('logoText');
+  const logoSub = document.getElementById('logoSub');
+  if (mode === 'live') {
+    btnBT.classList.remove('active');
+    btnLive.classList.add('active');
+    logoMark.style.background = 'var(--green)';
+    logoMark.textContent = '▶';
+    logoText.textContent = 'LiveTrack';
+    logoSub.innerHTML = '<span class="live-dot"></span> live trading journal';
+    document.title = 'LiveTrack Journal';
+  } else {
+    btnBT.classList.add('active');
+    btnLive.classList.remove('active');
+    logoMark.style.background = 'var(--accent)';
+    logoMark.textContent = 'BT';
+    logoText.textContent = 'BackTest';
+    logoSub.textContent = 'trading journal v3.0';
+    document.title = 'Backtesting Journal';
+  }
+}
+
+function getKey() {
+  const acct = getActiveAccount();
+  const mode = getMode();
+  const prefix = mode === 'live' ? 'live' : 'btj';
+  const acctPart = (acct !== 'all') ? `-${acct}` : '';
+  return `${prefix}${acctPart}-${document.getElementById('yearSel').value}-${document.getElementById('monthSel').value}`;
+}
+
+// Filter trades by active account
+function getFilteredTrades() {
+  const acct = getActiveAccount();
+  if (acct === 'all') return trades;
+  return trades.filter(t => !t.account || t.account === acct || t.account === 'all');
+}
+
+// Account modal
+function openAccountModal() {
+  renderModalList();
+  document.getElementById('accountModal').classList.add('open');
+}
+function closeAccountModal() {
+  document.getElementById('accountModal').classList.remove('open');
+}
+
+function renderModalList() {
+  const accounts = getAccounts();
+  const list = document.getElementById('accountModalList');
+  if (!list) return;
+  if (!accounts.length) { list.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:10px">No accounts yet</div>'; return; }
+  const typeLabel = { live:'Live', prop:'Prop Firm', demo:'Demo', backtest:'Backtest' };
+  const typeColor = { live:'var(--green)', prop:'var(--amber)', demo:'var(--accent)', backtest:'var(--text3)' };
+  list.innerHTML = accounts.map(a => `
+    <div class="modal-account-item">
+      <div>
+        <div class="modal-account-name">${a.name}</div>
+        <div class="modal-account-meta" style="color:${typeColor[a.type]||'var(--text3)'}">${typeLabel[a.type]||a.type}${a.broker?' · '+a.broker:''} · $${parseFloat(a.balance||0).toLocaleString()}</div>
+      </div>
+      <button class="modal-del-btn" onclick="deleteAccount('${a.id}')" title="Delete account">✕</button>
+    </div>`).join('');
+}
+
+function saveNewAccount() {
+  const name = document.getElementById('newAccName').value.trim();
+  if (!name) { document.getElementById('newAccName').focus(); return; }
+  const accounts = getAccounts();
+  const newAcc = {
+    id: 'acc_' + Date.now(),
+    name,
+    type: document.getElementById('newAccType').value,
+    broker: document.getElementById('newAccBroker').value.trim(),
+    balance: parseFloat(document.getElementById('newAccBalance').value) || 10000
+  };
+  accounts.push(newAcc);
+  saveAccounts(accounts);
+  // Set starting balance in sidebar to match
+  document.getElementById('startingBalance').value = newAcc.balance;
+  document.getElementById('newAccName').value = '';
+  document.getElementById('newAccBroker').value = '';
+  document.getElementById('newAccBalance').value = '10000';
+  renderAccountSelector();
+  // Auto-select the new account
+  document.getElementById('accountSel').value = newAcc.id;
+  setActiveAccount(newAcc.id);
+  renderModalList();
+  refreshAll();
+}
+
+function deleteAccount(id) {
+  if (!confirm('Delete this account? The account\'s trade data will remain in storage but the account entry will be removed.')) return;
+  const accounts = getAccounts().filter(a => a.id !== id);
+  saveAccounts(accounts);
+  if (getActiveAccount() === id) { setActiveAccount('all'); }
+  renderAccountSelector();
+  refreshAll();
+}
+
+// Close modal on overlay click
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('accountModal');
+  if (e.target === modal) closeAccountModal();
+});
+
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 function showBackupMsg(msg, color) {
   const el=document.getElementById('backup-msg'); el.textContent=msg; el.style.color=color||'var(--green)';
@@ -2465,5 +2710,31 @@ function renderNewsPage() {
 }
 
 </script>
+
+<!-- Account Manager Modal -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal-box">
+    <div class="modal-title">Manage Accounts</div>
+    <div class="modal-list" id="accountModalList"></div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:4px">
+      <div style="font-size:11px;font-weight:600;margin-bottom:10px;color:var(--text2)">Add New Account</div>
+      <div class="modal-field"><label>Account Name</label><input type="text" id="newAccName" placeholder="e.g. FTMO Challenge, Live MT4, Demo 01"></div>
+      <div class="modal-field"><label>Type</label>
+        <select id="newAccType">
+          <option value="live">Live</option>
+          <option value="prop">Prop Firm Challenge</option>
+          <option value="demo">Demo</option>
+          <option value="backtest">Backtest Only</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Broker / Platform</label><input type="text" id="newAccBroker" placeholder="e.g. FTMO, IC Markets, Pepperstone"></div>
+      <div class="modal-field"><label>Starting Balance ($)</label><input type="number" id="newAccBalance" value="10000"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAccountModal()">Close</button>
+      <button class="btn btn-primary" onclick="saveNewAccount()">Add Account</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
