@@ -347,6 +347,69 @@ tr.trade-row:hover > td { background: var(--bg3); }
 .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .toolbar-info { font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
 .section { margin-bottom: 20px; }
+/* ── PROP TRACKER ── */
+.prop-phase { background:var(--bg3); border-radius:var(--radius); padding:14px 16px; margin-bottom:12px; border-left:3px solid var(--amber); }
+.prop-phase-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.prop-phase-title { font-size:13px; font-weight:700; }
+.prop-phase-badge { font-size:10px; font-family:var(--font-mono); padding:2px 8px; border-radius:20px; font-weight:600; }
+.prop-phase-badge.p1 { background:rgba(59,130,246,0.15); color:var(--accent); }
+.prop-phase-badge.p2 { background:rgba(167,139,250,0.15); color:var(--purple); }
+.prop-phase-badge.done { background:rgba(34,197,94,0.15); color:var(--green); }
+.prop-progress-wrap { height:8px; background:var(--bg4); border-radius:4px; overflow:hidden; margin-bottom:6px; }
+.prop-progress-bar { height:100%; border-radius:4px; transition:width 0.4s ease; }
+.prop-stats-row { display:flex; gap:16px; flex-wrap:wrap; }
+.prop-stat { display:flex; flex-direction:column; gap:2px; }
+.prop-stat-label { font-size:9px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text3); font-family:var(--font-mono); }
+.prop-stat-val { font-size:14px; font-weight:700; font-family:var(--font-mono); letter-spacing:-0.3px; }
+.prop-set-row { display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+.prop-set-row input, .prop-set-row select { background:var(--bg4); border:1px solid var(--border2); color:var(--text); border-radius:var(--radius); padding:5px 8px; font-family:var(--font-mono); font-size:12px; }
+
+/* ── EMOTION JOURNAL ── */
+.emotion-layout { display:flex; height:calc(100vh - 140px); gap:16px; overflow:hidden; }
+.emotion-list-panel { width:260px; min-width:260px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); display:flex; flex-direction:column; overflow:hidden; }
+.emotion-list-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.emotion-list-title { font-size:13px; font-weight:700; }
+.emotion-list-items { flex:1; overflow-y:auto; padding:6px 8px; }
+.emotion-list-item { padding:10px 12px; border-radius:var(--radius); cursor:pointer; border:1px solid transparent; margin-bottom:3px; transition:all 0.12s; }
+.emotion-list-item:hover { background:var(--bg3); }
+.emotion-list-item.active { background:var(--bg3); border-color:var(--border2); border-left:3px solid var(--purple); }
+.emotion-list-item-title { font-size:12px; font-weight:600; margin-bottom:3px; display:flex; align-items:center; gap:6px; }
+.emotion-list-item-meta { font-size:10px; color:var(--text3); font-family:var(--font-mono); }
+.emotion-add-btn { margin:10px 12px 12px; padding:8px; background:var(--purple); color:#fff; border:none; border-radius:var(--radius); font-family:var(--font-display); font-size:12px; font-weight:700; cursor:pointer; width:calc(100% - 24px); display:flex; align-items:center; justify-content:center; gap:6px; transition:opacity 0.15s; }
+.emotion-add-btn:hover { opacity:0.85; }
+/* Mood picker */
+.mood-grid { display:flex; gap:8px; flex-wrap:wrap; }
+.mood-btn { padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border2); background:var(--bg3); cursor:pointer; font-size:18px; transition:all 0.15s; line-height:1; }
+.mood-btn:hover { border-color:var(--purple); transform:scale(1.1); }
+.mood-btn.selected { border-color:var(--purple); background:rgba(167,139,250,0.15); transform:scale(1.1); box-shadow:0 0 0 2px rgba(167,139,250,0.3); }
+/* Emotion form */
+.emotion-form { flex:1; overflow-y:auto; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:24px; display:flex; flex-direction:column; gap:18px; min-height:0; }
+.emotion-section { display:flex; flex-direction:column; gap:8px; }
+.emotion-section-title { font-size:10px; text-transform:uppercase; letter-spacing:0.9px; color:var(--text3); font-family:var(--font-mono); }
+/* Sliders */
+.slider-group { display:flex; flex-direction:column; gap:4px; }
+.slider-label { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text2); }
+.slider-label span { font-family:var(--font-mono); font-size:11px; color:var(--purple); font-weight:600; }
+input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
+/* Prompt cards */
+.prompt-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+.prompt-q { font-size:12px; color:var(--text2); margin-bottom:8px; line-height:1.5; font-style:italic; }
+.prompt-ta { width:100%; background:var(--bg4); border:1px solid transparent; color:var(--text); border-radius:6px; padding:10px 12px; font-family:var(--font-display); font-size:13px; line-height:1.65; resize:vertical; min-height:70px; transition:border-color 0.15s; }
+.prompt-ta:focus { outline:none; border-color:var(--purple); }
+.prompt-ta::placeholder { color:var(--text3); }
+/* Checklist */
+.checklist { display:flex; flex-direction:column; gap:8px; }
+.check-item { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg3); border-radius:var(--radius); cursor:pointer; transition:background 0.12s; border:1px solid transparent; }
+.check-item:hover { background:var(--bg4); }
+.check-item.checked { border-color:rgba(167,139,250,0.3); background:rgba(167,139,250,0.07); }
+.check-box { width:18px; height:18px; border-radius:4px; border:2px solid var(--border2); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.check-item.checked .check-box { background:var(--purple); border-color:var(--purple); }
+.check-box::after { content:''; display:none; width:5px; height:9px; border:2px solid #fff; border-top:none; border-left:none; transform:rotate(45deg) translate(-1px,-1px); }
+.check-item.checked .check-box::after { display:block; }
+.check-label { font-size:13px; }
+/* Emotion stats */
+.emotion-stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+
 /* ── ACCOUNTS ── */
 .mode-toggle { display:flex; margin:12px 20px 0; gap:0; background:var(--bg3); border-radius:var(--radius); padding:3px; border:1px solid var(--border); }
 .mode-btn { flex:1; padding:5px 6px; border:none; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font-display); background:none; color:var(--text3); transition:all 0.15s; }
@@ -506,6 +569,9 @@ tr.trade-row:hover > td { background: var(--bg3); }
     <button class="nav-item" onclick="showPage('news',this)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>News Tracker
     </button>
+    <button class="nav-item" onclick="showPage('emotion',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>Emotion Journal
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="bal-row"><span>Starting balance</span></div>
@@ -553,6 +619,24 @@ tr.trade-row:hover > td { background: var(--bg3); }
     <div class="card"><div class="card-title">Win / Loss / Breakeven</div><div class="chart-wrap" style="height:200px"><canvas id="winLossChart"></canvas></div></div>
   </div>
   <div class="card section"><div class="card-title">Cumulative PnL Curve</div><div class="chart-wrap" style="height:180px"><canvas id="cumPnlChart"></canvas></div></div>
+
+      <!-- Per-account PnL breakdown -->
+      <div id="acctBreakdownSection" class="section" style="display:none">
+        <div class="card">
+          <div class="card-title">PnL by Account — This Month</div>
+          <div id="acctBreakdownList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
+          <div class="chart-wrap" style="height:160px"><canvas id="acctPnlChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Prop firm challenge tracker -->
+      <div id="propTrackerSection" class="section" style="display:none">
+        <div class="card" style="border-color:rgba(245,158,11,0.35);background:rgba(245,158,11,0.03)">
+          <div class="card-title" style="color:var(--amber)">🏆 Prop Firm Challenge Tracker</div>
+          <div id="propTrackerContent" style="margin-top:4px"></div>
+        </div>
+      </div>
+
 </div>
 
 <!-- ══ JOURNAL ══ -->
@@ -965,6 +1049,180 @@ tr.trade-row:hover > td { background: var(--bg3); }
   </div>
 </div>
 
+
+<!-- ══ EMOTION JOURNAL ══ -->
+<div id="page-emotion" class="page">
+  <div class="page-header" style="margin-bottom:16px">
+    <div>
+      <div class="page-title">Emotion Journal</div>
+      <div class="page-sub" id="emotion-period-sub">Daily psychological reflection &amp; mindset tracking</div>
+    </div>
+    <button class="btn btn-ghost" onclick="toggleEmotionStats()" id="emotionStatsBtn">📊 Mood Analytics</button>
+  </div>
+
+  <!-- Analytics panel -->
+  <div id="emotionStatsPanel" style="display:none;margin-bottom:20px">
+    <div class="emotion-stat-row">
+      <div class="na-card"><div class="na-label">Entries Logged</div><div class="na-value c-purple" id="es-total">0</div></div>
+      <div class="na-card"><div class="na-label">Avg Mood Score</div><div class="na-value c-purple" id="es-mood">—</div><div class="na-sub">out of 10</div></div>
+      <div class="na-card"><div class="na-label">Best Trading Day Mood</div><div class="na-value" id="es-best-mood">—</div></div>
+      <div class="na-card"><div class="na-label">Discipline Score Avg</div><div class="na-value c-amber" id="es-discipline">—</div><div class="na-sub">out of 10</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+      <div class="card card-sm">
+        <div class="news-section-title">Mood Over Time</div>
+        <div style="height:160px"><canvas id="moodChart"></canvas></div>
+      </div>
+      <div class="card card-sm">
+        <div class="news-section-title">Most Common Emotions</div>
+        <div style="height:160px"><canvas id="emotionFreqChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card card-sm" style="margin-bottom:16px">
+      <div class="news-section-title">Mood vs Net PnL Correlation</div>
+      <div style="height:140px"><canvas id="moodPnlChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="emotion-layout">
+    <!-- Left: entry list -->
+    <div class="emotion-list-panel">
+      <div class="emotion-list-header">
+        <span class="emotion-list-title">Entries</span>
+        <span id="emotion-count" style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">0</span>
+      </div>
+      <div class="emotion-list-items" id="emotionListItems">
+        <div style="text-align:center;padding:30px 12px;color:var(--text3);font-size:12px;line-height:1.8">No entries yet.<br>Start your reflection<br>by clicking below.</div>
+      </div>
+      <button class="emotion-add-btn" onclick="addEmotionEntry()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+        New Entry
+      </button>
+    </div>
+
+    <!-- Right: form -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div id="emotionDetailEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);font-size:13px;line-height:2;text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">🧠</div>
+        Select an entry or create a new one<br>to start your reflection.
+      </div>
+      <div id="emotionDetailForm" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="emotion-form">
+
+          <!-- Header -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--border)">
+            <div style="flex:1">
+              <input type="text" id="ef-title" class="study-canvas-title-input" placeholder="Entry title (e.g. Post-loss reflection, Morning mindset)" oninput="saveActiveEmotion()" style="font-size:17px">
+              <div style="margin-top:4px;display:flex;gap:10px;align-items:center">
+                <input type="date" id="ef-date" style="background:transparent;border:none;color:var(--text3);font-family:var(--font-mono);font-size:11px;cursor:pointer" onchange="saveActiveEmotion()">
+                <select id="ef-session-type" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;padding:3px 8px;font-size:11px;font-family:var(--font-mono)" onchange="saveActiveEmotion()">
+                  <option value="">— Session type —</option>
+                  <option>Pre-session</option>
+                  <option>During session</option>
+                  <option>Post-session</option>
+                  <option>End of day</option>
+                  <option>Weekly review</option>
+                  <option>Monthly review</option>
+                  <option>After a loss</option>
+                  <option>After a big win</option>
+                  <option>After a drawdown</option>
+                </select>
+              </div>
+            </div>
+            <button class="canvas-action-btn danger" onclick="deleteEmotionEntry()">Delete</button>
+          </div>
+
+          <!-- Mood emoji picker -->
+          <div class="emotion-section">
+            <div class="emotion-section-title">How are you feeling right now?</div>
+            <div class="mood-grid" id="ef-mood-grid">
+              <button class="mood-btn" data-mood="😄" data-label="Confident" onclick="selectMood(this)" title="Confident">😄</button>
+              <button class="mood-btn" data-mood="🙂" data-label="Calm" onclick="selectMood(this)" title="Calm">🙂</button>
+              <button class="mood-btn" data-mood="😐" data-label="Neutral" onclick="selectMood(this)" title="Neutral">😐</button>
+              <button class="mood-btn" data-mood="😰" data-label="Anxious" onclick="selectMood(this)" title="Anxious">😰</button>
+              <button class="mood-btn" data-mood="😤" data-label="Frustrated" onclick="selectMood(this)" title="Frustrated">😤</button>
+              <button class="mood-btn" data-mood="😔" data-label="Discouraged" onclick="selectMood(this)" title="Discouraged">😔</button>
+              <button class="mood-btn" data-mood="😡" data-label="Angry" onclick="selectMood(this)" title="Angry — Revenge mode?">😡</button>
+              <button class="mood-btn" data-mood="🤑" data-label="Greedy" onclick="selectMood(this)" title="Greedy — be careful">🤑</button>
+              <button class="mood-btn" data-mood="😴" data-label="Tired" onclick="selectMood(this)" title="Tired">😴</button>
+              <button class="mood-btn" data-mood="🔥" data-label="In the zone" onclick="selectMood(this)" title="In the zone">🔥</button>
+              <button class="mood-btn" data-mood="😬" data-label="Nervous" onclick="selectMood(this)" title="Nervous">😬</button>
+              <button class="mood-btn" data-mood="🧘" data-label="Focused" onclick="selectMood(this)" title="Focused & disciplined">🧘</button>
+            </div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="emotion-section">
+            <div class="emotion-section-title">Rate yourself today (1 = low · 10 = high)</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="slider-group">
+                <div class="slider-label">Overall mood <span id="ef-mood-val">5</span>/10</div>
+                <input type="range" id="ef-mood-score" min="1" max="10" value="5" oninput="document.getElementById('ef-mood-val').textContent=this.value;saveActiveEmotion()">
+              </div>
+              <div class="slider-group">
+                <div class="slider-label">Focus &amp; clarity <span id="ef-focus-val">5</span>/10</div>
+                <input type="range" id="ef-focus" min="1" max="10" value="5" oninput="document.getElementById('ef-focus-val').textContent=this.value;saveActiveEmotion()">
+              </div>
+              <div class="slider-group">
+                <div class="slider-label">Discipline (followed rules?) <span id="ef-discipline-val">5</span>/10</div>
+                <input type="range" id="ef-discipline" min="1" max="10" value="5" oninput="document.getElementById('ef-discipline-val').textContent=this.value;saveActiveEmotion()">
+              </div>
+              <div class="slider-group">
+                <div class="slider-label">Patience (waited for setups?) <span id="ef-patience-val">5</span>/10</div>
+                <input type="range" id="ef-patience" min="1" max="10" value="5" oninput="document.getElementById('ef-patience-val').textContent=this.value;saveActiveEmotion()">
+              </div>
+              <div class="slider-group">
+                <div class="slider-label">Confidence in strategy <span id="ef-confidence-val">5</span>/10</div>
+                <input type="range" id="ef-confidence" min="1" max="10" value="5" oninput="document.getElementById('ef-confidence-val').textContent=this.value;saveActiveEmotion()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Rule checklist -->
+          <div class="emotion-section">
+            <div class="emotion-section-title">Trading rules checklist — did you follow your rules today?</div>
+            <div class="checklist" id="ef-checklist"></div>
+          </div>
+
+          <!-- Reflection prompts -->
+          <div class="emotion-section">
+            <div class="emotion-section-title">Guided reflection</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="prompt-card">
+                <div class="prompt-q">📍 What was your mindset going into the session? Were you in the right mental state to trade?</div>
+                <textarea class="prompt-ta" id="ef-q1" placeholder="Write freely…" oninput="saveActiveEmotion()"></textarea>
+              </div>
+              <div class="prompt-card">
+                <div class="prompt-q">🎯 Did you follow your trading plan? If not, what caused you to deviate?</div>
+                <textarea class="prompt-ta" id="ef-q2" placeholder="Be honest with yourself…" oninput="saveActiveEmotion()"></textarea>
+              </div>
+              <div class="prompt-card">
+                <div class="prompt-q">😤 Did you feel any FOMO, revenge trading urges, or emotional bias? How did you handle it?</div>
+                <textarea class="prompt-ta" id="ef-q3" placeholder="No judgment here — just awareness…" oninput="saveActiveEmotion()"></textarea>
+              </div>
+              <div class="prompt-card">
+                <div class="prompt-q">📚 What is the single most important lesson from today's session?</div>
+                <textarea class="prompt-ta" id="ef-q4" placeholder="One clear takeaway…" oninput="saveActiveEmotion()"></textarea>
+              </div>
+              <div class="prompt-card">
+                <div class="prompt-q">🌅 What will you do differently tomorrow? What is your intention for your next session?</div>
+                <textarea class="prompt-ta" id="ef-q5" placeholder="Make it specific and actionable…" oninput="saveActiveEmotion()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Free notes -->
+          <div class="emotion-section">
+            <div class="emotion-section-title">Additional thoughts</div>
+            <textarea class="prompt-ta" id="ef-notes" placeholder="Anything else on your mind — life context, stress outside trading, patterns you're noticing in yourself…" oninput="saveActiveEmotion()" style="min-height:90px"></textarea>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </main>
 </div>
 
@@ -1078,16 +1336,19 @@ function updatePeriod() {
 }
 
 function showPage(id, btn) {
+  const pageEl = document.getElementById('page-'+id);
+  if (!pageEl) return;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
-  closeRulesPopover();
+  pageEl.classList.add('active');
+  if (btn && btn.classList) btn.classList.add('active');
+  if (typeof closeRulesPopover === 'function') closeRulesPopover();
   if (id==='metrics') setTimeout(renderCharts, 60);
   if (id==='calendar') renderCalendar();
   if (id==='analytics') setTimeout(renderAnalytics, 60);
   if (id==='study') renderStudy();
   if (id==='news') renderNewsPage();
+  if (id==='emotion') renderEmotionPage();
 }
 
 // ─── JOURNAL ─────────────────────────────────────────────────────────────────
@@ -1113,6 +1374,11 @@ function updateField(id, field, val) {
   if (['pnl','date','outcome','direction','session','setup'].includes(field)) refreshAll();
 }
 
+function netPnl(t) {
+  const p = parseFloat(t.pnl) || 0;
+  const c = Math.abs(parseFloat(t.commission) || 0);
+  return parseFloat((p - c).toFixed(2));
+}
 function getAccountName(id) {
   if (!id || id === 'all') return '—';
   const acc = getAccounts().find(a => a.id === id);
@@ -1449,13 +1715,19 @@ function renderJournal() {
   <td><input type="number" value="${t.size}" placeholder="0.01" onchange="updateField(${t.id},'size',this.value)" style="min-width:60px"></td>
   <td><input type="number" value="${t.pnl}" placeholder="0.00" onchange="updateField(${t.id},'pnl',this.value)" style="min-width:70px;color:${pnlColor}"></td>
   <td><input type="number" value="${t.commission||''}" placeholder="0.00" onchange="updateField(${t.id},'commission',this.value)" style="min-width:65px;color:var(--red)"></td>
-  <td style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:${(parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0)>0?'var(--green)':(parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0)<0?'var(--red)':'var(--text2)'}">
-    ${((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))!==0?(((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))>0?'+':'')+(((parseFloat(t.pnl)||0)-Math.abs(parseFloat(t.commission)||0))).toFixed(2):'—'}
+  <td style="font-family:var(--font-mono);font-size:12px;font-weight:600;
+    color:${netPnl(t)>0?'var(--green)':netPnl(t)<0?'var(--red)':'var(--text2)'}">
+    ${netPnl(t)!==0?(netPnl(t)>0?'+':'')+netPnl(t).toFixed(2):'—'}
   </td>
   <td><select onchange="updateField(${t.id},'setup',this.value)">${mkOpt(SETUPS,t.setup)}</select></td>
   <td><select onchange="updateField(${t.id},'outcome',this.value)">${mkOpt(OUTCOMES,t.outcome)}</select></td>
   <td style="font-family:var(--font-mono);font-size:11px;color:var(--text2)">${rr!==null?rr.toFixed(2)+'R':'—'}</td>
-  <td style="font-size:10px;color:var(--text3);font-family:var(--font-mono);white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis" title="${getAccountName(t.account)}">${getAccountName(t.account)}</td>
+  <td>
+    <select style="background:transparent;border:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;padding:2px 4px;cursor:pointer;max-width:110px" onchange="updateField(${t.id},'account',this.value)">
+      <option value="">— none —</option>
+      ${getAccounts().map(a=>'<option value="'+a.id+'"'+(t.account===a.id?' selected':'')+'>'+a.name+(a.type==="live"?" 🔴":a.type==="prop"?" 🏆":a.type==="demo"?" 🔵":" 📊")+'</option>').join('')}
+    </select>
+  </td>
   <td>${rulesFraction(t.id)}</td>
   <td><button class="del-btn" onclick="delTrade(${t.id})" title="Delete">✕</button></td>
 </tr>
@@ -1543,6 +1815,8 @@ function renderMetrics() {
   avgEl.className='stat-value sm '+(m.avg>0?'c-green':m.avg<0?'c-red':'');
   document.getElementById('sb-net').textContent='$'+m.balance.toFixed(2);
   document.getElementById('sb-net').style.color=m.balance>m.starting?'var(--green)':m.balance<m.starting?'var(--red)':'var(--text)';
+  renderAccountBreakdown();
+  renderPropTracker();
 }
 
 function getChartColors() {
@@ -1553,7 +1827,7 @@ function getChartColors() {
 function renderCharts() {
   const m = getMetrics(); const c = getChartColors();
   const byDay={};
-  trades.forEach(t=>{ if(t.date) byDay[t.date]=(byDay[t.date]||0)+(parseFloat(t.pnl)||0); });
+  trades.forEach(t=>{ if(t.date) byDay[t.date]=(byDay[t.date]||0)+netPnl(t); });
   const days=Object.keys(byDay).sort(), dayPnls=days.map(d=>parseFloat(byDay[d].toFixed(2)));
   destroyChart('daily'); charts.daily=new Chart(document.getElementById('dailyPnlChart'),{
     type:'bar', data:{labels:days.map(d=>d.slice(5)),datasets:[{data:dayPnls,backgroundColor:dayPnls.map(v=>v>=0?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),borderRadius:4,borderSkipped:false}]},
@@ -1565,7 +1839,7 @@ function renderCharts() {
     options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{color:c.tick,font:c.font,boxWidth:10,padding:10}}}}
   });
   let cum=0; const sorted=trades.slice().sort((a,b)=>a.date.localeCompare(b.date));
-  const cumData=sorted.map(t=>{cum+=parseFloat(t.pnl)||0;return parseFloat(cum.toFixed(2));});
+  const cumData=sorted.map(t=>{cum+=netPnl(t);return parseFloat(cum.toFixed(2));});
   destroyChart('cum'); charts.cum=new Chart(document.getElementById('cumPnlChart'),{
     type:'line', data:{labels:sorted.map((_,i)=>'#'+(i+1)),datasets:[{data:[0,...cumData],borderColor:cum>=0?'#22c55e':'#ef4444',backgroundColor:cum>=0?'rgba(34,197,94,0.08)':'rgba(239,68,68,0.08)',fill:true,tension:0.35,pointRadius:2,borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.tick,font:c.font},grid:{display:false}},y:{ticks:{color:c.tick,font:c.font},grid:{color:c.grid}}}}
@@ -1580,7 +1854,7 @@ function renderCalendar() {
   const dayMap={};
   trades.forEach(t=>{
     if(!t.date) return; const [ty,tm,td]=t.date.split('-').map(Number);
-    if(ty===y&&tm===m){if(!dayMap[td])dayMap[td]={count:0,pnl:0};dayMap[td].count++;dayMap[td].pnl+=parseFloat(t.pnl)||0;}
+    if(ty===y&&tm===m){if(!dayMap[td])dayMap[td]={count:0,pnl:0};dayMap[td].count++;dayMap[td].pnl+=netPnl(t);}
   });
   const tT=Object.values(dayMap).reduce((a,b)=>a+b.count,0);
   const tP=Object.values(dayMap).reduce((a,b)=>a+b.pnl,0);
@@ -1605,12 +1879,12 @@ function renderAnalytics() {
   document.getElementById('a-avg-hold').textContent=holdMins.length?fmtMins(Math.round(holdMins.reduce((a,b)=>a+b,0)/holdMins.length)):'—';
   document.getElementById('a-max-hold').textContent=holdMins.length?fmtMins(Math.max(...holdMins)):'—';
   destroyChart('holdPnl');
-  if(holdTrades.length>0){charts.holdPnl=new Chart(document.getElementById('holdPnlChart'),{type:'scatter',data:{datasets:[{data:holdTrades.map(t=>({x:parseHoldMins(t),y:parseFloat(t.pnl)||0})),backgroundColor:holdTrades.map(t=>(parseFloat(t.pnl)||0)>=0?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${fmtMins(ctx.raw.x)} · $${ctx.raw.y.toFixed(2)}`}}},scales:{x:{title:{display:true,text:'minutes',color:c.tick,font:c.font},ticks:{color:c.tick,font:c.font},grid:{color:c.grid}},y:{title:{display:true,text:'PnL ($)',color:c.tick,font:c.font},ticks:{color:c.tick,font:c.font},grid:{color:c.grid}}}}});}
+  if(holdTrades.length>0){charts.holdPnl=new Chart(document.getElementById('holdPnlChart'),{type:'scatter',data:{datasets:[{data:holdTrades.map(t=>({x:parseHoldMins(t),y:netPnl(t)})),backgroundColor:holdTrades.map(t=>(parseFloat(t.pnl)||0)>=0?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${fmtMins(ctx.raw.x)} · $${ctx.raw.y.toFixed(2)}`}}},scales:{x:{title:{display:true,text:'minutes',color:c.tick,font:c.font},ticks:{color:c.tick,font:c.font},grid:{color:c.grid}},y:{title:{display:true,text:'PnL ($)',color:c.tick,font:c.font},ticks:{color:c.tick,font:c.font},grid:{color:c.grid}}}}});}
 
   // Sessions (only Asian, London, New York)
   const sesList=['Asian','London','New York'];
   const sesMap={}; sesList.forEach(s=>{sesMap[s]={pnl:0,wins:0,losses:0,count:0};});
-  trades.forEach(t=>{if(t.session&&sesMap[t.session]){sesMap[t.session].pnl+=parseFloat(t.pnl)||0;sesMap[t.session].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')sesMap[t.session].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')sesMap[t.session].losses++;}});
+  trades.forEach(t=>{if(t.session&&sesMap[t.session]){sesMap[t.session].pnl+=netPnl(t);sesMap[t.session].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')sesMap[t.session].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')sesMap[t.session].losses++;}});
   const activeSes=Object.entries(sesMap).filter(([,v])=>v.count>0).sort((a,b)=>b[1].pnl-a[1].pnl);
   const maxSesPnl=Math.max(...activeSes.map(([,v])=>Math.abs(v.pnl)),1);
   document.getElementById('a-sessions').innerHTML=activeSes.length?activeSes.map(([name,v],i)=>{const wr=(v.wins+v.losses)>0?(v.wins/(v.wins+v.losses)*100).toFixed(0):'—';const barColor=v.pnl>=0?'#22c55e':'#ef4444';const pct=Math.abs(v.pnl)/maxSesPnl*100;return`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-label">${name}<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">${v.count} trades · ${wr}% WR</div></div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%;background:${barColor}"></div></div><div class="rank-val" style="color:${barColor}">${v.pnl>=0?'+':''}$${v.pnl.toFixed(2)}</div></div>`}).join(''):'<div style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">No session data yet</div>';
@@ -1619,14 +1893,14 @@ function renderAnalytics() {
 
   // Setups
   const setupMap={}; SETUPS.filter(s=>s!=='—').forEach(s=>{setupMap[s]={pnl:0,wins:0,losses:0,count:0};});
-  trades.forEach(t=>{if(t.setup&&setupMap[t.setup]){setupMap[t.setup].pnl+=parseFloat(t.pnl)||0;setupMap[t.setup].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')setupMap[t.setup].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')setupMap[t.setup].losses++;}});
+  trades.forEach(t=>{if(t.setup&&setupMap[t.setup]){setupMap[t.setup].pnl+=netPnl(t);setupMap[t.setup].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')setupMap[t.setup].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')setupMap[t.setup].losses++;}});
   const setupList=Object.entries(setupMap).filter(([,v])=>v.count>0).sort((a,b)=>b[1].pnl-a[1].pnl);
   const maxSetupPnl=Math.max(...setupList.map(([,v])=>Math.abs(v.pnl)),1);
   document.getElementById('a-setups').innerHTML=setupList.length?setupList.map(([name,v],i)=>{const wr=(v.wins+v.losses)>0?(v.wins/(v.wins+v.losses)*100).toFixed(0):'—';const barColor=v.pnl>=0?'#22c55e':'#ef4444';const pct=Math.abs(v.pnl)/maxSetupPnl*100;return`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-label">${name}<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">${v.count} trades · ${wr}% WR</div></div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%;background:${barColor}"></div></div><div class="rank-val" style="color:${barColor}">${v.pnl>=0?'+':''}$${v.pnl.toFixed(2)}</div></div>`}).join(''):'<div style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">No setup data yet</div>';
 
   // Direction
   const longs=trades.filter(t=>t.direction==='Long'), shorts=trades.filter(t=>t.direction==='Short');
-  const dStats=arr=>{const pnl=arr.reduce((a,t)=>a+(parseFloat(t.pnl)||0),0);const wins=arr.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').length;const losses=arr.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').length;const wr=(wins+losses)>0?(wins/(wins+losses)*100).toFixed(1)+'%':'—';return{pnl,wr,count:arr.length};};
+  const dStats=arr=>{const pnl=arr.reduce((a,t)=>a+netPnl(t),0);const wins=arr.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').length;const losses=arr.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').length;const wr=(wins+losses)>0?(wins/(wins+losses)*100).toFixed(1)+'%':'—';return{pnl,wr,count:arr.length};};
   const ls=dStats(longs),ss=dStats(shorts);
   document.getElementById('a-long-count').textContent=ls.count+' trades';document.getElementById('a-long-wr').textContent=ls.wr+' win rate';document.getElementById('a-long-pnl').textContent='PnL: '+(ls.pnl>=0?'+':'')+'$'+ls.pnl.toFixed(2);
   document.getElementById('a-short-count').textContent=ss.count+' trades';document.getElementById('a-short-wr').textContent=ss.wr+' win rate';document.getElementById('a-short-pnl').textContent='PnL: '+(ss.pnl>=0?'+':'')+'$'+ss.pnl.toFixed(2);
@@ -1634,15 +1908,15 @@ function renderAnalytics() {
 
   // Symbols
   const symMap={};
-  trades.forEach(t=>{const sym=(t.symbol||'—').toUpperCase();if(!symMap[sym])symMap[sym]={pnl:0,wins:0,losses:0,count:0};symMap[sym].pnl+=parseFloat(t.pnl)||0;symMap[sym].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')symMap[sym].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')symMap[sym].losses++;});
+  trades.forEach(t=>{const sym=(t.symbol||'—').toUpperCase();if(!symMap[sym])symMap[sym]={pnl:0,wins:0,losses:0,count:0};symMap[sym].pnl+=netPnl(t);symMap[sym].count++;if(t.outcome==='Win'||t.outcome==='Partial Win')symMap[sym].wins++;if(t.outcome==='Loss'||t.outcome==='Partial Loss')symMap[sym].losses++;});
   const symList=Object.entries(symMap).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
   const maxSymPnl=Math.max(...symList.map(([,v])=>Math.abs(v.pnl)),1);
   document.getElementById('a-symbols').innerHTML=symList.length?symList.map(([name,v],i)=>{const wr=(v.wins+v.losses)>0?(v.wins/(v.wins+v.losses)*100).toFixed(0):'—';const barColor=v.pnl>=0?'#22c55e':'#ef4444';const pct=Math.abs(v.pnl)/maxSymPnl*100;return`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-label" style="font-family:var(--font-mono);font-weight:600">${name}<div style="font-size:10px;color:var(--text3);font-weight:400">${v.count} trades · ${wr}% WR</div></div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%;background:${barColor}"></div></div><div class="rank-val" style="color:${barColor}">${v.pnl>=0?'+':''}$${v.pnl.toFixed(2)}</div></div>`}).join(''):'<div style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">No symbol data yet</div>';
 
   // Risk metrics
-  const pnls=trades.map(t=>parseFloat(t.pnl)||0).filter(p=>p!==0);
-  const winPnls=trades.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').map(t=>parseFloat(t.pnl)||0);
-  const lossPnls=trades.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').map(t=>parseFloat(t.pnl)||0);
+  const pnls=trades.map(t=>netPnl(t)).filter(p=>p!==0);
+  const winPnls=trades.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').map(t=>netPnl(t));
+  const lossPnls=trades.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').map(t=>netPnl(t));
   const best=pnls.length?Math.max(...pnls):null, worst=pnls.length?Math.min(...pnls):null;
   const avgWin=winPnls.length?winPnls.reduce((a,b)=>a+b,0)/winPnls.length:null;
   const avgLoss=lossPnls.length?lossPnls.reduce((a,b)=>a+b,0)/lossPnls.length:null;
@@ -1687,7 +1961,7 @@ function renderAnalytics() {
 let activeNoteId = null;
 let activeNoteBlocks = []; // live working copy of blocks
 
-function noteIndexKey() { return `btj_note_index_${getKey()}`; }
+function noteIndexKey() { return `btj_note_index_${getMode()}_${getKey()}`; }
 function noteDataKey(id) { return `btj_note_data_${id}`; }
 
 function getNoteIndex() {
@@ -2182,6 +2456,177 @@ document.addEventListener('click', function(e) {
   if (e.target === modal) closeAccountModal();
 });
 
+
+// ─── ACCOUNT BREAKDOWN + PROP TRACKER ────────────────────────────────────────
+
+function renderAccountBreakdown() {
+  const activeAcct = getActiveAccount();
+  const section = document.getElementById('acctBreakdownSection');
+  const accounts = getAccounts();
+
+  // Only show when "All Accounts" is selected and there are multiple accounts with trades
+  if (activeAcct !== 'all' || accounts.length < 2) {
+    section.style.display = 'none'; return;
+  }
+
+  // Calculate PnL per account from current trades array
+  const acctPnl = {};
+  const acctCount = {};
+  accounts.forEach(a => { acctPnl[a.id] = 0; acctCount[a.id] = 0; });
+  trades.forEach(t => {
+    const aid = t.account || '';
+    if (acctPnl[aid] !== undefined) {
+      acctPnl[aid] += netPnl(t);
+      acctCount[aid]++;
+    }
+  });
+
+  const active = accounts.filter(a => acctCount[a.id] > 0);
+  if (!active.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  const starting = parseFloat(document.getElementById('startingBalance').value) || 10000;
+  const maxAbs = Math.max(...active.map(a => Math.abs(acctPnl[a.id])), 1);
+
+  // Rank list
+  document.getElementById('acctBreakdownList').innerHTML = active
+    .sort((a,b) => acctPnl[b.id] - acctPnl[a.id])
+    .map((a, i) => {
+      const pnl = acctPnl[a.id];
+      const pct = Math.abs(pnl) / maxAbs * 100;
+      const col = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+      const typeIcon = a.type==='live'?'🔴':a.type==='prop'?'🏆':a.type==='demo'?'🔵':'📊';
+      const pnlPct = (pnl / starting * 100).toFixed(2);
+      return '<div class="news-rank-item">' +
+        '<div class="rank-num">' + (i+1) + '</div>' +
+        '<div class="rank-label">' + typeIcon + ' ' + a.name +
+          '<div style="font-size:10px;color:var(--text3)">' + acctCount[a.id] + ' trades · ' + (a.broker||a.type) + '</div></div>' +
+        '<div class="rank-bar-wrap"><div class="rank-bar" style="width:'+pct+'%;background:'+col+'"></div></div>' +
+        '<div style="text-align:right;flex-shrink:0">' +
+          '<div style="font-size:12px;font-family:var(--font-mono);font-weight:600;color:'+col+'">' + (pnl>=0?'+':'') + '$' + pnl.toFixed(2) + '</div>' +
+          '<div style="font-size:10px;color:'+col+';font-family:var(--font-mono)">' + (pnl>=0?'+':'') + pnlPct + '%</div>' +
+        '</div></div>';
+    }).join('');
+
+  // Bar chart
+  const dark = {gridColor:'rgba(255,255,255,0.05)',tickColor:'rgba(255,255,255,0.35)',font:{family:"'DM Mono',monospace",size:10}};
+  if (window._acctPnlChart) window._acctPnlChart.destroy();
+  window._acctPnlChart = new Chart(document.getElementById('acctPnlChart'), {
+    type: 'bar',
+    data: {
+      labels: active.map(a => a.name.length > 14 ? a.name.slice(0,14)+'…' : a.name),
+      datasets: [{
+        data: active.map(a => parseFloat(acctPnl[a.id].toFixed(2))),
+        backgroundColor: active.map(a => acctPnl[a.id] >= 0 ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: dark.tickColor, font: dark.font }, grid: { display: false } },
+        y: { ticks: { color: dark.tickColor, font: dark.font }, grid: { color: dark.gridColor } }
+      }
+    }
+  });
+}
+
+function renderPropTracker() {
+  const accounts = getAccounts();
+  const propAccounts = accounts.filter(a => a.type === 'prop');
+  const section = document.getElementById('propTrackerSection');
+  if (!propAccounts.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  let html = '';
+  propAccounts.forEach(acct => {
+    const settingsKey = 'btj_prop_' + acct.id;
+    let settings;
+    try { settings = JSON.parse(localStorage.getItem(settingsKey) || 'null'); } catch(e) { settings = null; }
+    if (!settings) {
+      settings = { phase: '1', balance: acct.balance || 10000 };
+      localStorage.setItem(settingsKey, JSON.stringify(settings));
+    }
+
+    const balance = parseFloat(settings.balance) || parseFloat(acct.balance) || 10000;
+    const phase = settings.phase || '1';
+    const targetPct = phase === '1' ? 8 : 6;
+    const targetAmount = balance * targetPct / 100;
+
+    // Calculate cumulative PnL for this account across all months
+    let totalPnl = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k.includes(acct.id) && (k.startsWith('btj') || k.startsWith('live'))) {
+        try {
+          const mt = JSON.parse(localStorage.getItem(k) || '[]');
+          if (Array.isArray(mt)) mt.forEach(t => { if (t.account === acct.id) totalPnl += netPnl(t); });
+        } catch(e) {}
+      }
+    }
+
+    const progress = Math.min(Math.max(totalPnl / targetAmount, 0), 1);
+    const pct = (progress * 100).toFixed(1);
+    const remaining = Math.max(targetAmount - totalPnl, 0);
+    const isPassing = totalPnl >= targetAmount;
+    const barColor = isPassing ? '#22c55e' : totalPnl > 0 ? '#f59e0b' : '#ef4444';
+    const phaseBadgeClass = isPassing ? 'done' : phase === '1' ? 'p1' : 'p2';
+    const badgeText = isPassing ? '✅ Target Hit!' : 'Phase ' + phase;
+    const brokerLabel = acct.broker ? ' · <span style="font-weight:400;color:var(--text2)">' + acct.broker + '</span>' : '';
+
+    const p1Selected = phase === '1' ? ' selected' : '';
+    const p2Selected = phase === '2' ? ' selected' : '';
+
+    html += `
+      <div class="prop-phase">
+        <div class="prop-phase-header">
+          <div class="prop-phase-title">🏆 ${acct.name}${brokerLabel}</div>
+          <span class="prop-phase-badge ${phaseBadgeClass}">${badgeText}</span>
+        </div>
+        <div class="prop-set-row">
+          <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">Phase:</label>
+          <select id="phase-sel-${acct.id}" style="background:var(--bg4);border:1px solid var(--border2);color:var(--text);border-radius:4px;padding:4px 8px;font-family:var(--font-mono);font-size:12px">
+            <option value="1"${p1Selected}>Phase 1 — 8% target</option>
+            <option value="2"${p2Selected}>Phase 2 — 6% target</option>
+          </select>
+          <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">Account size $:</label>
+          <input type="number" id="bal-input-${acct.id}" value="${balance}" style="width:110px;background:var(--bg4);border:1px solid var(--border2);color:var(--text);border-radius:4px;padding:4px 8px;font-family:var(--font-mono);font-size:12px">
+        </div>
+        <div class="prop-progress-wrap">
+          <div class="prop-progress-bar" style="width:${pct}%;background:${barColor}"></div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px">${pct}% of ${targetPct}% target reached</div>
+        <div class="prop-stats-row">
+          <div class="prop-stat"><div class="prop-stat-label">Account Size</div><div class="prop-stat-val">$${balance.toLocaleString()}</div></div>
+          <div class="prop-stat"><div class="prop-stat-label">Target (${targetPct}%)</div><div class="prop-stat-val" style="color:var(--amber)">$${targetAmount.toFixed(2)}</div></div>
+          <div class="prop-stat"><div class="prop-stat-label">Current PnL</div><div class="prop-stat-val" style="color:${totalPnl >= 0 ? 'var(--green)' : 'var(--red)'}">${totalPnl >= 0 ? '+' : ''}$${totalPnl.toFixed(2)}</div></div>
+          <div class="prop-stat"><div class="prop-stat-label">Remaining</div><div class="prop-stat-val" style="color:${isPassing ? 'var(--green)' : 'var(--amber)'}">${isPassing ? '✅ Done' : '$' + remaining.toFixed(2)}</div></div>
+          <div class="prop-stat"><div class="prop-stat-label">% Gained</div><div class="prop-stat-val" style="color:${totalPnl >= 0 ? 'var(--green)' : 'var(--red)'}">${(totalPnl / balance * 100).toFixed(2)}%</div></div>
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('propTrackerContent').innerHTML = html;
+
+  // Wire up event listeners AFTER innerHTML is set (avoids inline onclick quote issues)
+  propAccounts.forEach(acct => {
+    const phaseSel = document.getElementById('phase-sel-' + acct.id);
+    const balInput = document.getElementById('bal-input-' + acct.id);
+    if (phaseSel) phaseSel.onchange = () => savePropSettings(acct.id, 'phase', phaseSel.value);
+    if (balInput) balInput.onchange = () => savePropSettings(acct.id, 'balance', balInput.value);
+  });
+}
+
+function savePropSettings(acctId, field, val) {
+  const key = 'btj_prop_' + acctId;
+  let settings;
+  try { settings = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) { settings = {}; }
+  settings[field] = val;
+  localStorage.setItem(key, JSON.stringify(settings));
+  renderPropTracker();
+}
+
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 function showBackupMsg(msg, color) {
   const el=document.getElementById('backup-msg'); el.textContent=msg; el.style.color=color||'var(--green)';
@@ -2189,7 +2634,7 @@ function showBackupMsg(msg, color) {
 }
 function exportJSON() {
   const allData={};
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('btj-'))allData[k]=JSON.parse(localStorage.getItem(k));}
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion'))allData[k]=JSON.parse(localStorage.getItem(k));}
   const blob=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;
   a.download=`backtesting-journal-backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
@@ -2212,7 +2657,7 @@ function importJSON(event) {
     try{
       const data=JSON.parse(e.target.result);
       if(Array.isArray(data)){if(!confirm(`Import ${data.length} trades into current month? This replaces existing data.`))return;trades=data;saveData();renderAll();showBackupMsg(`✓ ${data.length} trades imported`);}
-      else{const months=Object.keys(data).filter(k=>k.startsWith('btj-'));if(!months.length){showBackupMsg('Invalid file','var(--red)');return;}if(!confirm(`Restore ${months.length} month(s)? Existing data for those months will be overwritten.`))return;months.forEach(k=>localStorage.setItem(k,JSON.stringify(data[k])));loadData();showBackupMsg(`✓ ${months.length} month(s) restored`);}
+      else{const months=Object.keys(data).filter(k=>k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion'));if(!months.length){showBackupMsg('Invalid file','var(--red)');return;}if(!confirm(`Restore ${months.length} month(s)? Existing data for those months will be overwritten.`))return;months.forEach(k=>localStorage.setItem(k,JSON.stringify(data[k])));loadData();showBackupMsg(`✓ ${months.length} month(s) restored`);}
     }catch(err){showBackupMsg('✗ Invalid JSON','var(--red)');}
     event.target.value='';
   };
@@ -2229,16 +2674,21 @@ function renderAll() {
     if(ap.id==='page-metrics') setTimeout(renderCharts,60);
     if(ap.id==='page-study') renderStudy();
     if(ap.id==='page-news') renderNewsPage();
+    if(ap.id==='page-emotion') renderEmotionPage();
+    if(ap.id==='page-emotion') renderEmotionPage();
 
   }
 }
 function refreshAll() { renderAll(); }
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────
-openDB().then(() => {
-  loadTheme();
-  updatePeriod();
-  setTimeout(renderCharts, 100);
+document.addEventListener('DOMContentLoaded', () => {
+  openDB().then(() => {
+    initAccounts();
+    loadTheme();
+    updatePeriod();
+    setTimeout(renderCharts, 100);
+  });
 });
 
 // ─── NEWS TRACKER ─────────────────────────────────────────────────────────────
@@ -2427,7 +2877,7 @@ const USD_NEWS = [
   "US 10-Year Bond Auction","US 30-Year Bond Auction"
 ];
 
-function newsStorageKey() { return `btj_news_${getKey()}`; }
+function newsStorageKey() { return `btj_news_${getMode()}_${getKey()}`; }
 let newsEvents = [];
 let activeNewsId = null;
 let newsCharts = {};
@@ -2708,6 +3158,222 @@ function renderNewsPage() {
   const y = document.getElementById('yearSel').value;
   document.getElementById('news-period-sub').textContent = MONTHS[m-1] + ' ' + y + ' · high-impact EURUSD news events';
 }
+
+
+// ─── EMOTION JOURNAL ──────────────────────────────────────────────────────────
+
+const TRADING_RULES_CHECKLIST = [
+  'Only took A+ setups — no B or C grade trades',
+  'Waited for confirmation before entering',
+  'Respected my Stop Loss — no manual adjustment',
+  'Did not overtrade (max trades per day respected)',
+  'Did not trade during high-impact news (unless planned)',
+  'Followed my session rules (correct time window)',
+  'Did not revenge trade after a loss',
+  'Took profit at planned TP — no early exits from greed/fear',
+  'Reviewed my plan before the session',
+  'Stayed within my risk per trade limit',
+  'Did not trade when emotionally compromised',
+  'Journaled all trades taken today',
+];
+
+function emotionStorageKey() { return 'btj_emotion_' + getMode() + '_' + getKey(); }
+
+let emotionEntries = [];
+let activeEmotionId = null;
+
+function loadEmotionData() {
+  try { emotionEntries = JSON.parse(localStorage.getItem(emotionStorageKey()) || '[]'); } catch(e) { emotionEntries = []; }
+}
+function saveEmotionData() { localStorage.setItem(emotionStorageKey(), JSON.stringify(emotionEntries)); }
+
+function renderEmotionList() {
+  loadEmotionData();
+  document.getElementById('emotion-count').textContent = emotionEntries.length;
+  const container = document.getElementById('emotionListItems');
+  if (!emotionEntries.length) {
+    container.innerHTML = '<div style="text-align:center;padding:30px 12px;color:var(--text3);font-size:12px;line-height:1.8">No entries yet.<br>Start your reflection<br>by clicking below.</div>';
+    return;
+  }
+  const sorted = [...emotionEntries].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  container.innerHTML = sorted.map(e => {
+    const moodScore = e.moodScore || 5;
+    const scoreColor = moodScore >= 7 ? 'var(--green)' : moodScore >= 4 ? 'var(--amber)' : 'var(--red)';
+    const activeClass = e.id === activeEmotionId ? ' active' : '';
+    const sessionLine = e.sessionType ? ` <span>&middot; ${e.sessionType}</span>` : '';
+    return `<div class="emotion-list-item${activeClass}" data-eid="${e.id}">
+      <div class="emotion-list-item-title"><span style="font-size:16px">${e.mood || '📝'}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.title || 'Untitled Entry'}</span></div>
+      <div class="emotion-list-item-meta"><span>${e.date || ''}</span>${sessionLine}
+      <span style="color:${scoreColor};font-weight:600"> &middot; ${moodScore}/10</span></div>
+    </div>`;
+  }).join('');
+  // Wire click events after innerHTML (avoids inline onclick quote issues)
+  container.querySelectorAll('.emotion-list-item[data-eid]').forEach(el => {
+    el.addEventListener('click', () => openEmotionEntry(el.dataset.eid));
+  });
+}
+
+
+function addEmotionEntry() {
+  const today = new Date().toISOString().slice(0,10);
+  const id = 'em_' + Date.now();
+  emotionEntries.push({ id, title:'', date:today, sessionType:'', mood:'', moodLabel:'',
+    moodScore:5, focus:5, discipline:5, patience:5, confidence:5,
+    checklist:{}, q1:'', q2:'', q3:'', q4:'', q5:'', notes:'' });
+  saveEmotionData(); renderEmotionList(); openEmotionEntry(id);
+  setTimeout(()=>document.getElementById('ef-title').focus(), 50);
+}
+
+function openEmotionEntry(id) {
+  activeEmotionId = id; loadEmotionData();
+  const e = emotionEntries.find(x=>x.id===id);
+  if (!e) return;
+  document.getElementById('emotionDetailEmpty').style.display = 'none';
+  const form = document.getElementById('emotionDetailForm');
+  form.style.display = 'flex'; form.style.flexDirection = 'column';
+  form.style.flex = '1'; form.style.overflow = 'hidden';
+  document.getElementById('ef-title').value = e.title||'';
+  document.getElementById('ef-date').value = e.date||'';
+  document.getElementById('ef-session-type').value = e.sessionType||'';
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.toggle('selected', b.dataset.mood===e.mood));
+  document.getElementById('ef-mood-score').value = e.moodScore||5;
+  document.getElementById('ef-mood-val').textContent = e.moodScore||5;
+  document.getElementById('ef-focus').value = e.focus||5;
+  document.getElementById('ef-focus-val').textContent = e.focus||5;
+  document.getElementById('ef-discipline').value = e.discipline||5;
+  document.getElementById('ef-discipline-val').textContent = e.discipline||5;
+  document.getElementById('ef-patience').value = e.patience||5;
+  document.getElementById('ef-patience-val').textContent = e.patience||5;
+  document.getElementById('ef-confidence').value = e.confidence||5;
+  document.getElementById('ef-confidence-val').textContent = e.confidence||5;
+  renderChecklist(e.checklist||{});
+  ['q1','q2','q3','q4','q5','notes'].forEach(k=>{const el=document.getElementById('ef-'+k);if(el)el.value=e[k]||'';});
+  renderEmotionList();
+}
+
+function renderChecklist(checked) {
+  const container = document.getElementById('ef-checklist');
+  container.innerHTML = TRADING_RULES_CHECKLIST.map((rule, i) => {
+    const isChecked = checked[i] === true;
+    const checkedClass = isChecked ? ' checked' : '';
+    return `<div class="check-item${checkedClass}" data-cidx="${i}">
+      <div class="check-box"></div>
+      <div class="check-label">${rule}</div>
+    </div>`;
+  }).join('');
+  // Wire click events after innerHTML
+  container.querySelectorAll('.check-item[data-cidx]').forEach(el => {
+    el.addEventListener('click', () => toggleCheck(parseInt(el.dataset.cidx), el));
+  });
+}
+
+
+function toggleCheck(idx, el) {
+  el.classList.toggle('checked');
+  const e = emotionEntries.find(x=>x.id===activeEmotionId);
+  if (!e) return;
+  if (!e.checklist) e.checklist={};
+  e.checklist[idx] = el.classList.contains('checked');
+  saveEmotionData();
+}
+
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const e = emotionEntries.find(x=>x.id===activeEmotionId);
+  if (e) { e.mood=btn.dataset.mood; e.moodLabel=btn.dataset.label; saveEmotionData(); renderEmotionList(); }
+}
+
+function saveActiveEmotion() {
+  if (!activeEmotionId) return;
+  const e = emotionEntries.find(x=>x.id===activeEmotionId);
+  if (!e) return;
+  e.title = document.getElementById('ef-title').value;
+  e.date = document.getElementById('ef-date').value;
+  e.sessionType = document.getElementById('ef-session-type').value;
+  e.moodScore = parseInt(document.getElementById('ef-mood-score').value)||5;
+  e.focus = parseInt(document.getElementById('ef-focus').value)||5;
+  e.discipline = parseInt(document.getElementById('ef-discipline').value)||5;
+  e.patience = parseInt(document.getElementById('ef-patience').value)||5;
+  e.confidence = parseInt(document.getElementById('ef-confidence').value)||5;
+  ['q1','q2','q3','q4','q5','notes'].forEach(k=>{const el=document.getElementById('ef-'+k);if(el)e[k]=el.value||'';});
+  saveEmotionData();
+}
+
+function deleteEmotionEntry() {
+  if (!activeEmotionId||!confirm('Delete this entry?')) return;
+  emotionEntries = emotionEntries.filter(x=>x.id!==activeEmotionId);
+  saveEmotionData(); activeEmotionId=null;
+  document.getElementById('emotionDetailEmpty').style.display='flex';
+  document.getElementById('emotionDetailForm').style.display='none';
+  renderEmotionList();
+}
+
+let emotionCharts = {};
+function toggleEmotionStats() {
+  const panel = document.getElementById('emotionStatsPanel');
+  const btn = document.getElementById('emotionStatsBtn');
+  const vis = panel.style.display !== 'none';
+  panel.style.display = vis?'none':'block';
+  btn.textContent = vis?'📊 Mood Analytics':'📊 Hide Analytics';
+  if (!vis) buildEmotionStats();
+}
+
+function buildEmotionStats() {
+  loadEmotionData();
+  const dark = {gridColor:'rgba(255,255,255,0.05)',tickColor:'rgba(255,255,255,0.35)',font:{family:"'DM Mono',monospace",size:10}};
+  document.getElementById('es-total').textContent = emotionEntries.length;
+  const avg = arr => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : '—';
+  document.getElementById('es-mood').textContent = avg(emotionEntries.map(e=>e.moodScore||5));
+  document.getElementById('es-discipline').textContent = avg(emotionEntries.map(e=>e.discipline||5));
+  const best = [...emotionEntries].sort((a,b)=>(b.moodScore||0)-(a.moodScore||0))[0];
+  document.getElementById('es-best-mood').textContent = best ? (best.mood||'😄')+' '+best.moodScore+'/10' : '—';
+
+  const sorted = [...emotionEntries].filter(e=>e.date).sort((a,b)=>a.date.localeCompare(b.date));
+  if (emotionCharts.mood) emotionCharts.mood.destroy();
+  emotionCharts.mood = new Chart(document.getElementById('moodChart'), {
+    type:'line',
+    data:{labels:sorted.map(e=>e.date.slice(5)),datasets:[
+      {label:'Mood',data:sorted.map(e=>e.moodScore||5),borderColor:'rgba(167,139,250,1)',backgroundColor:'rgba(167,139,250,0.08)',tension:0.4,pointRadius:3,fill:true,borderWidth:2},
+      {label:'Discipline',data:sorted.map(e=>e.discipline||5),borderColor:'rgba(245,158,11,0.9)',backgroundColor:'transparent',tension:0.4,pointRadius:2,borderWidth:1.5,borderDash:[4,2]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:dark.tickColor,font:dark.font,boxWidth:10}}},scales:{x:{ticks:{color:dark.tickColor,font:dark.font},grid:{display:false}},y:{min:1,max:10,ticks:{color:dark.tickColor,font:dark.font,stepSize:2},grid:{color:dark.gridColor}}}}
+  });
+
+  const moodCount = {};
+  emotionEntries.forEach(e=>{if(e.mood){const k=e.mood+(e.moodLabel?' '+e.moodLabel:'');moodCount[k]=(moodCount[k]||0)+1;}});
+  const moodPairs = Object.entries(moodCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  if (emotionCharts.freq) emotionCharts.freq.destroy();
+  emotionCharts.freq = new Chart(document.getElementById('emotionFreqChart'), {
+    type:'doughnut',
+    data:{labels:moodPairs.map(p=>p[0]),datasets:[{data:moodPairs.map(p=>p[1]),backgroundColor:['rgba(167,139,250,0.8)','rgba(59,130,246,0.7)','rgba(34,197,94,0.7)','rgba(245,158,11,0.7)','rgba(239,68,68,0.7)','rgba(100,116,139,0.5)'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{color:dark.tickColor,font:dark.font,boxWidth:10,padding:6}}}}
+  });
+
+  const tradePnlByDate = {};
+  trades.forEach(t=>{if(t.date)tradePnlByDate[t.date]=(tradePnlByDate[t.date]||0)+netPnl(t);});
+  const corr = emotionEntries.filter(e=>e.date&&tradePnlByDate[e.date]!==undefined).map(e=>({x:e.moodScore||5,y:parseFloat(tradePnlByDate[e.date].toFixed(2))}));
+  if (emotionCharts.moodPnl) emotionCharts.moodPnl.destroy();
+  if (corr.length > 0) {
+    emotionCharts.moodPnl = new Chart(document.getElementById('moodPnlChart'), {
+      type:'scatter',
+      data:{datasets:[{data:corr,backgroundColor:corr.map(p=>p.y>=0?'rgba(34,197,94,0.7)':'rgba(239,68,68,0.7)'),pointRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Mood '+c.raw.x+'/10 · PnL $'+c.raw.y}}},scales:{x:{title:{display:true,text:'Mood Score',color:dark.tickColor,font:dark.font},min:1,max:10,ticks:{color:dark.tickColor,font:dark.font},grid:{color:dark.gridColor}},y:{title:{display:true,text:'Net PnL ($)',color:dark.tickColor,font:dark.font},ticks:{color:dark.tickColor,font:dark.font},grid:{color:dark.gridColor}}}}
+    });
+  } else {
+    const wrap = document.getElementById('moodPnlChart');
+    if (wrap) wrap.parentElement.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:40px">Log both emotion entries and trades on the same dates to see the correlation.</div>';
+  }
+}
+
+function renderEmotionPage() {
+  loadEmotionData(); renderEmotionList();
+  const m = parseInt(document.getElementById('monthSel').value);
+  const y = document.getElementById('yearSel').value;
+  document.getElementById('emotion-period-sub').textContent = MONTHS[m-1]+' '+y+' · daily psychological reflection';
+}
+
 
 </script>
 
