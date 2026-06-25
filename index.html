@@ -620,6 +620,38 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
 .pw-outcome-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
 .pw-outcome-val { font-size: 20px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.5px; }
 
+
+/* ── ACCOUNT CARDS ── */
+.m-acct-card {
+  border-radius: var(--radius-lg); padding: 18px 20px; cursor: pointer;
+  position: relative; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid transparent;
+}
+.m-acct-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+.m-acct-card.selected { box-shadow: 0 0 0 2px var(--teal); }
+.m-acct-card .acct-card-glow {
+  position: absolute; top: -30px; right: -30px;
+  width: 100px; height: 100px; border-radius: 50%; opacity: 0.15;
+}
+.m-acct-card .acct-card-type { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono); font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.m-acct-card .acct-card-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; letter-spacing: -0.3px; }
+.m-acct-card .acct-card-broker { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 14px; }
+.m-acct-card .acct-card-pnl { font-size: 22px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; margin-bottom: 4px; }
+.m-acct-card .acct-card-balance { font-size: 11px; font-family: var(--font-mono); color: var(--text2); }
+.m-acct-card .acct-card-bar-wrap { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 12px; }
+.m-acct-card .acct-card-bar { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.m-acct-card .acct-card-pct { font-size: 10px; font-family: var(--font-mono); font-weight: 600; margin-top: 4px; }
+
+/* Gradient themes per account type */
+.acct-theme-live   { background: linear-gradient(135deg, rgba(34,197,94,0.18) 0%, rgba(22,163,74,0.06) 100%); border-color: rgba(34,197,94,0.25); }
+.acct-theme-prop   { background: linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(217,119,6,0.06) 100%); border-color: rgba(245,158,11,0.25); }
+.acct-theme-demo   { background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(37,99,235,0.06) 100%); border-color: rgba(59,130,246,0.25); }
+.acct-theme-backtest { background: linear-gradient(135deg, rgba(167,139,250,0.18) 0%, rgba(139,92,246,0.06) 100%); border-color: rgba(167,139,250,0.25); }
+
+/* Section dividers */
+.m-section-divider { font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
+.m-section-divider span:not(:first-child) { flex:1;height:1px;background:var(--border); }
+
 </style>
 </head>
 <body>
@@ -712,43 +744,116 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
 
 <!-- ══ METRICS ══ -->
 <div id="page-metrics" class="page active">
+
+  <!-- ── Page header ── -->
   <div class="page-header">
-    <div><div class="page-title" id="metrics-title">February 2019</div><div class="page-sub">Monthly performance overview</div></div>
+    <div>
+      <div class="page-title" id="metrics-title">February 2019</div>
+      <div class="page-sub">Monthly performance overview</div>
+    </div>
     <button class="btn btn-ghost" onclick="showPage('journal',document.querySelectorAll('.nav-item')[1])">+ Add trade</button>
   </div>
-  <div class="stat-grid stat-grid-3 section">
-    <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value c-blue" id="m-winrate">—</div><div class="stat-sub" id="m-wr-sub">no closed trades</div></div>
-    <div class="stat-card"><div class="stat-label">Total PnL</div><div class="stat-value" id="m-pnl">—</div><div id="m-pnl-badge"></div></div>
-    <div class="stat-card"><div class="stat-label">Balance</div><div class="stat-value" id="m-balance">—</div><div class="stat-sub">starting + PnL</div></div>
-  </div>
-  <div class="stat-grid stat-grid-4 section">
-    <div class="stat-card"><div class="stat-label">Total Trades</div><div class="stat-value sm" id="m-total">0</div></div>
-    <div class="stat-card"><div class="stat-label">Wins</div><div class="stat-value sm c-green" id="m-wins">0</div></div>
-    <div class="stat-card"><div class="stat-label">Losses</div><div class="stat-value sm c-red" id="m-losses">0</div></div>
-    <div class="stat-card"><div class="stat-label">Avg PnL / Trade</div><div class="stat-value sm" id="m-avg">—</div></div>
-  </div>
-  <div class="chart-grid-2 section">
-    <div class="card"><div class="card-title">Daily PnL</div><div class="chart-wrap" style="height:200px"><canvas id="dailyPnlChart"></canvas></div></div>
-    <div class="card"><div class="card-title">Win / Loss / Breakeven</div><div class="chart-wrap" style="height:200px"><canvas id="winLossChart"></canvas></div></div>
-  </div>
-  <div class="card section"><div class="card-title">Cumulative PnL Curve</div><div class="chart-wrap" style="height:180px"><canvas id="cumPnlChart"></canvas></div></div>
 
-      <!-- Per-account PnL breakdown -->
-      <div id="acctBreakdownSection" class="section" style="display:none">
-        <div class="card">
-          <div class="card-title">PnL by Account — This Month</div>
-          <div id="acctBreakdownList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
-          <div class="chart-wrap" style="height:160px"><canvas id="acctPnlChart"></canvas></div>
-        </div>
-      </div>
+  <!-- ── SECTION 1: Account Cards ── -->
+  <div id="m-account-cards-section" style="margin-bottom:20px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Accounts</span>
+      <span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div id="m-account-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px"></div>
+  </div>
 
-      <!-- Prop firm challenge tracker -->
-      <div id="propTrackerSection" class="section" style="display:none">
-        <div class="card" style="border-color:rgba(245,158,11,0.35);background:rgba(245,158,11,0.03)">
-          <div class="card-title" style="color:var(--amber)">🏆 Prop Firm Challenge Tracker</div>
-          <div id="propTrackerContent" style="margin-top:4px"></div>
-        </div>
+  <!-- ── SECTION 2: Hero KPI strip ── -->
+  <div style="margin-bottom:14px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Month Overview</span><span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+      <!-- Win rate - blue gradient -->
+      <div style="border-radius:var(--radius-lg);padding:20px 22px;background:linear-gradient(135deg,rgba(59,130,246,0.18) 0%,rgba(37,99,235,0.06) 100%);border:1px solid rgba(59,130,246,0.25);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(59,130,246,0.08)"></div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(59,130,246,0.7);font-family:var(--font-mono);margin-bottom:8px">Win Rate</div>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-1.5px;color:#60a5fa;line-height:1" id="m-winrate">—</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);margin-top:6px" id="m-wr-sub">no closed trades</div>
       </div>
+      <!-- Total PnL - green/red gradient -->
+      <div style="border-radius:var(--radius-lg);padding:20px 22px;border:1px solid rgba(34,197,94,0.2);position:relative;overflow:hidden" id="m-pnl-card" style="background:linear-gradient(135deg,rgba(34,197,94,0.15) 0%,rgba(22,163,74,0.04) 100%)">
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(34,197,94,0.08)"></div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(34,197,94,0.7);font-family:var(--font-mono);margin-bottom:8px">Total Net PnL</div>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:1" id="m-pnl">—</div>
+        <div id="m-pnl-badge" style="margin-top:6px"></div>
+      </div>
+      <!-- Balance - purple gradient -->
+      <div style="border-radius:var(--radius-lg);padding:20px 22px;background:linear-gradient(135deg,rgba(167,139,250,0.15) 0%,rgba(139,92,246,0.05) 100%);border:1px solid rgba(167,139,250,0.22);position:relative;overflow:hidden">
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(167,139,250,0.08)"></div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(167,139,250,0.7);font-family:var(--font-mono);margin-bottom:8px">Balance</div>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-1.5px;color:var(--purple);line-height:1" id="m-balance">—</div>
+        <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono);margin-top:6px">starting + net PnL</div>
+      </div>
+    </div>
+
+    <!-- Secondary KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(100,116,139,0.4)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px">Total Trades</div>
+        <div style="font-size:26px;font-weight:700;letter-spacing:-0.8px" id="m-total">0</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(34,197,94,0.5)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(34,197,94,0.7);font-family:var(--font-mono);margin-bottom:6px">Wins</div>
+        <div style="font-size:26px;font-weight:700;letter-spacing:-0.8px;color:var(--green)" id="m-wins">0</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(239,68,68,0.5)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(239,68,68,0.7);font-family:var(--font-mono);margin-bottom:6px">Losses</div>
+        <div style="font-size:26px;font-weight:700;letter-spacing:-0.8px;color:var(--red)" id="m-losses">0</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(245,158,11,0.5)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(245,158,11,0.7);font-family:var(--font-mono);margin-bottom:6px">Avg PnL / Trade</div>
+        <div style="font-size:26px;font-weight:700;letter-spacing:-0.8px;color:var(--amber)" id="m-avg">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: Charts row ── -->
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:12px">📊 Daily PnL</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="dailyPnlChart"></canvas></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:12px">🎯 Win / Loss Split</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="winLossChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: Equity Curve (full width, taller) ── -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;background:linear-gradient(180deg,var(--bg2) 0%,rgba(34,197,94,0.02) 100%)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono)">📈 Cumulative PnL Curve</div>
+      <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono)" id="m-curve-label"></div>
+    </div>
+    <div class="chart-wrap" style="height:220px"><canvas id="cumPnlChart"></canvas></div>
+  </div>
+
+  <!-- ── SECTION 5: Per-account breakdown (shown when All Accounts) ── -->
+  <div id="acctBreakdownSection" style="display:none;margin-bottom:14px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Account Breakdown</span><span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
+      <div id="acctBreakdownList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px"></div>
+      <div class="chart-wrap" style="height:160px"><canvas id="acctPnlChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: Prop Tracker ── -->
+  <div id="propTrackerSection" style="display:none;margin-bottom:14px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Prop Firm Challenge</span><span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div style="border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-lg);background:linear-gradient(135deg,rgba(245,158,11,0.06) 0%,var(--bg2) 100%);padding:18px 20px">
+      <div id="propTrackerContent"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -2057,6 +2162,38 @@ async function exportPDF(scope) {
 .pw-outcome-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
 .pw-outcome-val { font-size: 20px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.5px; }
 
+
+/* ── ACCOUNT CARDS ── */
+.m-acct-card {
+  border-radius: var(--radius-lg); padding: 18px 20px; cursor: pointer;
+  position: relative; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s;
+  border: 1px solid transparent;
+}
+.m-acct-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+.m-acct-card.selected { box-shadow: 0 0 0 2px var(--teal); }
+.m-acct-card .acct-card-glow {
+  position: absolute; top: -30px; right: -30px;
+  width: 100px; height: 100px; border-radius: 50%; opacity: 0.15;
+}
+.m-acct-card .acct-card-type { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono); font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.m-acct-card .acct-card-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; letter-spacing: -0.3px; }
+.m-acct-card .acct-card-broker { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 14px; }
+.m-acct-card .acct-card-pnl { font-size: 22px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; margin-bottom: 4px; }
+.m-acct-card .acct-card-balance { font-size: 11px; font-family: var(--font-mono); color: var(--text2); }
+.m-acct-card .acct-card-bar-wrap { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 12px; }
+.m-acct-card .acct-card-bar { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.m-acct-card .acct-card-pct { font-size: 10px; font-family: var(--font-mono); font-weight: 600; margin-top: 4px; }
+
+/* Gradient themes per account type */
+.acct-theme-live   { background: linear-gradient(135deg, rgba(34,197,94,0.18) 0%, rgba(22,163,74,0.06) 100%); border-color: rgba(34,197,94,0.25); }
+.acct-theme-prop   { background: linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(217,119,6,0.06) 100%); border-color: rgba(245,158,11,0.25); }
+.acct-theme-demo   { background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(37,99,235,0.06) 100%); border-color: rgba(59,130,246,0.25); }
+.acct-theme-backtest { background: linear-gradient(135deg, rgba(167,139,250,0.18) 0%, rgba(139,92,246,0.06) 100%); border-color: rgba(167,139,250,0.25); }
+
+/* Section dividers */
+.m-section-divider { font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
+.m-section-divider span:not(:first-child) { flex:1;height:1px;background:var(--border); }
+
 </style>
 </head><body>
 <div class="pdf-header">
@@ -2071,7 +2208,7 @@ ${sections.join('\n')}
 <!-- Account Manager Modal -->
 <div class="modal-overlay" id="accountModal">
   <div class="modal-box">
-    <div class="modal-title">Manage Accounts</div>
+    <div class="modal-title" id="acctModalTitle">Manage Accounts</div>
     <div class="modal-list" id="accountModalList"></div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:4px">
       <div style="font-size:11px;font-weight:600;margin-bottom:10px;color:var(--text2)">Add New Account</div>
@@ -2239,8 +2376,23 @@ function renderMetrics() {
   avgEl.className='stat-value sm '+(m.avg>0?'c-green':m.avg<0?'c-red':'');
   document.getElementById('sb-net').textContent='$'+m.balance.toFixed(2);
   document.getElementById('sb-net').style.color=m.balance>m.starting?'var(--green)':m.balance<m.starting?'var(--red)':'var(--text)';
+  renderAccountCards();
   renderAccountBreakdown();
   renderPropTracker();
+  // Update PnL card background dynamically
+  const pnlCard = document.getElementById('m-pnl-card');
+  if (pnlCard) {
+    if (m.total > 0) {
+      pnlCard.style.background = 'linear-gradient(135deg,rgba(34,197,94,0.15) 0%,rgba(22,163,74,0.04) 100%)';
+      pnlCard.style.borderColor = 'rgba(34,197,94,0.2)';
+    } else if (m.total < 0) {
+      pnlCard.style.background = 'linear-gradient(135deg,rgba(239,68,68,0.15) 0%,rgba(220,38,38,0.04) 100%)';
+      pnlCard.style.borderColor = 'rgba(239,68,68,0.2)';
+    } else {
+      pnlCard.style.background = 'var(--bg2)';
+      pnlCard.style.borderColor = 'var(--border)';
+    }
+  }
 }
 
 function getChartColors() {
@@ -2725,31 +2877,35 @@ function showTrash() {
 
 // ─── ACCOUNTS & MODE ──────────────────────────────────────────────────────────
 
-const ACCOUNTS_KEY = 'btj_accounts';
-const ACTIVE_ACCOUNT_KEY = 'btj_active_account';
 const MODE_KEY = 'btj_mode';
 
+// Accounts are fully separated by mode — backtest accounts never appear in live and vice versa
+function accountsKey() { return 'btj_accounts_' + (getMode() || 'backtest'); }
+function activeAccountKey() { return 'btj_active_account_' + (getMode() || 'backtest'); }
+
 function getAccounts() {
-  try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '[]'); } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem(accountsKey()) || '[]'); } catch(e) { return []; }
 }
-function saveAccounts(arr) { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(arr)); }
-function getActiveAccount() { return localStorage.getItem(ACTIVE_ACCOUNT_KEY) || 'all'; }
-function setActiveAccount(id) { localStorage.setItem(ACTIVE_ACCOUNT_KEY, id); }
+function saveAccounts(arr) { localStorage.setItem(accountsKey(), JSON.stringify(arr)); }
+function getActiveAccount() { return localStorage.getItem(activeAccountKey()) || 'all'; }
+function setActiveAccount(id) { localStorage.setItem(activeAccountKey(), id); }
 function getMode() { return localStorage.getItem(MODE_KEY) || 'backtest'; }
 function saveMode(m) { localStorage.setItem(MODE_KEY, m); }
 
 function initAccounts() {
+  const mode = getMode();
   let accounts = getAccounts();
   if (!accounts.length) {
-    // Seed default accounts
-    accounts = [
-      { id:'acc_backtest', name:'Backtest', type:'backtest', broker:'Simulation', balance:10000 },
-      { id:'acc_live_01', name:'Live Account 01', type:'live', broker:'', balance:10000 }
-    ];
+    // Seed mode-specific default account
+    if (mode === 'live') {
+      accounts = [{ id:'acc_live_' + Date.now(), name:'Live Account 01', type:'live', broker:'', balance:10000 }];
+    } else {
+      accounts = [{ id:'acc_bt_' + Date.now(), name:'Backtest', type:'backtest', broker:'Simulation', balance:10000 }];
+    }
     saveAccounts(accounts);
   }
   renderAccountSelector();
-  applyMode(getMode());
+  applyMode(mode);
 }
 
 function renderAccountSelector() {
@@ -2770,6 +2926,11 @@ function updateAccount() {
 function setMode(mode) {
   saveMode(mode);
   applyMode(mode);
+  // Re-init accounts for the new mode so only that mode's accounts appear
+  initAccounts();
+  // Reset active account to 'all' when switching modes
+  setActiveAccount('all');
+  loadData();
   refreshAll();
 }
 
@@ -2802,8 +2963,11 @@ function getKey() {
   const acct = getActiveAccount();
   const mode = getMode();
   const prefix = mode === 'live' ? 'live' : 'btj';
-  const acctPart = (acct !== 'all') ? `-${acct}` : '';
-  return `${prefix}${acctPart}-${document.getElementById('yearSel').value}-${document.getElementById('monthSel').value}`;
+  // Each mode has its own trade data namespace — live and backtest never share keys
+  const acctPart = (acct && acct !== 'all') ? '-' + acct : '';
+  const y = document.getElementById('yearSel') ? document.getElementById('yearSel').value : '2019';
+  const m = document.getElementById('monthSel') ? document.getElementById('monthSel').value : '1';
+  return prefix + acctPart + '-' + y + '-' + m;
 }
 
 // Filter trades by active account
@@ -2815,6 +2979,12 @@ function getFilteredTrades() {
 
 // Account modal
 function openAccountModal() {
+  // Show which mode's accounts we're managing
+  const title = document.getElementById('acctModalTitle');
+  if (title) title.textContent = (getMode() === 'live' ? '🔴 Live' : '📊 Backtest') + ' — Manage Accounts';
+  // Pre-select the appropriate account type for this mode
+  const typeEl = document.getElementById('newAccType');
+  if (typeEl) typeEl.value = getMode() === 'live' ? 'live' : 'backtest';
   renderModalList();
   document.getElementById('accountModal').classList.add('open');
 }
@@ -2843,8 +3013,9 @@ function saveNewAccount() {
   const name = document.getElementById('newAccName').value.trim();
   if (!name) { document.getElementById('newAccName').focus(); return; }
   const accounts = getAccounts();
+  const mode = getMode();
   const newAcc = {
-    id: 'acc_' + Date.now(),
+    id: (mode === 'live' ? 'live_acc_' : 'bt_acc_') + Date.now(),
     name,
     type: document.getElementById('newAccType').value,
     broker: document.getElementById('newAccBroker').value.trim(),
@@ -3051,6 +3222,107 @@ function savePropSettings(acctId, field, val) {
   renderPropTracker();
 }
 
+
+// ─── ACCOUNT CARDS (metrics page) ────────────────────────────────────────────
+
+const ACCT_COLORS = {
+  live:      { theme:'acct-theme-live',      glow:'#22c55e', pnl:'var(--green)', bar:'#22c55e', icon:'🔴', label:'Live' },
+  prop:      { theme:'acct-theme-prop',      glow:'#f59e0b', pnl:'var(--amber)', bar:'#f59e0b', icon:'🏆', label:'Prop Firm' },
+  demo:      { theme:'acct-theme-demo',      glow:'#3b82f6', pnl:'#60a5fa',      bar:'#3b82f6', icon:'🔵', label:'Demo' },
+  backtest:  { theme:'acct-theme-backtest',  glow:'#a78bfa', pnl:'var(--purple)',bar:'#a78bfa', icon:'📊', label:'Backtest' },
+};
+
+let selectedAcctCard = null; // null = show aggregate
+
+function renderAccountCards() {
+  const accounts = getAccounts();
+  const container = document.getElementById('m-account-cards');
+  if (!container) return;
+
+  if (!accounts.length) { container.innerHTML = ''; return; }
+
+  // Calculate PnL per account from ALL localStorage months for this mode
+  const acctPnl   = {};
+  const acctCount = {};
+  accounts.forEach(a => { acctPnl[a.id] = 0; acctCount[a.id] = 0; });
+
+  // Only scan keys belonging to this mode — strict separation
+  const modePrefix = getMode() === 'live' ? 'live' : 'btj';
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k.startsWith(modePrefix + '-') && !k.startsWith(modePrefix + '_acc_') && !k.startsWith(modePrefix + '-acc_') && !k.startsWith(modePrefix + '-live_acc_') && !k.startsWith(modePrefix + '-bt_acc_')) {
+      // Only include keys that start with the mode prefix
+      if (!k.startsWith(modePrefix)) continue;
+    }
+    // Must look like a trade data key (contains year-month pattern)
+    if (!/-(\d{4})-(\d{1,2})$/.test(k)) continue;
+    try {
+      const mt = JSON.parse(localStorage.getItem(k) || '[]');
+      if (!Array.isArray(mt)) continue;
+      mt.forEach(t => {
+        if (t.account && acctPnl[t.account] !== undefined) {
+          acctPnl[t.account] += netPnl(t);
+          acctCount[t.account]++;
+        }
+      });
+    } catch(e) {}
+  }
+
+  const totalAbsPnl = Math.max(...accounts.map(a => Math.abs(acctPnl[a.id])), 1);
+
+  container.innerHTML = accounts.map(acct => {
+    const colors = ACCT_COLORS[acct.type] || ACCT_COLORS.backtest;
+    const pnl    = acctPnl[acct.id] || 0;
+    const bal    = (parseFloat(acct.balance) || 0) + pnl;
+    const pct    = ((pnl / (parseFloat(acct.balance) || 10000)) * 100);
+    const barW   = Math.min(Math.abs(pnl) / totalAbsPnl * 100, 100).toFixed(1);
+    const pnlColor = pnl > 0 ? 'var(--green)' : pnl < 0 ? 'var(--red)' : 'var(--text2)';
+    const isActive = selectedAcctCard === acct.id;
+
+    return `<div class="m-acct-card ${colors.theme}${isActive ? ' selected' : ''}" data-accid="${acct.id}">
+      <div class="acct-card-glow" style="background:${colors.glow}"></div>
+      <div class="acct-card-type" style="color:${colors.glow}">${colors.icon} ${colors.label}</div>
+      <div class="acct-card-name">${acct.name}</div>
+      <div class="acct-card-broker">${acct.broker || '—'}</div>
+      <div class="acct-card-pnl" style="color:${pnlColor}">${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}</div>
+      <div class="acct-card-balance">Balance: $${bal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+      <div class="acct-card-bar-wrap"><div class="acct-card-bar" style="width:${barW}%;background:${pnl >= 0 ? colors.bar : '#ef4444'}"></div></div>
+      <div class="acct-card-pct" style="color:${pnlColor}">${pct >= 0 ? '+' : ''}${pct.toFixed(2)}% ${acctCount[acct.id] ? '· ' + acctCount[acct.id] + ' trades' : ''}</div>
+    </div>`;
+  }).join('');
+
+  // Wire click — clicking a card filters the metrics view to that account
+  container.querySelectorAll('.m-acct-card[data-accid]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.accid;
+      if (selectedAcctCard === id) {
+        // Deselect — go back to aggregate
+        selectedAcctCard = null;
+        // Reset account selector to "all"
+        document.getElementById('accountSel').value = 'all';
+        setActiveAccount('all');
+      } else {
+        selectedAcctCard = id;
+        document.getElementById('accountSel').value = id;
+        setActiveAccount(id);
+      }
+      loadData();
+      refreshAll();
+    });
+  });
+
+  // Update curve label
+  const curveLabel = document.getElementById('m-curve-label');
+  if (curveLabel) {
+    if (selectedAcctCard) {
+      const acc = accounts.find(a => a.id === selectedAcctCard);
+      curveLabel.textContent = acc ? acc.name : '';
+    } else {
+      curveLabel.textContent = 'All accounts combined';
+    }
+  }
+}
+
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 function showBackupMsg(msg, color) {
   const el=document.getElementById('backup-msg'); el.textContent=msg; el.style.color=color||'var(--green)';
@@ -3058,7 +3330,7 @@ function showBackupMsg(msg, color) {
 }
 function exportJSON() {
   const allData={};
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion')||k.startsWith('btj_pw'))allData[k]=JSON.parse(localStorage.getItem(k));}
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion')||k.startsWith('btj_pw')||k.startsWith('btj_accounts_')||k.startsWith('btj_active_account_'))allData[k]=JSON.parse(localStorage.getItem(k));}
   const blob=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;
   a.download=`backtesting-journal-backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
@@ -4166,7 +4438,7 @@ function renderPreweekPage() {
 <!-- Account Manager Modal -->
 <div class="modal-overlay" id="accountModal">
   <div class="modal-box">
-    <div class="modal-title">Manage Accounts</div>
+    <div class="modal-title" id="acctModalTitle">Manage Accounts</div>
     <div class="modal-list" id="accountModalList"></div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:4px">
       <div style="font-size:11px;font-weight:600;margin-bottom:10px;color:var(--text2)">Add New Account</div>
