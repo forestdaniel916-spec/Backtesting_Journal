@@ -652,6 +652,32 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
 .m-section-divider { font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
 .m-section-divider span:not(:first-child) { flex:1;height:1px;background:var(--border); }
 
+
+/* ── PW NEWS LIST ── */
+.pw-news-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.pw-news-entry { display: flex; align-items: center; gap: 6px; }
+.pw-news-entry-input {
+  flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border);
+  color: var(--text); font-family: var(--font-display); font-size: 12px;
+  padding: 4px 2px; transition: border-color 0.15s;
+}
+.pw-news-entry-input:focus { outline: none; border-bottom-color: var(--teal); }
+.pw-news-entry-input::placeholder { color: var(--text3); }
+.pw-news-del-btn {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 13px; padding: 2px 4px; border-radius: 3px; line-height: 1;
+  flex-shrink: 0; transition: color 0.15s;
+}
+.pw-news-del-btn:hover { color: var(--red); }
+.pw-news-add-btn {
+  display: flex; align-items: center; gap: 4px; background: none; border: none;
+  color: var(--teal); cursor: pointer; font-size: 11px; font-family: var(--font-display);
+  padding: 4px 2px; margin-top: 4px; transition: opacity 0.15s;
+}
+.pw-news-add-btn:hover { opacity: 0.75; }
+.pw-list-empty-week { opacity: 0.55; }
+.pw-list-empty-week:hover { opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -1449,6 +1475,16 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
       <div class="page-title">Pre-Week Planner</div>
       <div class="page-sub" id="pw-period-sub">Plan your week before the market opens</div>
     </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="position:relative" id="pwPdfDropWrap">
+        <button class="btn btn-ghost" onclick="togglePWPdfMenu()" id="pwPdfBtn">↓ Export PDF ▾</button>
+        <div id="pwPdfMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);min-width:180px;z-index:100;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.3)">
+          <button onclick="exportPWPDF('current')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📄 This week only</button>
+          <button onclick="exportPWPDF('month')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📅 All weeks this month</button>
+          <button onclick="exportPWPDF('year')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">🗓️ Full year summary</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="pw-layout">
@@ -1490,11 +1526,11 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
               </div>
               <div style="margin-top:12px">
                 <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px">Weekly bias</div>
-                <div class="pw-bias-pills">
-                  <button class="pw-bias-btn" data-bias="bullish" id="pw-bias-bull">📈 Bullish</button>
-                  <button class="pw-bias-btn" data-bias="bearish" id="pw-bias-bear">📉 Bearish</button>
-                  <button class="pw-bias-btn" data-bias="ranging" id="pw-bias-ranging">↕️ Ranging</button>
-                  <button class="pw-bias-btn" data-bias="neutral" id="pw-bias-neutral">— Neutral / Wait</button>
+                <div class="pw-bias-pills" id="pw-bias-pills">
+                  <button class="pw-bias-btn" data-bias="bullish">📈 Bullish</button>
+                  <button class="pw-bias-btn" data-bias="bearish">📉 Bearish</button>
+                  <button class="pw-bias-btn" data-bias="ranging">↕️ Ranging</button>
+                  <button class="pw-bias-btn" data-bias="neutral">— Neutral / Wait</button>
                 </div>
               </div>
             </div>
@@ -1571,12 +1607,12 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
           <!-- Row 3: High-impact news this week -->
           <div class="pw-card" style="margin-bottom:14px">
             <div class="pw-card-title">📰 High-Impact News This Week</div>
-            <div class="pw-news-strip">
-              <div class="pw-news-day"><div class="pw-news-day-label">MON</div><div class="pw-news-day-events"><input type="text" class="pw-news-event-input" id="pw-news-mon" placeholder="e.g. German IFO Business Climate 10:00 GMT" oninput="savePW()"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">TUE</div><div class="pw-news-day-events"><input type="text" class="pw-news-event-input" id="pw-news-tue" placeholder="e.g. US Consumer Confidence 15:00 GMT" oninput="savePW()"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">WED</div><div class="pw-news-day-events"><input type="text" class="pw-news-event-input" id="pw-news-wed" placeholder="e.g. FOMC Minutes 19:00 GMT" oninput="savePW()"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">THU</div><div class="pw-news-day-events"><input type="text" class="pw-news-event-input" id="pw-news-thu" placeholder="e.g. ECB Interest Rate Decision 13:15 GMT" oninput="savePW()"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">FRI</div><div class="pw-news-day-events"><input type="text" class="pw-news-event-input" id="pw-news-fri" placeholder="e.g. NFP 13:30 GMT · Unemployment Rate" oninput="savePW()"></div></div>
+            <div class="pw-news-strip" id="pw-news-strip">
+              <div class="pw-news-day"><div class="pw-news-day-label">MON</div><div class="pw-news-day-events" id="pw-news-mon-list"></div></div>
+              <div class="pw-news-day"><div class="pw-news-day-label">TUE</div><div class="pw-news-day-events" id="pw-news-tue-list"></div></div>
+              <div class="pw-news-day"><div class="pw-news-day-label">WED</div><div class="pw-news-day-events" id="pw-news-wed-list"></div></div>
+              <div class="pw-news-day"><div class="pw-news-day-label">THU</div><div class="pw-news-day-events" id="pw-news-thu-list"></div></div>
+              <div class="pw-news-day"><div class="pw-news-day-label">FRI</div><div class="pw-news-day-events" id="pw-news-fri-list"></div></div>
             </div>
           </div>
 
@@ -2193,6 +2229,32 @@ async function exportPDF(scope) {
 /* Section dividers */
 .m-section-divider { font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
 .m-section-divider span:not(:first-child) { flex:1;height:1px;background:var(--border); }
+
+
+/* ── PW NEWS LIST ── */
+.pw-news-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+.pw-news-entry { display: flex; align-items: center; gap: 6px; }
+.pw-news-entry-input {
+  flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border);
+  color: var(--text); font-family: var(--font-display); font-size: 12px;
+  padding: 4px 2px; transition: border-color 0.15s;
+}
+.pw-news-entry-input:focus { outline: none; border-bottom-color: var(--teal); }
+.pw-news-entry-input::placeholder { color: var(--text3); }
+.pw-news-del-btn {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  font-size: 13px; padding: 2px 4px; border-radius: 3px; line-height: 1;
+  flex-shrink: 0; transition: color 0.15s;
+}
+.pw-news-del-btn:hover { color: var(--red); }
+.pw-news-add-btn {
+  display: flex; align-items: center; gap: 4px; background: none; border: none;
+  color: var(--teal); cursor: pointer; font-size: 11px; font-family: var(--font-display);
+  padding: 4px 2px; margin-top: 4px; transition: opacity 0.15s;
+}
+.pw-news-add-btn:hover { opacity: 0.75; }
+.pw-list-empty-week { opacity: 0.55; }
+.pw-list-empty-week:hover { opacity: 1; }
 
 </style>
 </head><body>
@@ -3323,6 +3385,258 @@ function renderAccountCards() {
   }
 }
 
+
+// ── Dynamic news event lists per day ────────────────────────────────────────
+const PW_NEWS_DAYS = ['mon','tue','wed','thu','fri'];
+const PW_NEWS_PLACEHOLDERS = {
+  mon: 'e.g. German IFO Business Climate 10:00 GMT',
+  tue: 'e.g. US Consumer Confidence 15:00 GMT',
+  wed: 'e.g. FOMC Meeting Minutes 19:00 GMT',
+  thu: 'e.g. ECB Interest Rate Decision 13:15 GMT',
+  fri: 'e.g. NFP 13:30 GMT · US Unemployment Rate'
+};
+
+function renderNewsLists(plan) {
+  PW_NEWS_DAYS.forEach(day => {
+    const container = document.getElementById('pw-news-' + day + '-list');
+    if (!container) return;
+    // Migrate old string format to array
+    if (typeof plan['news' + day.charAt(0).toUpperCase() + day.slice(1)] === 'string') {
+      const old = plan['news' + day.charAt(0).toUpperCase() + day.slice(1)];
+      plan['news_' + day] = old ? [old] : [];
+    }
+    if (!plan['news_' + day]) plan['news_' + day] = [];
+    // Ensure at least one empty entry
+    if (!plan['news_' + day].length) plan['news_' + day].push('');
+    renderNewsDayList(container, day, plan);
+  });
+}
+
+function renderNewsDayList(container, day, plan) {
+  container.innerHTML = '';
+  const items = plan['news_' + day] || [''];
+  const listWrap = document.createElement('div');
+  listWrap.className = 'pw-news-list';
+
+  items.forEach((val, idx) => {
+    const row = document.createElement('div');
+    row.className = 'pw-news-entry';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'pw-news-entry-input';
+    input.value = val;
+    input.placeholder = idx === 0 ? PW_NEWS_PLACEHOLDERS[day] : 'Add another event...';
+    input.oninput = () => {
+      const p = pwPlans.find(p => p.id === activePWId);
+      if (!p) return;
+      if (!p['news_' + day]) p['news_' + day] = [];
+      p['news_' + day][idx] = input.value;
+      savePWData();
+    };
+    // Press Enter to add a new row
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const p = pwPlans.find(p => p.id === activePWId);
+        if (!p) return;
+        if (!p['news_' + day]) p['news_' + day] = [];
+        p['news_' + day].splice(idx + 1, 0, '');
+        savePWData();
+        renderNewsDayList(container, day, p);
+        // Focus the new input
+        const inputs = container.querySelectorAll('.pw-news-entry-input');
+        if (inputs[idx + 1]) inputs[idx + 1].focus();
+      } else if (e.key === 'Backspace' && input.value === '' && items.length > 1) {
+        e.preventDefault();
+        const p = pwPlans.find(p => p.id === activePWId);
+        if (!p) return;
+        p['news_' + day].splice(idx, 1);
+        savePWData();
+        renderNewsDayList(container, day, p);
+        const inputs = container.querySelectorAll('.pw-news-entry-input');
+        if (inputs[idx - 1]) inputs[idx - 1].focus();
+      }
+    };
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'pw-news-del-btn';
+    delBtn.title = 'Remove event';
+    delBtn.innerHTML = '✕';
+    delBtn.style.display = items.length > 1 ? 'block' : 'none';
+    delBtn.onclick = () => {
+      const p = pwPlans.find(p => p.id === activePWId);
+      if (!p) return;
+      p['news_' + day].splice(idx, 1);
+      if (!p['news_' + day].length) p['news_' + day].push('');
+      savePWData();
+      renderNewsDayList(container, day, p);
+    };
+
+    row.appendChild(input);
+    row.appendChild(delBtn);
+    listWrap.appendChild(row);
+  });
+
+  // Add event button
+  const addBtn = document.createElement('button');
+  addBtn.className = 'pw-news-add-btn';
+  addBtn.innerHTML = '+ Add event';
+  addBtn.onclick = () => {
+    const p = pwPlans.find(p => p.id === activePWId);
+    if (!p) return;
+    if (!p['news_' + day]) p['news_' + day] = [];
+    p['news_' + day].push('');
+    savePWData();
+    renderNewsDayList(container, day, p);
+    const inputs = container.querySelectorAll('.pw-news-entry-input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  };
+
+  container.appendChild(listWrap);
+  container.appendChild(addBtn);
+}
+
+
+// ── Pre-Week Plan PDF Export ──────────────────────────────────────────────────
+
+function togglePWPdfMenu() {
+  const menu = document.getElementById('pwPdfMenu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  if (menu.style.display === 'block') {
+    setTimeout(() => document.addEventListener('click', closePWPdfMenu), 10);
+  }
+}
+function closePWPdfMenu(e) {
+  const wrap = document.getElementById('pwPdfDropWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const menu = document.getElementById('pwPdfMenu');
+    if (menu) menu.style.display = 'none';
+    document.removeEventListener('click', closePWPdfMenu);
+  }
+}
+
+function exportPWPDF(scope) {
+  // scope: 'current' | 'month' | 'year'
+  const y = parseInt(document.getElementById('yearSel').value);
+  const m = parseInt(document.getElementById('monthSel').value);
+  loadPWData();
+
+  let plansToExport = [];
+  if (scope === 'current') {
+    const plan = pwPlans.find(p => p.id === activePWId);
+    if (plan) plansToExport = [plan];
+  } else if (scope === 'month') {
+    plansToExport = pwPlans.filter(p => {
+      if (!p.dateFrom) return false;
+      const [py, pm] = p.dateFrom.split('-').map(Number);
+      return py === y && pm === m;
+    });
+  } else if (scope === 'year') {
+    plansToExport = pwPlans.filter(p => p.dateFrom && p.dateFrom.startsWith(String(y)));
+  }
+
+  plansToExport.sort((a,b) => (a.dateFrom||'').localeCompare(b.dateFrom||''));
+
+  if (!plansToExport.length) {
+    alert('No week plans found for the selected scope.');
+    return;
+  }
+
+  const biasLabel = { bullish:'📈 Bullish', bearish:'📉 Bearish', ranging:'↕️ Ranging', neutral:'— Neutral / Wait' };
+  const hitLabel  = { yes:'✅ Target Hit', no:'❌ Target Missed', partial:'〰️ Partial' };
+
+  const sections = plansToExport.map(plan => {
+    const wk = plan.dateFrom ? 'W' + getWeekNumber(plan.dateFrom) : '—';
+    const dateRange = [plan.dateFrom, plan.dateTo].filter(Boolean).map(fmtDate).join(' – ');
+
+    const newsRows = ['mon','tue','wed','thu','fri'].map(day => {
+      const dayLabel = day.charAt(0).toUpperCase() + day.slice(1);
+      const events = (plan['news_' + day] || []).filter(e => e.trim());
+      // Backward compat
+      const legacyKey = 'news' + dayLabel;
+      const legacyVal = plan[legacyKey];
+      const allEvents = events.length ? events : (legacyVal ? [legacyVal] : []);
+      if (!allEvents.length) return '';
+      return `<tr><td style="font-weight:700;color:#374151;padding:6px 10px;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f3f4f6">${dayLabel.toUpperCase()}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #f3f4f6">${allEvents.map(e => '<div style=\"margin-bottom:2px\">' + escHtml(e) + '</div>').join('')}</td></tr>`;
+    }).filter(Boolean).join('');
+
+    const daysSection = ['mon','tue','wed','thu','fri'].map((day, i) => {
+      const d = plan.days && plan.days[day];
+      if (!d || (!d.bias && !d.notes)) return '';
+      const dLabel = ['Monday','Tuesday','Wednesday','Thursday','Friday'][i];
+      const bIcon = d.bias === 'bull' ? '▲' : d.bias === 'bear' ? '▼' : d.bias === 'off' ? '✕' : '';
+      const bColor = d.bias === 'bull' ? '#16a34a' : d.bias === 'bear' ? '#dc2626' : '#6b7280';
+      return `<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:${bColor}">${bIcon} ${dLabel}</div>
+        ${d.notes ? '<div style="font-size:12px;color:#374151;margin-top:2px;white-space:pre-wrap">' + escHtml(d.notes) + '</div>' : ''}</div>`;
+    }).filter(Boolean).join('');
+
+    return `<div style="margin-bottom:40px;page-break-inside:avoid">
+      <div style="border-bottom:3px solid #2dd4bf;padding-bottom:10px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between">
+        <div>
+          <div style="font-size:20px;font-weight:800;color:#111827;letter-spacing:-0.5px">${wk} — ${y}</div>
+          <div style="font-size:12px;color:#6b7280;font-family:monospace;margin-top:2px">${dateRange}</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#374151">${biasLabel[plan.bias] || '—'}</div>
+      </div>
+
+      ${(plan.htf || plan.fundamental) ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        ${plan.htf ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">HTF Market Structure</div>
+          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap">${escHtml(plan.htf)}</div></div>` : ''}
+        ${plan.fundamental ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Fundamental Outlook</div>
+          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap">${escHtml(plan.fundamental)}</div></div>` : ''}
+      </div>` : ''}
+
+      ${(plan.weeklyHigh || plan.weeklyLow || plan.target) ? `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
+        ${[['Weekly High',plan.weeklyHigh,'#dc2626'],['Weekly Low',plan.weeklyLow,'#16a34a'],['Weekly Open',plan.weeklyOpen,'#d97706'],['Target',plan.target,'#2dd4bf'],['Invalidation',plan.invalidation,'#6b7280']].filter(r=>r[1]).map(([l,v,c])=>`<div style="background:#f9fafb;border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:#9ca3af;margin-bottom:3px">${l}</div><div style="font-size:14px;font-weight:700;color:${c}">${v}</div></div>`).join('')}
+      </div>` : ''}
+
+      ${newsRows ? `<div style="margin-bottom:16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:8px">High-Impact News</div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px">${newsRows}</table></div>` : ''}
+
+      ${daysSection ? `<div style="margin-bottom:16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:8px">Daily Expectations</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">${daysSection}</div></div>` : ''}
+
+      ${(plan.pairs || plan.rules) ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        ${plan.pairs ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Pairs in Focus</div>
+          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.pairs)}</div></div>` : ''}
+        ${plan.rules ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Rules This Week</div>
+          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.rules)}</div></div>` : ''}
+      </div>` : ''}
+
+      ${(plan.reflection || plan.targetHit) ? `<div style="background:#f0fdfa;border-left:4px solid #2dd4bf;border-radius:0 6px 6px 0;padding:12px 16px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#0d9488;margin-bottom:6px">Post-Week Outcome ${plan.targetHit ? '· ' + (hitLabel[plan.targetHit]||'') : ''}</div>
+        ${plan.actualHigh || plan.actualLow ? `<div style="font-size:11px;color:#374151;margin-bottom:6px;font-family:monospace">Actual High: ${plan.actualHigh||'—'} &nbsp; Low: ${plan.actualLow||'—'} &nbsp; Range: ${plan.actualHigh&&plan.actualLow?Math.round((plan.actualHigh-plan.actualLow)*10000)+'pips':'—'}</div>` : ''}
+        ${plan.reflection ? `<div style="font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.reflection)}</div>` : ''}
+      </div>` : ''}
+    </div>`;
+  });
+
+  const scopeLabel = scope === 'current' ? 'Week Plan' : scope === 'month' ? MONTHS[m-1] + ' ' + y : 'Full Year ' + y;
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Pre-Week Planner — ${scopeLabel}</title>
+    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;color:#111827;background:#fff;padding:40px;font-size:14px;line-height:1.6}
+    .pdf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid #e5e7eb}
+    @media print{body{padding:20px}}</style>
+  </head><body>
+    <div class="pdf-header">
+      <div style="font-size:18px;font-weight:800;color:#2dd4bf">📅 Pre-Week Planner</div>
+      <div style="text-align:right;font-size:11px;color:#6b7280;font-family:monospace">
+        <div style="font-weight:600;color:#374151;font-size:13px">${scopeLabel}</div>
+        <div>Exported ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
+      </div>
+    </div>
+    ${sections.join('')}
+  </body></html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => setTimeout(() => win.print(), 300);
+}
+
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 function showBackupMsg(msg, color) {
   const el=document.getElementById('backup-msg'); el.textContent=msg; el.style.color=color||'var(--green)';
@@ -4119,30 +4433,83 @@ function fmtDate(str) {
   } catch(e) { return str; }
 }
 
+// Generate all 52 Mondays for a given year
+function getAllWeeksOfYear(year) {
+  const weeks = [];
+  // Find first Monday of the year
+  const jan1 = new Date(year, 0, 1);
+  const dayOfWeek = jan1.getDay(); // 0=Sun, 1=Mon ...
+  const daysToMon = dayOfWeek === 0 ? 1 : dayOfWeek === 1 ? 0 : 8 - dayOfWeek;
+  let monday = new Date(year, 0, 1 + daysToMon);
+  // If Jan 1 is Mon, start there
+  if (dayOfWeek === 1) monday = new Date(year, 0, 1);
+  while (monday.getFullYear() === year || (monday.getFullYear() === year - 1 && getWeekNumber(monday.toISOString().slice(0,10)) === 1)) {
+    const monStr = monday.toISOString().slice(0,10);
+    const fri = new Date(monday); fri.setDate(monday.getDate() + 4);
+    const friStr = fri.toISOString().slice(0,10);
+    weeks.push({ monday: monStr, friday: friStr, wkNum: getWeekNumber(monStr) });
+    monday = new Date(monday); monday.setDate(monday.getDate() + 7);
+    if (weeks.length >= 53) break;
+  }
+  return weeks;
+}
+
 function renderPWList() {
   loadPWData();
-  document.getElementById('pw-count').textContent = pwPlans.length;
+  const y = parseInt(document.getElementById('yearSel').value) || new Date().getFullYear();
   const container = document.getElementById('pwListItems');
-  if (!pwPlans.length) {
-    container.innerHTML = '<div style="text-align:center;padding:30px 12px;color:var(--text3);font-size:12px;line-height:1.8">No plans yet.<br>Click below to plan<br>your first week.</div>';
-    return;
-  }
-  const sorted = [...pwPlans].sort((a,b) => (b.dateFrom||'').localeCompare(a.dateFrom||''));
   container.innerHTML = '';
-  sorted.forEach(plan => {
+
+  const allWeeks = getAllWeeksOfYear(y);
+  document.getElementById('pw-count').textContent = pwPlans.filter(p => p.year == y).length + '/' + allWeeks.length;
+
+  allWeeks.forEach(wk => {
+    // Find existing plan for this week
+    const plan = pwPlans.find(p => p.dateFrom === wk.monday && String(p.year) === String(y));
+    const isActive = plan && plan.id === activePWId;
+
     const el = document.createElement('div');
-    const isActive = plan.id === activePWId;
-    el.className = 'pw-list-item' + (isActive ? ' active' : '');
-    const biasColor = plan.bias === 'bullish' ? 'var(--green)' : plan.bias === 'bearish' ? 'var(--red)' : plan.bias === 'ranging' ? 'var(--amber)' : 'var(--text3)';
-    const biasIcon = plan.bias === 'bullish' ? '📈' : plan.bias === 'bearish' ? '📉' : plan.bias === 'ranging' ? '↕️' : '—';
-    const wk = plan.dateFrom ? 'W' + getWeekNumber(plan.dateFrom) : 'New Week';
-    const dateRange = (plan.dateFrom && plan.dateTo) ? fmtDate(plan.dateFrom) + ' – ' + fmtDate(plan.dateTo) : plan.dateFrom ? fmtDate(plan.dateFrom) : '';
-    el.innerHTML = `<div class="pw-list-item-week">${wk} ${plan.year || ''}</div>
-      <div class="pw-list-item-range">${dateRange || 'No dates set'}</div>
-      <div class="pw-list-item-meta" style="color:${biasColor}">${biasIcon} ${plan.bias || 'no bias set'}</div>`;
-    el.addEventListener('click', () => openPWPlan(plan.id));
+    el.className = 'pw-list-item' + (isActive ? ' active' : '') + (plan ? '' : ' pw-list-empty-week');
+
+    const biasColor = !plan ? 'var(--text3)' :
+      plan.bias === 'bullish' ? 'var(--green)' : plan.bias === 'bearish' ? 'var(--red)' :
+      plan.bias === 'ranging' ? 'var(--amber)' : 'var(--text3)';
+    const biasIcon = !plan ? '' :
+      plan.bias === 'bullish' ? '📈' : plan.bias === 'bearish' ? '📉' :
+      plan.bias === 'ranging' ? '↕️' : plan.bias === 'neutral' ? '—' : '';
+    const hitIcon = plan && plan.targetHit === 'yes' ? ' ✅' : plan && plan.targetHit === 'no' ? ' ❌' : plan && plan.targetHit === 'partial' ? ' 〰️' : '';
+
+    el.innerHTML = `<div class="pw-list-item-week">W${wk.wkNum} <span style="color:var(--text3);font-weight:400;font-size:10px">${y}</span></div>
+      <div class="pw-list-item-range">${fmtDate(wk.monday)} – ${fmtDate(wk.friday)}</div>
+      <div class="pw-list-item-meta" style="color:${biasColor}">${biasIcon}${plan ? ' ' + (plan.bias || 'no bias') : '<span style="color:var(--text3);font-size:10px">+ click to plan</span>'}${hitIcon}</div>`;
+
+    el.addEventListener('click', () => {
+      if (plan) {
+        openPWPlan(plan.id);
+      } else {
+        // Create new plan for this week
+        createWeekPlanFor(wk.monday, wk.friday, y);
+      }
+    });
     container.appendChild(el);
   });
+}
+
+function createWeekPlanFor(monday, friday, year) {
+  const id = 'pw_' + Date.now();
+  const plan = {
+    id, dateFrom: monday, dateTo: friday, year: String(year),
+    bias: '', htf: '', fundamental: '', weeklyHigh: '', weeklyLow: '',
+    weeklyOpen: '', target: '', invalidation: '', resistance: '', support: '',
+    pairs: '', rules: '', reflection: '', targetHit: '',
+    newsMon: [], newsTue: [], newsWed: [], newsThu: [], newsFri: [],
+    actualHigh: '', actualLow: '',
+    days: { mon:{bias:'',notes:''}, tue:{bias:'',notes:''}, wed:{bias:'',notes:''}, thu:{bias:'',notes:''}, fri:{bias:'',notes:''} }
+  };
+  pwPlans.push(plan);
+  savePWData();
+  renderPWList();
+  openPWPlan(id);
 }
 
 function addWeekPlan() {
@@ -4157,7 +4524,7 @@ function addWeekPlan() {
     bias: '', htf: '', fundamental: '', weeklyHigh: '', weeklyLow: '',
     weeklyOpen: '', target: '', invalidation: '', resistance: '', support: '',
     pairs: '', rules: '', reflection: '', targetHit: '',
-    newsMon: '', newsTue: '', newsWed: '', newsThu: '', newsFri: '',
+    news_mon: [], news_tue: [], news_wed: [], news_thu: [], news_fri: [],
     actualHigh: '', actualLow: '',
     days: { mon:{bias:'',notes:''}, tue:{bias:'',notes:''}, wed:{bias:'',notes:''}, thu:{bias:'',notes:''}, fri:{bias:'',notes:''} }
   };
@@ -4197,16 +4564,14 @@ function openPWPlan(id) {
   document.getElementById('pw-reflection').value = plan.reflection || '';
   document.getElementById('pw-actual-high').value = plan.actualHigh || '';
   document.getElementById('pw-actual-low').value = plan.actualLow || '';
-  document.getElementById('pw-news-mon').value = plan.newsMon || '';
-  document.getElementById('pw-news-tue').value = plan.newsTue || '';
-  document.getElementById('pw-news-wed').value = plan.newsWed || '';
-  document.getElementById('pw-news-thu').value = plan.newsThu || '';
-  document.getElementById('pw-news-fri').value = plan.newsFri || '';
+  // Render multi-item news lists
+  renderNewsLists(plan);
 
-  // Bias buttons
-  document.querySelectorAll('.pw-bias-btn[data-bias]').forEach(b => {
+  // Bias buttons — wire clicks and set active state
+  document.querySelectorAll('#pw-bias-pills .pw-bias-btn[data-bias]').forEach(b => {
     b.className = 'pw-bias-btn';
     if (b.dataset.bias === plan.bias) b.classList.add('selected-' + plan.bias);
+    b.onclick = () => selectPWBias(b.dataset.bias);
   });
 
   // Target hit buttons
@@ -4289,7 +4654,7 @@ function selectPWBias(bias) {
   const plan = pwPlans.find(p => p.id === activePWId);
   if (!plan) return;
   plan.bias = plan.bias === bias ? '' : bias;
-  document.querySelectorAll('.pw-bias-btn[data-bias]').forEach(b => {
+  document.querySelectorAll('#pw-bias-pills .pw-bias-btn[data-bias]').forEach(b => {
     b.className = 'pw-bias-btn';
     if (b.dataset.bias === plan.bias) b.classList.add('selected-' + plan.bias);
   });
@@ -4332,11 +4697,7 @@ function savePW() {
   plan.reflection = document.getElementById('pw-reflection').value;
   plan.actualHigh = document.getElementById('pw-actual-high').value;
   plan.actualLow = document.getElementById('pw-actual-low').value;
-  plan.newsMon = document.getElementById('pw-news-mon').value;
-  plan.newsTue = document.getElementById('pw-news-tue').value;
-  plan.newsWed = document.getElementById('pw-news-wed').value;
-  plan.newsThu = document.getElementById('pw-news-thu').value;
-  plan.newsFri = document.getElementById('pw-news-fri').value;
+  // News lists are saved directly in renderNewsDayList event handlers
   savePWData();
   calcExpectedRange();
   calcActualRange();
@@ -4426,10 +4787,7 @@ function renderPreweekPage() {
   const y = document.getElementById('yearSel').value;
   document.getElementById('pw-period-sub').textContent = MONTHS[m-1] + ' ' + y + ' · weekly market preparation';
 
-  // Wire bias buttons (they exist in HTML so need event listeners)
-  document.querySelectorAll('.pw-bias-btn[data-bias]').forEach(btn => {
-    btn.onclick = () => selectPWBias(btn.dataset.bias);
-  });
+  // Bias buttons are wired in openPWPlan — no need to wire here
 }
 
 
