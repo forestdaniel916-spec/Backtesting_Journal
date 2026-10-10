@@ -887,9 +887,15 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
 <div id="page-journal" class="page">
   <div class="page-header">
     <div><div class="page-title">Trade Journal</div><div class="page-sub" id="j-period-sub">February 2019</div></div>
-    <button class="btn btn-primary" onclick="addTrade()">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>Add Trade
-    </button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost" onclick="openOCRModal()" title="Import trade from screenshot" style="display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" d="M21 15l-5-5L5 21"/></svg>
+        Import Screenshot
+      </button>
+      <button class="btn btn-primary" onclick="addTrade()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>Add Trade
+      </button>
+    </div>
   </div>
   <div class="toolbar"><span class="toolbar-info" id="j-count">0 trades</span></div>
   <div id="empty-journal" class="empty-state"><span class="empty-icon">📋</span>No trades yet. Click "Add Trade" to begin.</div>
@@ -4818,5 +4824,391 @@ function renderPreweekPage() {
     </div>
   </div>
 </div>
+
+<!-- ── OCR IMPORT MODAL ── -->
+<div id="ocr-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:min(680px,95vw);max-height:90vh;overflow-y:auto;padding:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:16px;font-weight:600;color:var(--text);">📷 Import Trade from Screenshot</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Paste or upload a screenshot from your broker — fields will auto-fill</div>
+      </div>
+      <button onclick="closeOCRModal()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;line-height:1;">✕</button>
+    </div>
+
+    <!-- Drop zone -->
+    <div id="ocr-dropzone" style="border:2px dashed var(--border2);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:16px;position:relative;"
+         onclick="document.getElementById('ocr-file-input').click()"
+         ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+         ondragleave="this.style.borderColor='var(--border2)'"
+         ondrop="handleOCRDrop(event)">
+      <div id="ocr-preview-wrap" style="display:none;margin-bottom:12px;">
+        <img id="ocr-preview-img" style="max-width:100%;max-height:220px;border-radius:8px;object-fit:contain;" />
+      </div>
+      <svg width="32" height="32" fill="none" stroke="var(--text3)" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" d="M21 15l-5-5L5 21"/></svg>
+      <div style="color:var(--text2);font-size:13px;">Click to upload or drag & drop</div>
+      <div style="color:var(--text3);font-size:11px;margin-top:4px;">Or press <kbd style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:10px;">Ctrl+V</kbd> to paste from clipboard</div>
+      <input type="file" id="ocr-file-input" accept="image/*" style="display:none" onchange="handleOCRFile(this.files[0])">
+    </div>
+
+    <!-- OCR status -->
+    <div id="ocr-status" style="display:none;font-size:12px;color:var(--text2);margin-bottom:12px;padding:10px 14px;background:var(--bg3);border-radius:8px;"></div>
+
+    <!-- Parsed fields preview -->
+    <div id="ocr-fields" style="display:none;">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;">Detected Fields — review before importing</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="ocr-field-grid"></div>
+
+      <!-- Raw OCR text toggle -->
+      <details style="margin-top:14px;">
+        <summary style="font-size:11px;color:var(--text3);cursor:pointer;">Show raw OCR text</summary>
+        <pre id="ocr-raw-text" style="font-size:10px;color:var(--text3);background:var(--bg3);padding:10px;border-radius:6px;margin-top:6px;white-space:pre-wrap;max-height:140px;overflow-y:auto;"></pre>
+      </details>
+
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeOCRModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="applyOCRTrade()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 13l4 4L19 7"/></svg>
+          Add to Journal
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js"></script>
+<script>
+/* ── OCR IMPORT FEATURE ── */
+let ocrParsed = {};
+
+function openOCRModal() {
+  const m = document.getElementById('ocr-modal');
+  m.style.display = 'flex';
+  document.addEventListener('paste', handleOCRPaste);
+  // reset state
+  ocrParsed = {};
+  document.getElementById('ocr-status').style.display = 'none';
+  document.getElementById('ocr-fields').style.display = 'none';
+  document.getElementById('ocr-preview-wrap').style.display = 'none';
+  document.getElementById('ocr-dropzone').style.borderColor = 'var(--border2)';
+}
+
+function closeOCRModal() {
+  document.getElementById('ocr-modal').style.display = 'none';
+  document.removeEventListener('paste', handleOCRPaste);
+}
+
+function handleOCRPaste(e) {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      e.preventDefault();
+      handleOCRFile(item.getAsFile());
+      return;
+    }
+  }
+}
+
+function handleOCRDrop(e) {
+  e.preventDefault();
+  e.currentTarget.style.borderColor = 'var(--border2)';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleOCRFile(file);
+}
+
+function handleOCRFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const dataUrl = ev.target.result;
+    // show preview
+    const img = document.getElementById('ocr-preview-img');
+    img.src = dataUrl;
+    document.getElementById('ocr-preview-wrap').style.display = 'block';
+    runOCR(dataUrl);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runOCR(imageData) {
+  const status = document.getElementById('ocr-status');
+  status.style.display = 'block';
+  status.innerHTML = '⏳ Running OCR… this takes ~10–20 seconds';
+  document.getElementById('ocr-fields').style.display = 'none';
+
+  try {
+    const result = await Tesseract.recognize(imageData, 'eng', {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          status.innerHTML = `⏳ Reading text… ${Math.round(m.progress * 100)}%`;
+        }
+      }
+    });
+    const text = result.data.text;
+    document.getElementById('ocr-raw-text').textContent = text;
+    ocrParsed = parseTradeText(text);
+    renderOCRFields(ocrParsed);
+    status.innerHTML = '✅ Text extracted — review the fields below';
+  } catch(err) {
+    status.innerHTML = '❌ OCR failed: ' + err.message;
+  }
+}
+
+function parseTradeText(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const all = text;
+  const parsed = {};
+
+  // Helper: find a value after a label
+  function extract(patterns, transform) {
+    for (const pat of patterns) {
+      const m = all.match(pat);
+      if (m && m[1]) {
+        const val = m[1].trim().replace(/,/g, '');
+        return transform ? transform(val) : val;
+      }
+    }
+    return '';
+  }
+
+  // ── Symbol / Asset ──
+  parsed.symbol = extract([
+    /Asset[:\s]+([A-Z]{3,10}(?:[:/][A-Z]{3,6})?)/i,
+    /Symbol[:\s]+([A-Z]{3,10}(?:[:/][A-Z]{3,6})?)/i,
+    /Instrument[:\s]+([A-Z]{3,10}(?:[:/][A-Z]{3,6})?)/i,
+    /([A-Z]{2,4}[:\/][A-Z]{2,4})/,  // e.g. EUR/USD, XAU/USD
+    /(EURUSD|GBPUSD|USDJPY|XAUUSD|AUDUSD|NZDUSD|USDCAD|USDCHF|GBPJPY)/i
+  ], v => {
+    // normalize: OANDA:XAUUSD → XAUUSD, EUR/USD → EURUSD
+    return v.replace(/^[A-Z]+:/,'').replace('/','');
+  });
+
+  // ── Direction / Side ──
+  const dirText = extract([
+    /Side[:\s]+(Long|Short|Buy|Sell)/i,
+    /Direction[:\s]+(Long|Short|Buy|Sell)/i,
+    /Type[:\s]+(Long|Short|Buy|Sell)/i,
+  ]);
+  if (/long|buy/i.test(dirText)) parsed.direction = 'Long';
+  else if (/short|sell/i.test(dirText)) parsed.direction = 'Short';
+  else {
+    // fallback: look for standalone Buy/Sell/Long/Short
+    if (/\bLong\b/i.test(all)) parsed.direction = 'Long';
+    else if (/\bShort\b/i.test(all)) parsed.direction = 'Short';
+    else if (/\bBuy\b/i.test(all)) parsed.direction = 'Long';
+    else if (/\bSell\b/i.test(all)) parsed.direction = 'Short';
+  }
+
+  // ── Entry Price ──
+  parsed.entry = extract([
+    /Entry\s+(?:price)?[:\s]+([\d.]+)/i,
+    /Open(?:ed)?(?:\s+at)?[:\s]+([\d.]+)/i,
+    /Fill(?:ed)?(?:\s+at)?[:\s]+([\d.]+)/i,
+  ]);
+
+  // ── Exit Price ──
+  parsed.exit = extract([
+    /Exit\s+(?:price)?[:\s]+([\d.]+)/i,
+    /Close(?:d)?(?:\s+at)?[:\s]+([\d.]+)/i,
+    /Exit\s+price[:\s]+([\d.]+)/i,
+  ]);
+
+  // ── Stop Loss ──
+  parsed.sl = extract([
+    /Stop\s*[Ll]oss[:\s]+([\d.]+)/i,
+    /SL[:\s]+([\d.]+)/i,
+    /Stop[:\s]+([\d.]+)/i,
+  ]);
+
+  // ── Take Profit ──
+  parsed.tp = extract([
+    /Take\s*[Pp]rofit[:\s]+([\d.]+)/i,
+    /TP[:\s]+([\d.]+)/i,
+    /Target[:\s]+([\d.]+)/i,
+  ]);
+
+  // ── Size / Lots ──
+  parsed.size = extract([
+    /(?:Total\s+)?[Ss]ize[:\s]+([\d.]+)/i,
+    /[Ll]ots?[:\s]+([\d.]+)/i,
+    /[Qq]uantity[:\s]+([\d.]+)/i,
+    /[Vv]olume[:\s]+([\d.]+)/i,
+    /Units[:\s]+([\d.]+)/i,
+  ]);
+
+  // ── PnL ──
+  parsed.pnl = extract([
+    /(?:Gross\s+)?P[\/&]?L[:\s]+([+-]?[\d.]+)/i,
+    /Profit[:\s]+([+-]?[\d.]+)/i,
+    /(?:Net\s+)?P(?:rofit)?(?:\s*&\s*L(?:oss)?)?[:\s]+([+-]?[\d.]+)/i,
+    /Realized[:\s]+([+-]?[\d.]+)/i,
+  ]);
+  // If negative context around pnl
+  if (parsed.pnl && /Loss/.test(all) && !parsed.pnl.startsWith('-')) {
+    // keep as-is, let user decide
+  }
+
+  // ── Commission ──
+  parsed.commission = extract([
+    /Commission[:\s]+([+-]?[\d.]+)/i,
+    /Fee[:\s]+([+-]?[\d.]+)/i,
+    /Swap[:\s]+([+-]?[\d.]+)/i,
+  ]);
+
+  // ── Entry Date / Time ──
+  // Try to find date patterns: MM/DD/YY, YYYY-MM-DD, DD Mon YYYY etc.
+  const datePatterns = [
+    /Entry\s+date[:\s]+([\d\/\-]+(?:\s*,?\s*[\d:]+(?:\s*[AP]M)?)?)/i,
+    /Open(?:ed)?(?:\s+date)?[:\s]+([\d\/\-]+(?:\s*,?\s*[\d:]+(?:\s*[AP]M)?)?)/i,
+    /(\d{1,2}\/\d{1,2}\/\d{2,4})[,\s]+([\d:]+(?:\s*[AP]M)?)/i,
+    /(\d{4}-\d{2}-\d{2})[T\s]([\d:]+)/,
+  ];
+
+  for (const pat of datePatterns) {
+    const m = all.match(pat);
+    if (m) {
+      // Try to parse the date
+      const raw = m[1] + (m[2] ? ' ' + m[2] : '');
+      const d = new Date(raw);
+      if (!isNaN(d)) {
+        parsed.date = d.toISOString().split('T')[0];
+        parsed.timeIn = d.toTimeString().substring(0,5);
+        break;
+      }
+    }
+  }
+
+  // ── Exit Date / Time ──
+  const exitDatePatterns = [
+    /Exit\s+date[:\s]+([\d\/\-]+(?:\s*,?\s*[\d:]+(?:\s*[AP]M)?)?)/i,
+    /Close(?:d)?(?:\s+date)?[:\s]+([\d\/\-]+(?:\s*,?\s*[\d:]+(?:\s*[AP]M)?)?)/i,
+  ];
+  for (const pat of exitDatePatterns) {
+    const m = all.match(pat);
+    if (m) {
+      const raw = m[1];
+      const d = new Date(raw);
+      if (!isNaN(d)) {
+        parsed.timeOut = d.toTimeString().substring(0,5);
+        break;
+      }
+    }
+  }
+
+  return parsed;
+}
+
+function renderOCRFields(p) {
+  const grid = document.getElementById('ocr-field-grid');
+  const fields = [
+    { key: 'symbol',    label: 'Symbol',      type: 'text' },
+    { key: 'direction', label: 'Direction',   type: 'select', opts: ['Long','Short'] },
+    { key: 'date',      label: 'Date',        type: 'date' },
+    { key: 'timeIn',    label: 'Time In',     type: 'time' },
+    { key: 'timeOut',   label: 'Time Out',    type: 'time' },
+    { key: 'entry',     label: 'Entry Price', type: 'number' },
+    { key: 'exit',      label: 'Exit Price',  type: 'number' },
+    { key: 'sl',        label: 'Stop Loss',   type: 'number' },
+    { key: 'tp',        label: 'Take Profit', type: 'number' },
+    { key: 'size',      label: 'Size / Lots', type: 'number' },
+    { key: 'pnl',       label: 'Gross P&L',  type: 'number' },
+    { key: 'commission',label: 'Commission',  type: 'number' },
+  ];
+
+  grid.innerHTML = fields.map(f => {
+    const val = p[f.key] || '';
+    const highlight = val ? 'border-color:var(--accent,#4f8ef7);' : '';
+    if (f.type === 'select') {
+      const opts = f.opts.map(o => `<option${o===val?' selected':''}>${o}</option>`).join('');
+      return `<label style="display:flex;flex-direction:column;gap:4px;">
+        <span style="font-size:11px;color:var(--text2);">${f.label}${val?' ✓':''}</span>
+        <select id="ocrf-${f.key}" style="background:var(--bg3);border:1px solid var(--border2);${highlight}color:var(--text);padding:7px 10px;border-radius:7px;font-size:13px;">${opts}</select>
+      </label>`;
+    }
+    return `<label style="display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:11px;color:var(--text2);">${f.label}${val?' ✓':''}</span>
+      <input type="${f.type}" id="ocrf-${f.key}" value="${val}" style="background:var(--bg3);border:1px solid var(--border2);${highlight}color:var(--text);padding:7px 10px;border-radius:7px;font-size:13px;width:100%;">
+    </label>`;
+  }).join('');
+
+  document.getElementById('ocr-fields').style.display = 'block';
+}
+
+function applyOCRTrade() {
+  const m = document.getElementById('monthSel').value.padStart(2,'0');
+  const y = document.getElementById('yearSel').value;
+
+  // Read values from the editable OCR fields (user may have corrected them)
+  function fv(key) {
+    const el = document.getElementById('ocrf-' + key);
+    return el ? el.value.trim() : '';
+  }
+
+  const date = fv('date') || `${y}-${m}-01`;
+  const pnl = parseFloat(fv('pnl')) || 0;
+  const commission = parseFloat(fv('commission')) || 0;
+  const entry = parseFloat(fv('entry')) || 0;
+  const exit_ = parseFloat(fv('exit')) || 0;
+  const sl = parseFloat(fv('sl')) || 0;
+  const tp = parseFloat(fv('tp')) || 0;
+
+  // Auto-compute R:R
+  let rr = '';
+  if (entry && exit_ && sl) {
+    const risk = Math.abs(entry - sl);
+    const reward = Math.abs(exit_ - entry);
+    if (risk > 0) rr = (reward / risk).toFixed(2);
+  }
+
+  // Auto-detect outcome from pnl
+  let outcome = '—';
+  if (pnl > 0) outcome = 'Win';
+  else if (pnl < 0) outcome = 'Loss';
+
+  const trade = {
+    id: Date.now(),
+    date,
+    timeIn:      fv('timeIn'),
+    timeOut:     fv('timeOut'),
+    symbol:      fv('symbol').toUpperCase(),
+    direction:   fv('direction') || 'Long',
+    session:     '—',          // manual
+    entry:       fv('entry'),
+    exit:        fv('exit'),
+    sl:          fv('sl'),
+    tp:          fv('tp'),
+    size:        fv('size'),
+    pnl:         fv('pnl'),
+    commission:  fv('commission'),
+    setup:       '—',
+    outcome,
+    rr,
+    account:     getActiveAccount(),
+    notes:       '',
+  };
+
+  trades.push(trade);
+  saveData();
+  renderJournal();
+  closeOCRModal();
+
+  // Scroll to the new trade row
+  setTimeout(() => {
+    const rows = document.querySelectorAll('#journal-body tr');
+    if (rows.length) rows[rows.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 200);
+
+  // Flash success
+  const status = document.getElementById('ocr-status');
+  status.style.display = 'block';
+  status.innerHTML = '✅ Trade added! Set Session, Rules, and Account in the journal row.';
+}
+
+// Close modal on backdrop click
+document.getElementById('ocr-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeOCRModal();
+});
+</script>
 </body>
 </html>
