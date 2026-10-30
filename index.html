@@ -696,7 +696,7 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
   </div>
   <!-- Account selector -->
   <div class="account-selector" id="accountSelectorWrap">
-    <label>Account</label>
+    <label title="Accounts persist across all months — use this to filter the view">Account <span style="color:var(--text3);font-size:9px;font-weight:400">filter</span></label>
     <div class="account-row">
       <select id="accountSel" onchange="updateAccount()"></select>
       <button class="add-account-btn" onclick="openAccountModal()" title="Manage accounts">⚙</button>
@@ -2312,11 +2312,12 @@ function renderJournal() {
   const body = document.getElementById('tradeBody');
   const empty = document.getElementById('empty-journal');
   const wrap = document.getElementById('table-wrap');
-  document.getElementById('j-count').textContent = trades.length + ' trade'+(trades.length!==1?'s':'');
-  if (!trades.length) { body.innerHTML=''; empty.style.display='block'; wrap.style.display='none'; return; }
+  const ft = getFilteredTrades();
+  document.getElementById('j-count').textContent = ft.length + ' trade'+(ft.length!==1?'s':'');
+  if (!ft.length) { body.innerHTML=''; empty.style.display='block'; wrap.style.display='none'; return; }
   empty.style.display='none'; wrap.style.display='block';
 
-  body.innerHTML = trades.map((t, i) => {
+  body.innerHTML = ft.map((t, i) => {
     const pnl = parseFloat(t.pnl);
     const pnlColor = pnl>0?'var(--green)':pnl<0?'var(--red)':'var(--text)';
     const rr = calcRR(t);
@@ -2412,14 +2413,15 @@ document.addEventListener('click', e => {
 
 // ─── METRICS ─────────────────────────────────────────────────────────────────
 function getMetrics() {
-  const pnls = trades.map(t=>parseFloat(t.pnl)||0);
+  const ft = getFilteredTrades();
+  const pnls = ft.map(t=>parseFloat(t.pnl)||0);
   const total = pnls.reduce((a,b)=>a+b,0);
-  const wins = trades.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').length;
-  const losses = trades.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').length;
+  const wins = ft.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').length;
+  const losses = ft.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss').length;
   const closed = wins+losses;
   const wr = closed>0?wins/closed*100:null;
   const starting = parseFloat(document.getElementById('startingBalance').value)||10000;
-  return { total, wins, losses, closed, wr, pnls, avg:trades.length?total/trades.length:null, starting, balance:starting+total };
+  return { total, wins, losses, closed, wr, pnls, avg:ft.length?total/ft.length:null, starting, balance:starting+total };
 }
 
 function renderMetrics() {
@@ -2470,6 +2472,7 @@ function getChartColors() {
 
 function renderCharts() {
   const m = getMetrics(); const c = getChartColors();
+  const trades = getFilteredTrades();
   const byDay={};
   trades.forEach(t=>{ if(t.date) byDay[t.date]=(byDay[t.date]||0)+netPnl(t); });
   const days=Object.keys(byDay).sort(), dayPnls=days.map(d=>parseFloat(byDay[d].toFixed(2)));
@@ -2496,6 +2499,7 @@ function renderCalendar() {
   const m=parseInt(document.getElementById('monthSel').value), y=parseInt(document.getElementById('yearSel').value);
   const lastDay=new Date(y,m,0).getDate(); let dow=new Date(y,m-1,1).getDay(); dow=dow===0?6:dow-1;
   const dayMap={};
+  const trades=getFilteredTrades();
   trades.forEach(t=>{
     if(!t.date) return; const [ty,tm,td]=t.date.split('-').map(Number);
     if(ty===y&&tm===m){if(!dayMap[td])dayMap[td]={count:0,pnl:0};dayMap[td].count++;dayMap[td].pnl+=netPnl(t);}
@@ -2519,6 +2523,7 @@ function fmtMins(m){if(m===null||isNaN(m))return'—';return m<60?m+'m':Math.flo
 
 function renderAnalytics() {
   const c=getChartColors();
+  const trades=getFilteredTrades();
   const holdTrades=trades.filter(t=>parseHoldMins(t)!==null), holdMins=holdTrades.map(t=>parseHoldMins(t));
   document.getElementById('a-avg-hold').textContent=holdMins.length?fmtMins(Math.round(holdMins.reduce((a,b)=>a+b,0)/holdMins.length)):'—';
   document.getElementById('a-max-hold').textContent=holdMins.length?fmtMins(Math.max(...holdMins)):'—';
@@ -2623,7 +2628,7 @@ function deleteNoteData(id) { localStorage.removeItem(noteDataKey(id)); }
 function renderStudy() {
   const index = getNoteIndex();   // standalone notes created in Study
   // Also pull from journal trades for quick linking
-  const tradeItems = trades.map(t => ({
+  const tradeItems = getFilteredTrades().map(t => ({
     id: 'trade_' + t.id,
     title: ((t.symbol || 'Trade').toUpperCase()) + ' ' + (t.direction || ''),
     date: t.date || '',
@@ -3028,21 +3033,61 @@ function applyMode(mode) {
 }
 
 function getKey() {
-  const acct = getActiveAccount();
   const mode = getMode();
   const prefix = mode === 'live' ? 'live' : 'btj';
-  // Each mode has its own trade data namespace — live and backtest never share keys
-  const acctPart = (acct && acct !== 'all') ? '-' + acct : '';
   const y = document.getElementById('yearSel') ? document.getElementById('yearSel').value : '2019';
   const m = document.getElementById('monthSel') ? document.getElementById('monthSel').value : '1';
-  return prefix + acctPart + '-' + y + '-' + m;
+  // Account ID is NOT part of the storage key — all trades for a month
+  // live in one key, filtered by account at render time.
+  return prefix + '-' + y + '-' + m;
 }
 
-// Filter trades by active account
+// One-time migration: merge old per-account keyed data into unified month keys.
+// Old format: btj-bt_acc_123-2019-1  →  new format: btj-2019-1
+function migrateAccountKeys() {
+  const migratedFlag = 'btj_migration_v2_done';
+  if (localStorage.getItem(migratedFlag)) return;
+  const keysToRemove = [];
+  const mergeMap = {};  // newKey → merged trades array
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    // Match old pattern: (btj|live)-<accountId>-<year>-<month>
+    const m = k.match(/^(btj|live)-(.+)-(\d{4})-(\d{1,2})$/);
+    if (!m) continue;
+    const prefix = m[1], acctId = m[2], year = m[3], month = m[4];
+    // Skip if acctId looks like a year (plain month key btj-2019-1 won't match but guard anyway)
+    if (/^\d{4}$/.test(acctId)) continue;
+    const newKey = prefix + '-' + year + '-' + month;
+    try {
+      const arr = JSON.parse(localStorage.getItem(k) || '[]');
+      if (!Array.isArray(arr)) continue;
+      if (!mergeMap[newKey]) {
+        // Load any existing trades in the new key
+        try { mergeMap[newKey] = JSON.parse(localStorage.getItem(newKey) || '[]'); } catch(e) { mergeMap[newKey] = []; }
+      }
+      // Merge, avoiding duplicates by id
+      const existingIds = new Set(mergeMap[newKey].map(t => t.id));
+      arr.forEach(t => { if (!existingIds.has(t.id)) { mergeMap[newKey].push(t); existingIds.add(t.id); } });
+      keysToRemove.push(k);
+    } catch(e) {}
+  }
+
+  // Write merged data and remove old keys
+  Object.entries(mergeMap).forEach(([k, arr]) => {
+    localStorage.setItem(k, JSON.stringify(arr));
+  });
+  keysToRemove.forEach(k => localStorage.removeItem(k));
+  localStorage.setItem(migratedFlag, '1');
+}
+
+// Filter trades by active account.
+// 'trades' always holds ALL trades for the current month (no account in the key).
+// We filter at display time only.
 function getFilteredTrades() {
   const acct = getActiveAccount();
   if (acct === 'all') return trades;
-  return trades.filter(t => !t.account || t.account === acct || t.account === 'all');
+  return trades.filter(t => t.account === acct);
 }
 
 // Account modal
@@ -3700,6 +3745,7 @@ function refreshAll() { renderAll(); }
 // ─── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   openDB().then(() => {
+    migrateAccountKeys();   // one-time: merge old per-account month keys → unified month keys
     initAccounts();
     loadTheme();
     updatePeriod();
