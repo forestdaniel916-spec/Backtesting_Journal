@@ -756,7 +756,8 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
       <span style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3)">Data backup</span>
       <div style="display:flex;gap:6px">
         <button onclick="exportJSON()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">↓ JSON</button>
-        <button onclick="exportCSV()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">↓ CSV</button>
+        <button onclick="exportCSV(false)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'" title="Export this month only">↓ CSV</button>
+        <button onclick="exportCSV(true)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--teal);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer;" title="Export all months / all accounts">↓ All CSV</button>
         <button onclick="document.getElementById('importFile').click()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">↑ Import</button>
       </div>
       <div id="backup-msg" style="font-size:10px;color:var(--green);min-height:14px;text-align:center"></div>
@@ -897,7 +898,10 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
       </button>
     </div>
   </div>
-  <div class="toolbar"><span class="toolbar-info" id="j-count">0 trades</span></div>
+  <div class="toolbar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <span class="toolbar-info" id="j-count">0 trades</span>
+    <button id="j-show-all-btn" onclick="toggleJournalShowAll()" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:var(--font-mono);transition:all 0.15s;" title="Toggle between current month and all months">Show All Months</button>
+  </div>
   <div id="empty-journal" class="empty-state"><span class="empty-icon">📋</span>No trades yet. Click "Add Trade" to begin.</div>
   <div class="table-wrap" id="table-wrap" style="display:none">
     <table>
@@ -1482,14 +1486,7 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
       <div class="page-sub" id="pw-period-sub">Plan your week before the market opens</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <div style="position:relative" id="pwPdfDropWrap">
-        <button class="btn btn-ghost" onclick="togglePWPdfMenu()" id="pwPdfBtn">↓ Export PDF ▾</button>
-        <div id="pwPdfMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);min-width:180px;z-index:100;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.3)">
-          <button onclick="exportPWPDF('current')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📄 This week only</button>
-          <button onclick="exportPWPDF('month')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">📅 All weeks this month</button>
-          <button onclick="exportPWPDF('year')" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text);font-family:var(--font-display);font-size:12px;text-align:left;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">🗓️ Full year summary</button>
-        </div>
-      </div>
+      
     </div>
   </div>
 
@@ -1518,166 +1515,68 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
       </div>
 
       <div id="pwDetailForm" style="display:none;flex:1;flex-direction:column;overflow:hidden">
-        <div class="pw-form">
-
-          <!-- Week header -->
-          <div class="pw-header-card">
-            <div style="flex:1">
-              <div class="pw-week-label" id="pw-week-label">Week 1</div>
-              <div class="pw-week-dates">
-                <span>Mon</span>
-                <input type="date" id="pw-date-from" onchange="savePW();updatePWWeekLabel()">
-                <span>→ Fri</span>
-                <input type="date" id="pw-date-to" onchange="savePW();updatePWWeekLabel()">
-              </div>
-              <div style="margin-top:12px">
-                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px">Weekly bias</div>
-                <div class="pw-bias-pills" id="pw-bias-pills">
-                  <button class="pw-bias-btn" data-bias="bullish">📈 Bullish</button>
-                  <button class="pw-bias-btn" data-bias="bearish">📉 Bearish</button>
-                  <button class="pw-bias-btn" data-bias="ranging">↕️ Ranging</button>
-                  <button class="pw-bias-btn" data-bias="neutral">— Neutral / Wait</button>
-                </div>
-              </div>
+        <div class="pw-form" id="pwDetailForm" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+        <!-- Week header card -->
+        <div class="pw-header-card">
+          <div>
+            <div class="pw-week-label" id="pwWeekLabel">Week —</div>
+            <div class="pw-week-dates">
+              <span>From:</span>
+              <input type="date" id="pw-date-from" onchange="savePWData()">
+              <span>To:</span>
+              <input type="date" id="pw-date-to" onchange="savePWData()">
             </div>
-            <div style="display:flex;gap:8px;flex-shrink:0">
-              <button class="canvas-action-btn danger" onclick="deletePWPlan()">Delete</button>
+            <div class="pw-bias-pills" id="pw-bias-pills">
+              <button class="pw-bias-btn" data-bias="bull">Bullish</button>
+              <button class="pw-bias-btn" data-bias="bear">Bearish</button>
+              <button class="pw-bias-btn" data-bias="ranging">Ranging</button>
+              <button class="pw-bias-btn" data-bias="neutral">Neutral</button>
             </div>
           </div>
+        </div>
 
-          <!-- Row 1: HTF Analysis + Weekly Range -->
-          <div class="pw-content-grid" style="margin-bottom:14px">
-            <div class="pw-card">
-              <div class="pw-card-title">📊 HTF Market Structure</div>
-              <textarea class="pw-textarea" id="pw-htf" placeholder="Describe the higher timeframe structure going into this week. What does the Monthly and Weekly chart look like? Is price in a premium or discount? Are we at a POI?" oninput="savePW()"></textarea>
-            </div>
-            <div class="pw-card">
-              <div class="pw-card-title">🗞️ Fundamental Outlook</div>
-              <textarea class="pw-textarea" id="pw-fundamental" placeholder="What is the macro backdrop this week? Dollar strength/weakness? ECB or Fed narrative? Any major central bank speeches or risk events that could shift sentiment?" oninput="savePW()"></textarea>
-            </div>
+        <!-- Scrollable content area -->
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-bottom:20px;">
+
+          <!-- Market Anticipation -->
+          <div class="pw-card">
+            <div class="pw-card-title">📈 Market Anticipation</div>
+            <textarea id="pw-anticipation" class="pw-textarea" placeholder="Describe what you anticipate price will do this week. Consider the HTF narrative, draw on liquidity, and expected delivery..." style="min-height:120px;" oninput="savePWData()"></textarea>
           </div>
 
-          <!-- Row 2: Weekly Range + Key Levels -->
-          <div class="pw-content-grid" style="margin-bottom:14px">
-            <div class="pw-card">
-              <div class="pw-card-title">📏 Weekly Range Expectation</div>
-              <div class="pw-range-grid" style="margin-bottom:12px">
-                <div class="pw-range-field">
-                  <div class="pw-range-label resistance">Weekly High Target</div>
-                  <input type="number" step="0.00001" class="pw-range-input" id="pw-weekly-high" placeholder="1.09500" oninput="savePW();drawLevelsBar()">
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label support">Weekly Low Target</div>
-                  <input type="number" step="0.00001" class="pw-range-input" id="pw-weekly-low" placeholder="1.08000" oninput="savePW();drawLevelsBar()">
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label">Expected Range (pips)</div>
-                  <input type="text" class="pw-range-input" id="pw-range-pips" placeholder="auto" readonly style="background:var(--bg4);cursor:default">
-                </div>
-              </div>
-              <div class="pw-range-grid">
-                <div class="pw-range-field">
-                  <div class="pw-range-label pivot">Weekly Open</div>
-                  <input type="number" step="0.00001" class="pw-range-input" id="pw-weekly-open" placeholder="1.08750" oninput="savePW();drawLevelsBar()">
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label target">Primary Target</div>
-                  <input type="number" step="0.00001" class="pw-range-input" id="pw-target" placeholder="1.09200" oninput="savePW();drawLevelsBar()">
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label">Invalidation Level</div>
-                  <input type="number" step="0.00001" class="pw-range-input" id="pw-invalidation" placeholder="1.07500" oninput="savePW();drawLevelsBar()">
-                </div>
-              </div>
-              <!-- Visual levels bar -->
-              <div class="pw-levels-bar" id="pw-levels-bar">
-                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;font-family:var(--font-mono)">Enter levels to see visual range</div>
-              </div>
-            </div>
-
-            <div class="pw-card">
-              <div class="pw-card-title">🎯 Key Price Levels</div>
-              <div style="display:flex;flex-direction:column;gap:8px">
-                <div class="pw-range-field">
-                  <div class="pw-range-label resistance">Major Resistance / Supply Zones</div>
-                  <textarea class="pw-textarea" id="pw-resistance" placeholder="e.g. 1.0950 — Monthly FVG&#10;1.0920 — Weekly Breaker&#10;1.0880 — EQH" style="min-height:60px" oninput="savePW()"></textarea>
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label support">Major Support / Demand Zones</div>
-                  <textarea class="pw-textarea" id="pw-support" placeholder="e.g. 1.0800 — HTF Order Block&#10;1.0760 — Weekly Low&#10;1.0720 — Liquidity Pool" style="min-height:60px" oninput="savePW()"></textarea>
-                </div>
-              </div>
-            </div>
+          <!-- Key Levels -->
+          <div class="pw-card">
+            <div class="pw-card-title">🎯 Key Levels</div>
+            <textarea id="pw-keylevels" class="pw-textarea" placeholder="List your key price levels: swing highs/lows, FVGs, OBs, PDH/PDL, weekly highs/lows, etc." style="min-height:100px;" oninput="savePWData()"></textarea>
           </div>
 
-          <!-- Row 3: High-impact news this week -->
-          <div class="pw-card" style="margin-bottom:14px">
-            <div class="pw-card-title">📰 High-Impact News This Week</div>
-            <div class="pw-news-strip" id="pw-news-strip">
-              <div class="pw-news-day"><div class="pw-news-day-label">MON</div><div class="pw-news-day-events" id="pw-news-mon-list"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">TUE</div><div class="pw-news-day-events" id="pw-news-tue-list"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">WED</div><div class="pw-news-day-events" id="pw-news-wed-list"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">THU</div><div class="pw-news-day-events" id="pw-news-thu-list"></div></div>
-              <div class="pw-news-day"><div class="pw-news-day-label">FRI</div><div class="pw-news-day-events" id="pw-news-fri-list"></div></div>
-            </div>
+          <!-- Invalidation -->
+          <div class="pw-card">
+            <div class="pw-card-title">⚠️ Invalidation</div>
+            <textarea id="pw-invalidation-note" class="pw-textarea" placeholder="What price action would invalidate your bias? Be specific — which level being broken or which candle close would flip the narrative?" style="min-height:100px;" oninput="savePWData()"></textarea>
           </div>
 
-          <!-- Row 4: Day-by-day expectation -->
-          <div style="margin-bottom:14px">
-            <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.9px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px">Daily Expectations</div>
-            <div class="pw-days-grid" id="pw-days-grid">
-              <!-- Populated by JS -->
+          <!-- Pre-Market Analysis Photos -->
+          <div class="pw-card">
+            <div class="pw-card-title">📷 Pre-Market Analysis Charts</div>
+            <div id="pw-photos-grid" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
+              <div id="pw-photos-empty" style="font-size:12px;color:var(--text3);font-family:var(--font-mono);padding:8px 0;">No charts added yet.</div>
             </div>
+            <input type="file" id="pw-photo-input" accept="image/*" multiple style="display:none;" onchange="pwHandlePhotoFiles(this.files)">
+            <button onclick="pwAddPhoto()" class="btn btn-ghost" style="font-size:12px;gap:6px;">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+              Add Chart Screenshot
+            </button>
           </div>
 
-          <!-- Row 5: Pairs in focus + Trading rules for the week -->
-          <div class="pw-content-grid" style="margin-bottom:14px">
-            <div class="pw-card">
-              <div class="pw-card-title">💱 Pairs / Instruments in Focus</div>
-              <textarea class="pw-textarea" id="pw-pairs" placeholder="Which pairs are you watching this week and why?&#10;e.g. EURUSD — Bullish continuation off H4 OB&#10;GBPUSD — Waiting for MSS on H1" oninput="savePW()"></textarea>
-            </div>
-            <div class="pw-card">
-              <div class="pw-card-title">📋 Rules &amp; Reminders for This Week</div>
-              <textarea class="pw-textarea" id="pw-rules" placeholder="What specific rules must you follow this week?&#10;e.g. No trading on NFP day&#10;Max 2 trades per day&#10;Only trade London session&#10;Wait for 15min confirmation before entry" oninput="savePW()"></textarea>
-            </div>
+          <!-- Post-Week Reflection -->
+          <div class="pw-card">
+            <div class="pw-card-title">📝 Post-Week Reflection</div>
+            <textarea id="pw-reflection" class="pw-textarea" placeholder="After the week closes — what happened? Did your anticipation play out? What did you miss? What would you do differently?" style="min-height:120px;" oninput="savePWData()"></textarea>
           </div>
 
-          <!-- Row 6: Post-week outcome (filled after week ends) -->
-          <div class="pw-card" style="margin-bottom:14px;border-color:rgba(45,212,191,0.2)">
-            <div class="pw-card-title" style="color:var(--teal)">✅ Post-Week Outcome (fill after Friday close)</div>
-            <div class="pw-content-grid" style="margin-bottom:12px">
-              <div>
-                <div class="pw-outcome-grid" style="margin-bottom:12px">
-                  <div class="pw-outcome-stat">
-                    <div class="pw-outcome-label">Actual High</div>
-                    <input type="number" step="0.00001" class="pw-range-input" id="pw-actual-high" placeholder="—" oninput="savePW()" style="text-align:center;font-size:14px;font-weight:700;color:var(--red)">
-                  </div>
-                  <div class="pw-outcome-stat">
-                    <div class="pw-outcome-label">Actual Low</div>
-                    <input type="number" step="0.00001" class="pw-range-input" id="pw-actual-low" placeholder="—" oninput="savePW()" style="text-align:center;font-size:14px;font-weight:700;color:var(--green)">
-                  </div>
-                  <div class="pw-outcome-stat">
-                    <div class="pw-outcome-label">Actual Range (pips)</div>
-                    <div class="pw-outcome-val" id="pw-actual-pips" style="color:var(--teal)">—</div>
-                  </div>
-                </div>
-                <div class="pw-range-field">
-                  <div class="pw-range-label" style="margin-bottom:4px">Did price reach your target?</div>
-                  <div style="display:flex;gap:8px">
-                    <button class="pw-bias-btn" data-hit="yes" id="pw-hit-yes" onclick="selectPWHit('yes')">✅ Yes</button>
-                    <button class="pw-bias-btn" data-hit="no" id="pw-hit-no" onclick="selectPWHit('no')">❌ No</button>
-                    <button class="pw-bias-btn" data-hit="partial" id="pw-hit-partial" onclick="selectPWHit('partial')">〰️ Partial</button>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div class="pw-range-label" style="margin-bottom:6px">Reflection — Was your analysis correct?</div>
-                <textarea class="pw-textarea" id="pw-reflection" placeholder="How did the week actually play out vs your expectations? What did you get right? What did you miss? How will you adjust next week?" style="min-height:110px" oninput="savePW()"></textarea>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /pw-form -->
+        </div>
+      </div><!-- /pw-form -->
       </div>
     </div><!-- /pw-detail-panel -->
   </div>
@@ -2094,174 +1993,6 @@ async function exportPDF(scope) {
   .pdf-meta { font-size: 11px; color: #888; font-family: monospace; text-align: right; }
   .pdf-scope { font-size: 13px; font-weight: 600; color: #1a1c22; }
   @media print { body { padding: 20px; } .pdf-header { margin-bottom: 20px; } }
-
-/* ── FULL WIDTH / LARGE SCREEN OPTIMISATIONS ── */
-@media (min-width: 1400px) {
-  .page { padding: 32px 48px; }
-  .stat-value { font-size: 32px; }
-  .stat-grid-3 { grid-template-columns: repeat(3, 1fr); }
-  .stat-grid-4 { grid-template-columns: repeat(4, 1fr); }
-  .chart-grid-2 { grid-template-columns: 1fr 1fr; }
-  .analytics-grid { grid-template-columns: 1fr 1fr; }
-  .analytics-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-}
-
-@media (min-width: 1800px) {
-  .page { padding: 36px 64px; }
-  .stat-grid-4 { grid-template-columns: repeat(4, 1fr); }
-  .analytics-grid { grid-template-columns: 1fr 1fr; }
-}
-
-
-/* ── PRE-WEEK PLANNER ── */
-.pw-layout { display: flex; height: calc(100vh - 130px); gap: 16px; overflow: hidden; width: 100%; }
-
-/* Left: week list */
-.pw-list-panel { width: 240px; min-width: 240px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; }
-.pw-list-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.pw-list-title { font-size: 13px; font-weight: 700; }
-.pw-list-items { flex: 1; overflow-y: auto; padding: 6px 8px; }
-.pw-list-item { padding: 10px 12px; border-radius: var(--radius); cursor: pointer; border: 1px solid transparent; margin-bottom: 3px; transition: all 0.12s; }
-.pw-list-item:hover { background: var(--bg3); }
-.pw-list-item.active { background: var(--bg3); border-color: var(--border2); border-left: 3px solid var(--teal); }
-.pw-list-item-week { font-size: 12px; font-weight: 700; color: var(--teal); font-family: var(--font-mono); margin-bottom: 2px; }
-.pw-list-item-range { font-size: 11px; color: var(--text2); margin-bottom: 2px; }
-.pw-list-item-meta { font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
-.pw-add-btn { margin: 10px 12px 12px; padding: 8px; background: var(--teal); color: #000; border: none; border-radius: var(--radius); font-family: var(--font-display); font-size: 12px; font-weight: 700; cursor: pointer; width: calc(100% - 24px); display: flex; align-items: center; justify-content: center; gap: 6px; transition: opacity 0.15s; }
-.pw-add-btn:hover { opacity: 0.85; }
-
-/* Right: detail canvas */
-.pw-detail-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-.pw-detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text3); font-size: 13px; line-height: 2; text-align: center; }
-.pw-form { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0; min-height: 0; }
-
-/* Week header card */
-.pw-header-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.pw-week-label { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
-.pw-week-dates { font-size: 12px; color: var(--text3); font-family: var(--font-mono); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.pw-week-dates input[type=date] { background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); border-radius: 4px; padding: 4px 8px; font-family: var(--font-mono); font-size: 11px; }
-.pw-week-dates input[type=date]:focus { outline: none; border-color: var(--teal); }
-.pw-bias-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.pw-bias-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: var(--font-display); }
-.pw-bias-btn:hover { border-color: var(--teal); color: var(--text); }
-.pw-bias-btn.selected-bull { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); }
-.pw-bias-btn.selected-bear { background: rgba(239,68,68,0.15); border-color: var(--red); color: var(--red); }
-.pw-bias-btn.selected-ranging { background: rgba(245,158,11,0.15); border-color: var(--amber); color: var(--amber); }
-.pw-bias-btn.selected-neutral { background: rgba(100,116,139,0.15); border-color: var(--text3); color: var(--text3); }
-
-/* Content grid */
-.pw-content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-.pw-content-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
-.pw-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
-.pw-card-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-.pw-textarea { width: 100%; background: var(--bg3); border: 1px solid transparent; color: var(--text); border-radius: var(--radius); padding: 12px 14px; font-family: var(--font-display); font-size: 13px; line-height: 1.75; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
-.pw-textarea:focus { outline: none; border-color: var(--teal); }
-.pw-textarea::placeholder { color: var(--text3); }
-
-/* Range inputs */
-.pw-range-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.pw-range-field { display: flex; flex-direction: column; gap: 4px; }
-.pw-range-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-mono); color: var(--text3); }
-.pw-range-label.support { color: var(--green); }
-.pw-range-label.resistance { color: var(--red); }
-.pw-range-label.target { color: var(--teal); }
-.pw-range-label.pivot { color: var(--amber); }
-.pw-range-input { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); border-radius: var(--radius); padding: 8px 10px; font-family: var(--font-mono); font-size: 13px; width: 100%; transition: border-color 0.15s; }
-.pw-range-input:focus { outline: none; border-color: var(--teal); }
-
-/* Key levels visual bar */
-.pw-levels-bar { position: relative; height: 60px; background: var(--bg3); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; margin-top: 12px; }
-.pw-level-line { position: absolute; top: 0; bottom: 0; width: 2px; display: flex; align-items: center; }
-.pw-level-tag { font-size: 9px; font-family: var(--font-mono); font-weight: 700; white-space: nowrap; padding: 1px 4px; border-radius: 2px; position: absolute; top: 4px; transform: translateX(-50%); }
-
-/* News calendar strip */
-.pw-news-strip { display: flex; flex-direction: column; gap: 6px; }
-.pw-news-day { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.pw-news-day:last-child { border-bottom: none; }
-.pw-news-day-label { font-size: 11px; font-weight: 700; color: var(--text2); font-family: var(--font-mono); width: 32px; flex-shrink: 0; padding-top: 1px; }
-.pw-news-day-events { flex: 1; }
-.pw-news-event-input { width: 100%; background: transparent; border: none; color: var(--text); font-family: var(--font-display); font-size: 12px; padding: 2px 0; border-bottom: 1px dashed var(--border); }
-.pw-news-event-input:focus { outline: none; border-bottom-color: var(--teal); }
-.pw-news-event-input::placeholder { color: var(--text3); }
-
-/* Day plan cards */
-.pw-days-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
-.pw-day-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-.pw-day-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--teal); font-family: var(--font-mono); }
-.pw-day-date { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-top: -4px; }
-.pw-day-bias { display: flex; gap: 4px; }
-.pw-day-bias-btn { flex: 1; padding: 4px 2px; border-radius: 4px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text3); font-size: 9px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.12s; font-family: var(--font-mono); }
-.pw-day-bias-btn.bull { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.1); }
-.pw-day-bias-btn.bear { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
-.pw-day-bias-btn.off { border-color: var(--text3); color: var(--text3); background: rgba(100,116,139,0.1); }
-.pw-day-textarea { width: 100%; background: var(--bg3); border: 1px solid transparent; color: var(--text); border-radius: 4px; padding: 8px 10px; font-family: var(--font-display); font-size: 11px; line-height: 1.6; resize: none; height: 80px; transition: border-color 0.12s; }
-.pw-day-textarea:focus { outline: none; border-color: var(--teal); }
-.pw-day-textarea::placeholder { color: var(--text3); font-size: 10px; }
-
-/* Outcome section */
-.pw-outcome-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.pw-outcome-stat { background: var(--bg3); border-radius: var(--radius); padding: 12px; text-align: center; }
-.pw-outcome-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 6px; }
-.pw-outcome-val { font-size: 20px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.5px; }
-
-
-/* ── ACCOUNT CARDS ── */
-.m-acct-card {
-  border-radius: var(--radius-lg); padding: 18px 20px; cursor: pointer;
-  position: relative; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s;
-  border: 1px solid transparent;
-}
-.m-acct-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-.m-acct-card.selected { box-shadow: 0 0 0 2px var(--teal); }
-.m-acct-card .acct-card-glow {
-  position: absolute; top: -30px; right: -30px;
-  width: 100px; height: 100px; border-radius: 50%; opacity: 0.15;
-}
-.m-acct-card .acct-card-type { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-mono); font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-.m-acct-card .acct-card-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; letter-spacing: -0.3px; }
-.m-acct-card .acct-card-broker { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 14px; }
-.m-acct-card .acct-card-pnl { font-size: 22px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; margin-bottom: 4px; }
-.m-acct-card .acct-card-balance { font-size: 11px; font-family: var(--font-mono); color: var(--text2); }
-.m-acct-card .acct-card-bar-wrap { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 12px; }
-.m-acct-card .acct-card-bar { height: 100%; border-radius: 2px; transition: width 0.4s; }
-.m-acct-card .acct-card-pct { font-size: 10px; font-family: var(--font-mono); font-weight: 600; margin-top: 4px; }
-
-/* Gradient themes per account type */
-.acct-theme-live   { background: linear-gradient(135deg, rgba(34,197,94,0.18) 0%, rgba(22,163,74,0.06) 100%); border-color: rgba(34,197,94,0.25); }
-.acct-theme-prop   { background: linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(217,119,6,0.06) 100%); border-color: rgba(245,158,11,0.25); }
-.acct-theme-demo   { background: linear-gradient(135deg, rgba(59,130,246,0.18) 0%, rgba(37,99,235,0.06) 100%); border-color: rgba(59,130,246,0.25); }
-.acct-theme-backtest { background: linear-gradient(135deg, rgba(167,139,250,0.18) 0%, rgba(139,92,246,0.06) 100%); border-color: rgba(167,139,250,0.25); }
-
-/* Section dividers */
-.m-section-divider { font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
-.m-section-divider span:not(:first-child) { flex:1;height:1px;background:var(--border); }
-
-
-/* ── PW NEWS LIST ── */
-.pw-news-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-.pw-news-entry { display: flex; align-items: center; gap: 6px; }
-.pw-news-entry-input {
-  flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--border);
-  color: var(--text); font-family: var(--font-display); font-size: 12px;
-  padding: 4px 2px; transition: border-color 0.15s;
-}
-.pw-news-entry-input:focus { outline: none; border-bottom-color: var(--teal); }
-.pw-news-entry-input::placeholder { color: var(--text3); }
-.pw-news-del-btn {
-  background: none; border: none; color: var(--text3); cursor: pointer;
-  font-size: 13px; padding: 2px 4px; border-radius: 3px; line-height: 1;
-  flex-shrink: 0; transition: color 0.15s;
-}
-.pw-news-del-btn:hover { color: var(--red); }
-.pw-news-add-btn {
-  display: flex; align-items: center; gap: 4px; background: none; border: none;
-  color: var(--teal); cursor: pointer; font-size: 11px; font-family: var(--font-display);
-  padding: 4px 2px; margin-top: 4px; transition: opacity 0.15s;
-}
-.pw-news-add-btn:hover { opacity: 0.75; }
-.pw-list-empty-week { opacity: 0.55; }
-.pw-list-empty-week:hover { opacity: 1; }
-
 </style>
 </head><body>
 <div class="pdf-header">
@@ -2273,31 +2004,6 @@ async function exportPDF(scope) {
 </div>
 ${sections.join('\n')}
 
-<!-- Account Manager Modal -->
-<div class="modal-overlay" id="accountModal">
-  <div class="modal-box">
-    <div class="modal-title" id="acctModalTitle">Manage Accounts</div>
-    <div class="modal-list" id="accountModalList"></div>
-    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:4px">
-      <div style="font-size:11px;font-weight:600;margin-bottom:10px;color:var(--text2)">Add New Account</div>
-      <div class="modal-field"><label>Account Name</label><input type="text" id="newAccName" placeholder="e.g. FTMO Challenge, Live MT4, Demo 01"></div>
-      <div class="modal-field"><label>Type</label>
-        <select id="newAccType">
-          <option value="live">Live</option>
-          <option value="prop">Prop Firm Challenge</option>
-          <option value="demo">Demo</option>
-          <option value="backtest">Backtest Only</option>
-        </select>
-      </div>
-      <div class="modal-field"><label>Broker / Platform</label><input type="text" id="newAccBroker" placeholder="e.g. FTMO, IC Markets, Pepperstone"></div>
-      <div class="modal-field"><label>Starting Balance ($)</label><input type="number" id="newAccBalance" value="10000"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeAccountModal()">Close</button>
-      <button class="btn btn-primary" onclick="saveNewAccount()">Add Account</button>
-    </div>
-  </div>
-</div>
 </body></html>`;
 
   // Open in new window and trigger print dialog
@@ -2308,12 +2014,24 @@ ${sections.join('\n')}
 }
 
 // ── Render journal table ──────────────────────────────────────────────────────
+function toggleJournalShowAll() {
+  journalShowAll = !journalShowAll;
+  renderJournal();
+}
+
 function renderJournal() {
   const body = document.getElementById('tradeBody');
   const empty = document.getElementById('empty-journal');
   const wrap = document.getElementById('table-wrap');
-  const ft = getFilteredTrades();
-  document.getElementById('j-count').textContent = ft.length + ' trade'+(ft.length!==1?'s':'');
+  const ft = journalShowAll ? getAllTrades() : getFilteredTrades();
+  const btn = document.getElementById('j-show-all-btn');
+  if (btn) {
+    btn.textContent = journalShowAll ? '← Current Month' : 'Show All Months';
+    btn.style.background = journalShowAll ? 'var(--teal)' : 'var(--bg3)';
+    btn.style.color = journalShowAll ? '#000' : 'var(--text2)';
+    btn.style.borderColor = journalShowAll ? 'var(--teal)' : 'var(--border2)';
+  }
+  document.getElementById('j-count').textContent = ft.length + ' trade'+(ft.length!==1?'s':'')+(journalShowAll?' (all months)':'');
   if (!ft.length) { body.innerHTML=''; empty.style.display='block'; wrap.style.display='none'; return; }
   empty.style.display='none'; wrap.style.display='block';
 
@@ -2628,7 +2346,8 @@ function deleteNoteData(id) { localStorage.removeItem(noteDataKey(id)); }
 function renderStudy() {
   const index = getNoteIndex();   // standalone notes created in Study
   // Also pull from journal trades for quick linking
-  const tradeItems = getFilteredTrades().map(t => ({
+  // Pull trades from ALL months/accounts so the study list is complete
+  const tradeItems = getAllTrades().map(t => ({
     id: 'trade_' + t.id,
     title: ((t.symbol || 'Trade').toUpperCase()) + ' ' + (t.direction || ''),
     date: t.date || '',
@@ -2951,6 +2670,7 @@ function showTrash() {
 // ─── ACCOUNTS & MODE ──────────────────────────────────────────────────────────
 
 const MODE_KEY = 'btj_mode';
+let journalShowAll = false;
 
 // Accounts are fully separated by mode — backtest accounts never appear in live and vice versa
 function accountsKey() { return 'btj_accounts_' + (getMode() || 'backtest'); }
@@ -3088,6 +2808,28 @@ function getFilteredTrades() {
   const acct = getActiveAccount();
   if (acct === 'all') return trades;
   return trades.filter(t => t.account === acct);
+}
+
+// Returns ALL trades across every stored month/year for the current mode.
+// Used by Study section, cross-month export, and journal "Show All" mode.
+function getAllTrades() {
+  const mode = getMode();
+  const prefix = mode === 'live' ? 'live-' : 'btj-';
+  const all = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith(prefix)) continue;
+    const parts = k.split('-');
+    if (parts.length !== 3) continue;
+    try {
+      const arr = JSON.parse(localStorage.getItem(k) || '[]');
+      if (Array.isArray(arr)) arr.forEach(t => all.push(t));
+    } catch(e) {}
+  }
+  const seen = new Set();
+  return all
+    .filter(t => { if (seen.has(t.id)) return false; seen.add(t.id); return true; })
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''));
 }
 
 // Account modal
@@ -3447,106 +3189,9 @@ const PW_NEWS_PLACEHOLDERS = {
   fri: 'e.g. NFP 13:30 GMT · US Unemployment Rate'
 };
 
-function renderNewsLists(plan) {
-  PW_NEWS_DAYS.forEach(day => {
-    const container = document.getElementById('pw-news-' + day + '-list');
-    if (!container) return;
-    // Migrate old string format to array
-    if (typeof plan['news' + day.charAt(0).toUpperCase() + day.slice(1)] === 'string') {
-      const old = plan['news' + day.charAt(0).toUpperCase() + day.slice(1)];
-      plan['news_' + day] = old ? [old] : [];
-    }
-    if (!plan['news_' + day]) plan['news_' + day] = [];
-    // Ensure at least one empty entry
-    if (!plan['news_' + day].length) plan['news_' + day].push('');
-    renderNewsDayList(container, day, plan);
-  });
-}
 
-function renderNewsDayList(container, day, plan) {
-  container.innerHTML = '';
-  const items = plan['news_' + day] || [''];
-  const listWrap = document.createElement('div');
-  listWrap.className = 'pw-news-list';
 
-  items.forEach((val, idx) => {
-    const row = document.createElement('div');
-    row.className = 'pw-news-entry';
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'pw-news-entry-input';
-    input.value = val;
-    input.placeholder = idx === 0 ? PW_NEWS_PLACEHOLDERS[day] : 'Add another event...';
-    input.oninput = () => {
-      const p = pwPlans.find(p => p.id === activePWId);
-      if (!p) return;
-      if (!p['news_' + day]) p['news_' + day] = [];
-      p['news_' + day][idx] = input.value;
-      savePWData();
-    };
-    // Press Enter to add a new row
-    input.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const p = pwPlans.find(p => p.id === activePWId);
-        if (!p) return;
-        if (!p['news_' + day]) p['news_' + day] = [];
-        p['news_' + day].splice(idx + 1, 0, '');
-        savePWData();
-        renderNewsDayList(container, day, p);
-        // Focus the new input
-        const inputs = container.querySelectorAll('.pw-news-entry-input');
-        if (inputs[idx + 1]) inputs[idx + 1].focus();
-      } else if (e.key === 'Backspace' && input.value === '' && items.length > 1) {
-        e.preventDefault();
-        const p = pwPlans.find(p => p.id === activePWId);
-        if (!p) return;
-        p['news_' + day].splice(idx, 1);
-        savePWData();
-        renderNewsDayList(container, day, p);
-        const inputs = container.querySelectorAll('.pw-news-entry-input');
-        if (inputs[idx - 1]) inputs[idx - 1].focus();
-      }
-    };
-
-    const delBtn = document.createElement('button');
-    delBtn.className = 'pw-news-del-btn';
-    delBtn.title = 'Remove event';
-    delBtn.innerHTML = '✕';
-    delBtn.style.display = items.length > 1 ? 'block' : 'none';
-    delBtn.onclick = () => {
-      const p = pwPlans.find(p => p.id === activePWId);
-      if (!p) return;
-      p['news_' + day].splice(idx, 1);
-      if (!p['news_' + day].length) p['news_' + day].push('');
-      savePWData();
-      renderNewsDayList(container, day, p);
-    };
-
-    row.appendChild(input);
-    row.appendChild(delBtn);
-    listWrap.appendChild(row);
-  });
-
-  // Add event button
-  const addBtn = document.createElement('button');
-  addBtn.className = 'pw-news-add-btn';
-  addBtn.innerHTML = '+ Add event';
-  addBtn.onclick = () => {
-    const p = pwPlans.find(p => p.id === activePWId);
-    if (!p) return;
-    if (!p['news_' + day]) p['news_' + day] = [];
-    p['news_' + day].push('');
-    savePWData();
-    renderNewsDayList(container, day, p);
-    const inputs = container.querySelectorAll('.pw-news-entry-input');
-    if (inputs.length) inputs[inputs.length - 1].focus();
-  };
-
-  container.appendChild(listWrap);
-  container.appendChild(addBtn);
-}
 
 
 // ── Pre-Week Plan PDF Export ──────────────────────────────────────────────────
@@ -3567,126 +3212,7 @@ function closePWPdfMenu(e) {
   }
 }
 
-function exportPWPDF(scope) {
-  // scope: 'current' | 'month' | 'year'
-  const y = parseInt(document.getElementById('yearSel').value);
-  const m = parseInt(document.getElementById('monthSel').value);
-  loadPWData();
 
-  let plansToExport = [];
-  if (scope === 'current') {
-    const plan = pwPlans.find(p => p.id === activePWId);
-    if (plan) plansToExport = [plan];
-  } else if (scope === 'month') {
-    plansToExport = pwPlans.filter(p => {
-      if (!p.dateFrom) return false;
-      const [py, pm] = p.dateFrom.split('-').map(Number);
-      return py === y && pm === m;
-    });
-  } else if (scope === 'year') {
-    plansToExport = pwPlans.filter(p => p.dateFrom && p.dateFrom.startsWith(String(y)));
-  }
-
-  plansToExport.sort((a,b) => (a.dateFrom||'').localeCompare(b.dateFrom||''));
-
-  if (!plansToExport.length) {
-    alert('No week plans found for the selected scope.');
-    return;
-  }
-
-  const biasLabel = { bullish:'📈 Bullish', bearish:'📉 Bearish', ranging:'↕️ Ranging', neutral:'— Neutral / Wait' };
-  const hitLabel  = { yes:'✅ Target Hit', no:'❌ Target Missed', partial:'〰️ Partial' };
-
-  const sections = plansToExport.map(plan => {
-    const wk = plan.dateFrom ? 'W' + getWeekNumber(plan.dateFrom) : '—';
-    const dateRange = [plan.dateFrom, plan.dateTo].filter(Boolean).map(fmtDate).join(' – ');
-
-    const newsRows = ['mon','tue','wed','thu','fri'].map(day => {
-      const dayLabel = day.charAt(0).toUpperCase() + day.slice(1);
-      const events = (plan['news_' + day] || []).filter(e => e.trim());
-      // Backward compat
-      const legacyKey = 'news' + dayLabel;
-      const legacyVal = plan[legacyKey];
-      const allEvents = events.length ? events : (legacyVal ? [legacyVal] : []);
-      if (!allEvents.length) return '';
-      return `<tr><td style="font-weight:700;color:#374151;padding:6px 10px;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f3f4f6">${dayLabel.toUpperCase()}</td>
-        <td style="padding:6px 10px;border-bottom:1px solid #f3f4f6">${allEvents.map(e => '<div style=\"margin-bottom:2px\">' + escHtml(e) + '</div>').join('')}</td></tr>`;
-    }).filter(Boolean).join('');
-
-    const daysSection = ['mon','tue','wed','thu','fri'].map((day, i) => {
-      const d = plan.days && plan.days[day];
-      if (!d || (!d.bias && !d.notes)) return '';
-      const dLabel = ['Monday','Tuesday','Wednesday','Thursday','Friday'][i];
-      const bIcon = d.bias === 'bull' ? '▲' : d.bias === 'bear' ? '▼' : d.bias === 'off' ? '✕' : '';
-      const bColor = d.bias === 'bull' ? '#16a34a' : d.bias === 'bear' ? '#dc2626' : '#6b7280';
-      return `<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:${bColor}">${bIcon} ${dLabel}</div>
-        ${d.notes ? '<div style="font-size:12px;color:#374151;margin-top:2px;white-space:pre-wrap">' + escHtml(d.notes) + '</div>' : ''}</div>`;
-    }).filter(Boolean).join('');
-
-    return `<div style="margin-bottom:40px;page-break-inside:avoid">
-      <div style="border-bottom:3px solid #2dd4bf;padding-bottom:10px;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between">
-        <div>
-          <div style="font-size:20px;font-weight:800;color:#111827;letter-spacing:-0.5px">${wk} — ${y}</div>
-          <div style="font-size:12px;color:#6b7280;font-family:monospace;margin-top:2px">${dateRange}</div>
-        </div>
-        <div style="font-size:13px;font-weight:600;color:#374151">${biasLabel[plan.bias] || '—'}</div>
-      </div>
-
-      ${(plan.htf || plan.fundamental) ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        ${plan.htf ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">HTF Market Structure</div>
-          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap">${escHtml(plan.htf)}</div></div>` : ''}
-        ${plan.fundamental ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Fundamental Outlook</div>
-          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap">${escHtml(plan.fundamental)}</div></div>` : ''}
-      </div>` : ''}
-
-      ${(plan.weeklyHigh || plan.weeklyLow || plan.target) ? `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px">
-        ${[['Weekly High',plan.weeklyHigh,'#dc2626'],['Weekly Low',plan.weeklyLow,'#16a34a'],['Weekly Open',plan.weeklyOpen,'#d97706'],['Target',plan.target,'#2dd4bf'],['Invalidation',plan.invalidation,'#6b7280']].filter(r=>r[1]).map(([l,v,c])=>`<div style="background:#f9fafb;border-radius:6px;padding:8px 10px;text-align:center"><div style="font-size:9px;text-transform:uppercase;color:#9ca3af;margin-bottom:3px">${l}</div><div style="font-size:14px;font-weight:700;color:${c}">${v}</div></div>`).join('')}
-      </div>` : ''}
-
-      ${newsRows ? `<div style="margin-bottom:16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:8px">High-Impact News</div>
-        <table style="width:100%;border-collapse:collapse;font-size:12px">${newsRows}</table></div>` : ''}
-
-      ${daysSection ? `<div style="margin-bottom:16px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:8px">Daily Expectations</div>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">${daysSection}</div></div>` : ''}
-
-      ${(plan.pairs || plan.rules) ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        ${plan.pairs ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Pairs in Focus</div>
-          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.pairs)}</div></div>` : ''}
-        ${plan.rules ? `<div><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#6b7280;margin-bottom:6px">Rules This Week</div>
-          <div style="background:#f9fafb;border-radius:6px;padding:10px 12px;font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.rules)}</div></div>` : ''}
-      </div>` : ''}
-
-      ${(plan.reflection || plan.targetHit) ? `<div style="background:#f0fdfa;border-left:4px solid #2dd4bf;border-radius:0 6px 6px 0;padding:12px 16px">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:#0d9488;margin-bottom:6px">Post-Week Outcome ${plan.targetHit ? '· ' + (hitLabel[plan.targetHit]||'') : ''}</div>
-        ${plan.actualHigh || plan.actualLow ? `<div style="font-size:11px;color:#374151;margin-bottom:6px;font-family:monospace">Actual High: ${plan.actualHigh||'—'} &nbsp; Low: ${plan.actualLow||'—'} &nbsp; Range: ${plan.actualHigh&&plan.actualLow?Math.round((plan.actualHigh-plan.actualLow)*10000)+'pips':'—'}</div>` : ''}
-        ${plan.reflection ? `<div style="font-size:12px;color:#374151;white-space:pre-wrap">${escHtml(plan.reflection)}</div>` : ''}
-      </div>` : ''}
-    </div>`;
-  });
-
-  const scopeLabel = scope === 'current' ? 'Week Plan' : scope === 'month' ? MONTHS[m-1] + ' ' + y : 'Full Year ' + y;
-
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-    <title>Pre-Week Planner — ${scopeLabel}</title>
-    <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',Arial,sans-serif;color:#111827;background:#fff;padding:40px;font-size:14px;line-height:1.6}
-    .pdf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid #e5e7eb}
-    @media print{body{padding:20px}}</style>
-  </head><body>
-    <div class="pdf-header">
-      <div style="font-size:18px;font-weight:800;color:#2dd4bf">📅 Pre-Week Planner</div>
-      <div style="text-align:right;font-size:11px;color:#6b7280;font-family:monospace">
-        <div style="font-weight:600;color:#374151;font-size:13px">${scopeLabel}</div>
-        <div>Exported ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
-      </div>
-    </div>
-    ${sections.join('')}
-  </body></html>`;
-
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  win.onload = () => setTimeout(() => win.print(), 300);
-}
 
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
 function showBackupMsg(msg, color) {
@@ -3701,15 +3227,16 @@ function exportJSON() {
   a.download=`backtesting-journal-backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
   showBackupMsg('✓ All months exported');
 }
-function exportCSV() {
-  if(!trades.length){showBackupMsg('No trades to export','var(--amber)');return;}
-  const headers=['Date','Time In','Time Out','Symbol','Direction','Session','Entry','Exit','SL','TP','Size','PnL','Setup','Outcome','Notes'];
-  const rows=trades.map(t=>[t.date,t.timeIn||'',t.timeOut||'',t.symbol,t.direction,t.session,t.entry,t.exit,t.sl,t.tp,t.size,t.pnl,t.setup,t.outcome,(localStorage.getItem(notesKey(t.id))||'').replace(/,/g,'；').replace(/\n/g,' ')]);
+function exportCSV(allMonths) {
+  const exportTrades = allMonths ? getAllTrades() : trades;
+  if(!exportTrades.length){showBackupMsg('No trades to export','var(--amber)');return;}
+  const headers=['Date','Time In','Time Out','Symbol','Direction','Session','Account','Entry','Exit','SL','TP','Size','PnL','Setup','Outcome','Notes'];
+  const rows=exportTrades.map(t=>[t.date,t.timeIn||'',t.timeOut||'',t.symbol,t.direction,t.session,t.account||'',t.entry,t.exit,t.sl,t.tp,t.size,t.pnl,t.setup,t.outcome,(localStorage.getItem(notesKey(t.id))||'').replace(/,/g,'；').replace(/\n/g,' ')]);
   const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
-  const m=document.getElementById('monthSel').value.padStart(2,'0'), y=document.getElementById('yearSel').value;
+  const filename = allMonths ? 'trades-all-months.csv' : `trades-${document.getElementById('yearSel').value}-${document.getElementById('monthSel').value.padStart(2,'0')}.csv`;
   const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;
-  a.download=`trades-${y}-${m}.csv`; a.click(); URL.revokeObjectURL(url);
-  showBackupMsg(`✓ ${trades.length} trades exported`);
+  a.download=filename; a.click(); URL.revokeObjectURL(url);
+  showBackupMsg(`✓ ${exportTrades.length} trades exported`);
 }
 function importJSON(event) {
   const file=event.target.files[0]; if(!file) return;
@@ -4601,45 +4128,20 @@ function openPWPlan(id) {
 
   updatePWWeekLabel();
   document.getElementById('pw-date-from').value = plan.dateFrom || '';
-  document.getElementById('pw-date-to').value = plan.dateTo || '';
-  document.getElementById('pw-htf').value = plan.htf || '';
-  document.getElementById('pw-fundamental').value = plan.fundamental || '';
-  document.getElementById('pw-weekly-high').value = plan.weeklyHigh || '';
-  document.getElementById('pw-weekly-low').value = plan.weeklyLow || '';
-  document.getElementById('pw-weekly-open').value = plan.weeklyOpen || '';
-  document.getElementById('pw-target').value = plan.target || '';
-  document.getElementById('pw-invalidation').value = plan.invalidation || '';
-  document.getElementById('pw-resistance').value = plan.resistance || '';
-  document.getElementById('pw-support').value = plan.support || '';
-  document.getElementById('pw-pairs').value = plan.pairs || '';
-  document.getElementById('pw-rules').value = plan.rules || '';
-  document.getElementById('pw-reflection').value = plan.reflection || '';
-  document.getElementById('pw-actual-high').value = plan.actualHigh || '';
-  document.getElementById('pw-actual-low').value = plan.actualLow || '';
-  // Render multi-item news lists
-  renderNewsLists(plan);
+  document.getElementById('pw-date-to').value   = plan.dateTo   || '';
+  document.getElementById('pw-anticipation').value      = plan.anticipation      || '';
+  document.getElementById('pw-keylevels').value         = plan.keylevels         || '';
+  document.getElementById('pw-invalidation-note').value = plan.invalidationNote  || '';
+  document.getElementById('pw-reflection').value        = plan.reflection        || '';
 
-  // Bias buttons — wire clicks and set active state
+  // Bias buttons
   document.querySelectorAll('#pw-bias-pills .pw-bias-btn[data-bias]').forEach(b => {
     b.className = 'pw-bias-btn';
     if (b.dataset.bias === plan.bias) b.classList.add('selected-' + plan.bias);
     b.onclick = () => selectPWBias(b.dataset.bias);
   });
 
-  // Target hit buttons
-  document.querySelectorAll('.pw-bias-btn[data-hit]').forEach(b => {
-    b.className = 'pw-bias-btn';
-    if (b.dataset.hit === plan.targetHit) {
-      if (plan.targetHit === 'yes') b.classList.add('selected-bull');
-      else if (plan.targetHit === 'no') b.classList.add('selected-bear');
-      else if (plan.targetHit === 'partial') b.classList.add('selected-ranging');
-    }
-  });
-
-  renderDayCards(plan);
-  drawLevelsBar();
-  calcActualRange();
-  calcExpectedRange();
+  renderPWPhotos(plan);
   renderPWList();
 }
 
@@ -4652,55 +4154,7 @@ function updatePWWeekLabel() {
   }
 }
 
-function renderDayCards(plan) {
-  const grid = document.getElementById('pw-days-grid');
-  const from = plan.dateFrom;
-  grid.innerHTML = '';
-  DAY_KEYS.forEach((key, i) => {
-    const dayPlan = (plan.days && plan.days[key]) || {bias:'', notes:''};
-    const dayDate = from ? (() => { const d = new Date(from); d.setDate(d.getDate()+i); return fmtDate(d.toISOString().slice(0,10)); })() : '';
 
-    const card = document.createElement('div');
-    card.className = 'pw-day-card';
-    card.innerHTML = `<div class="pw-day-name">${DAYS[i]}</div>
-      <div class="pw-day-date">${dayDate}</div>
-      <div class="pw-day-bias">
-        <button class="pw-day-bias-btn${dayPlan.bias==='bull'?' bull':''}" data-day="${key}" data-val="bull">▲ Bull</button>
-        <button class="pw-day-bias-btn${dayPlan.bias==='bear'?' bear':''}" data-day="${key}" data-val="bear">▼ Bear</button>
-        <button class="pw-day-bias-btn${dayPlan.bias==='off'?' off':''}" data-day="${key}" data-val="off">✕ Off</button>
-      </div>
-      <textarea class="pw-day-textarea" data-day="${key}" placeholder="${DAYS[i]} expectation…
-What do you expect price to do?">${dayPlan.notes || ''}</textarea>`;
-    grid.appendChild(card);
-
-    // Wire day bias buttons
-    card.querySelectorAll('.pw-day-bias-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const plan = pwPlans.find(p => p.id === activePWId);
-        if (!plan) return;
-        if (!plan.days) plan.days = {};
-        if (!plan.days[key]) plan.days[key] = {bias:'', notes:''};
-        plan.days[key].bias = btn.dataset.val;
-        savePWData();
-        // Update button styles
-        card.querySelectorAll('.pw-day-bias-btn').forEach(b => { b.className = 'pw-day-bias-btn'; });
-        if (btn.dataset.val === 'bull') btn.classList.add('bull');
-        else if (btn.dataset.val === 'bear') btn.classList.add('bear');
-        else btn.classList.add('off');
-      });
-    });
-
-    // Wire day textarea
-    card.querySelector('textarea').addEventListener('input', function() {
-      const plan = pwPlans.find(p => p.id === activePWId);
-      if (!plan) return;
-      if (!plan.days) plan.days = {};
-      if (!plan.days[key]) plan.days[key] = {bias:'', notes:''};
-      plan.days[key].notes = this.value;
-      savePWData();
-    });
-  });
-}
 
 function selectPWBias(bias) {
   const plan = pwPlans.find(p => p.id === activePWId);
@@ -4729,98 +4183,13 @@ function selectPWHit(val) {
   savePWData();
 }
 
-function savePW() {
-  if (!activePWId) return;
-  const plan = pwPlans.find(p => p.id === activePWId);
-  if (!plan) return;
-  plan.dateFrom = document.getElementById('pw-date-from').value;
-  plan.dateTo = document.getElementById('pw-date-to').value;
-  plan.htf = document.getElementById('pw-htf').value;
-  plan.fundamental = document.getElementById('pw-fundamental').value;
-  plan.weeklyHigh = document.getElementById('pw-weekly-high').value;
-  plan.weeklyLow = document.getElementById('pw-weekly-low').value;
-  plan.weeklyOpen = document.getElementById('pw-weekly-open').value;
-  plan.target = document.getElementById('pw-target').value;
-  plan.invalidation = document.getElementById('pw-invalidation').value;
-  plan.resistance = document.getElementById('pw-resistance').value;
-  plan.support = document.getElementById('pw-support').value;
-  plan.pairs = document.getElementById('pw-pairs').value;
-  plan.rules = document.getElementById('pw-rules').value;
-  plan.reflection = document.getElementById('pw-reflection').value;
-  plan.actualHigh = document.getElementById('pw-actual-high').value;
-  plan.actualLow = document.getElementById('pw-actual-low').value;
-  // News lists are saved directly in renderNewsDayList event handlers
-  savePWData();
-  calcExpectedRange();
-  calcActualRange();
-}
+function savePW() { savePWData(); }
 
-function calcExpectedRange() {
-  const high = parseFloat(document.getElementById('pw-weekly-high').value);
-  const low = parseFloat(document.getElementById('pw-weekly-low').value);
-  const el = document.getElementById('pw-range-pips');
-  if (!isNaN(high) && !isNaN(low) && high > low) {
-    el.value = Math.round((high - low) * 10000) + ' pips';
-  } else {
-    el.value = '';
-  }
-}
 
-function calcActualRange() {
-  const high = parseFloat(document.getElementById('pw-actual-high').value);
-  const low = parseFloat(document.getElementById('pw-actual-low').value);
-  const el = document.getElementById('pw-actual-pips');
-  if (!isNaN(high) && !isNaN(low) && high > low) {
-    el.textContent = Math.round((high - low) * 10000) + ' pips';
-  } else {
-    el.textContent = '—';
-  }
-}
 
-function drawLevelsBar() {
-  const bar = document.getElementById('pw-levels-bar');
-  if (!bar) return;
-  const high = parseFloat(document.getElementById('pw-weekly-high').value);
-  const low = parseFloat(document.getElementById('pw-weekly-low').value);
-  const open = parseFloat(document.getElementById('pw-weekly-open').value);
-  const target = parseFloat(document.getElementById('pw-target').value);
-  const inv = parseFloat(document.getElementById('pw-invalidation').value);
 
-  const levels = [high, low, open, target, inv].filter(v => !isNaN(v));
-  if (levels.length < 2) {
-    bar.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;font-family:var(--font-mono)">Enter levels to see visual range</div>';
-    return;
-  }
 
-  const minVal = Math.min(...levels);
-  const maxVal = Math.max(...levels);
-  const range = maxVal - minVal || 0.001;
 
-  const pct = v => ((v - minVal) / range * 100).toFixed(1);
-
-  let html = '';
-  // Shaded range between low and high
-  if (!isNaN(high) && !isNaN(low)) {
-    const left = pct(low);
-    const width = (pct(high) - pct(low));
-    html += `<div style="position:absolute;top:10px;bottom:10px;left:${left}%;width:${width}%;background:rgba(45,212,191,0.12);border-radius:3px"></div>`;
-  }
-
-  const addLine = (val, color, label, top) => {
-    if (isNaN(val)) return;
-    html += `<div style="position:absolute;top:0;bottom:0;left:${pct(val)}%;width:2px;background:${color}">
-      <div style="position:absolute;${top?'top:3px':'bottom:3px'};left:3px;font-size:9px;font-family:var(--font-mono);color:${color};font-weight:700;white-space:nowrap">${label}</div>
-    </div>`;
-  };
-
-  addLine(high, 'var(--red)', 'H', true);
-  addLine(low, 'var(--green)', 'L', false);
-  addLine(open, 'var(--amber)', 'O', true);
-  addLine(target, 'var(--teal)', 'T', false);
-  addLine(inv, 'var(--text3)', 'INV', true);
-
-  bar.innerHTML = html;
-}
 
 function deletePWPlan() {
   if (!activePWId || !confirm('Delete this week plan? This cannot be undone.')) return;
@@ -5255,6 +4624,92 @@ function applyOCRTrade() {
 document.getElementById('ocr-modal').addEventListener('click', function(e) {
   if (e.target === this) closeOCRModal();
 });
+</script>
+
+<script>
+/* ── PRE-WEEK PLANNER PHOTO + SAVE FUNCTIONS ── */
+function savePWData() {
+  localStorage.setItem(pwStorageKey(), JSON.stringify(pwPlans));
+}
+
+function pwAddPhoto() { document.getElementById('pw-photo-input').click(); }
+
+function pwHandlePhotoFiles(files) {
+  if (!activePWId || !files.length) return;
+  const plan = pwPlans.find(p => p.id === activePWId);
+  if (!plan) return;
+  if (!plan.photos) plan.photos = [];
+  let pending = files.length;
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      plan.photos.push({ id: Date.now() + Math.random(), src: ev.target.result, caption: '' });
+      pending--;
+      if (pending === 0) { savePWData(); renderPWPhotos(plan); }
+    };
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('pw-photo-input').value = '';
+}
+
+function pwDeletePhoto(photoId) {
+  const plan = pwPlans.find(p => p.id === activePWId);
+  if (!plan || !plan.photos) return;
+  plan.photos = plan.photos.filter(ph => String(ph.id) !== String(photoId));
+  savePWData();
+  renderPWPhotos(plan);
+}
+
+function pwUpdateCaption(photoId, val) {
+  const plan = pwPlans.find(p => p.id === activePWId);
+  if (!plan || !plan.photos) return;
+  const ph = plan.photos.find(p => String(p.id) === String(photoId));
+  if (ph) { ph.caption = val; savePWData(); }
+}
+
+function renderPWPhotos(plan) {
+  const grid = document.getElementById('pw-photos-grid');
+  if (!grid) return;
+  const empty = document.getElementById('pw-photos-empty');
+  const photos = plan.photos || [];
+  grid.querySelectorAll('.pw-photo-card').forEach(el => el.remove());
+  if (!photos.length) { if (empty) empty.style.display='block'; return; }
+  if (empty) empty.style.display='none';
+  photos.forEach(ph => {
+    const card = document.createElement('div');
+    card.className = 'pw-photo-card';
+    card.style.cssText = 'position:relative;display:flex;flex-direction:column;gap:6px;width:calc(50% - 6px);min-width:200px;flex-shrink:0;';
+    const safeId = JSON.stringify(ph.id);
+    const safeSrc = ph.src.replace(/"/g, '&quot;');
+    const safeCaption = (ph.caption||'').replace(/"/g,'&quot;');
+    card.innerHTML = `
+      <div style="position:relative;border-radius:8px;overflow:hidden;background:var(--bg3);border:1px solid var(--border);">
+        <img src="${safeSrc}" style="width:100%;max-height:260px;object-fit:contain;display:block;cursor:pointer;" onclick="pwOpenLightbox(${safeId})" title="Click to expand">
+        <button onclick="pwDeletePhoto(${safeId})" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.65);border:none;color:#fff;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">&times;</button>
+      </div>
+      <input type="text" placeholder="Caption (optional)" value="${safeCaption}" onchange="pwUpdateCaption(${safeId},this.value)" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:5px 8px;border-radius:6px;font-family:var(--font-mono);">
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function pwOpenLightbox(photoId) {
+  const plan = pwPlans.find(p => p.id === activePWId);
+  if (!plan || !plan.photos) return;
+  const ph = plan.photos.find(p => String(p.id) === String(photoId));
+  if (!ph) return;
+  let lb = document.getElementById('pw-lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'pw-lightbox';
+    lb.style.cssText = 'display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;cursor:zoom-out;';
+    lb.innerHTML = '<img id="pw-lb-img" style="max-width:92vw;max-height:92vh;border-radius:8px;object-fit:contain;">';
+    lb.addEventListener('click', () => { lb.style.display='none'; });
+    document.body.appendChild(lb);
+  }
+  document.getElementById('pw-lb-img').src = ph.src;
+  lb.style.display = 'flex';
+}
 </script>
 </body>
 </html>
