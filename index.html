@@ -754,12 +754,17 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
     </div>
     <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px">
       <span style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3)">Data backup</span>
+      <div id="backup-reminder" style="display:none;font-size:10px;padding:6px 8px;border-radius:6px;background:rgba(246,173,85,0.12);border:1px solid rgba(246,173,85,0.3);color:var(--amber);font-family:var(--font-mono);line-height:1.4;">⚠ No backup in 7+ days. Export a full backup now.</div>
       <div style="display:flex;gap:6px">
-        <button onclick="exportJSON()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">↓ JSON</button>
-        <button onclick="exportCSV(false)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'" title="Export this month only">↓ CSV</button>
-        <button onclick="exportCSV(true)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--teal);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer;" title="Export all months / all accounts">↓ All CSV</button>
-        <button onclick="document.getElementById('importFile').click()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">↑ Import</button>
+        <button onclick="exportFullBackup()" style="flex:1;background:var(--teal);border:none;color:#000;padding:7px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;font-weight:700;cursor:pointer;" title="Export every trade, note, photo and setting — all in one .btj file">↓ Full Backup</button>
+        <button onclick="document.getElementById('restoreFile').click()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:7px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'" title="Restore from a .btj backup file">↑ Restore</button>
       </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="exportCSV(false)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'" title="Export this month as CSV">↓ CSV</button>
+        <button onclick="exportCSV(true)" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--teal);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer;" title="Export all months / all accounts as CSV">↓ All CSV</button>
+        <button onclick="document.getElementById('importFile').click()" style="flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:6px 0;border-radius:var(--radius);font-family:var(--font-mono);font-size:10px;cursor:pointer" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">↑ JSON</button>
+      </div>
+      <input type="file" id="restoreFile" accept=".btj,.json" style="display:none" onchange="restoreFullBackup(event)">
       <div id="backup-msg" style="font-size:10px;color:var(--green);min-height:14px;text-align:center"></div>
     </div>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
@@ -3219,14 +3224,7 @@ function showBackupMsg(msg, color) {
   const el=document.getElementById('backup-msg'); el.textContent=msg; el.style.color=color||'var(--green)';
   setTimeout(()=>{el.textContent='';},3000);
 }
-function exportJSON() {
-  const allData={};
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion')||k.startsWith('btj_pw')||k.startsWith('btj_accounts_')||k.startsWith('btj_active_account_'))allData[k]=JSON.parse(localStorage.getItem(k));}
-  const blob=new Blob([JSON.stringify(allData,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;
-  a.download=`backtesting-journal-backup-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
-  showBackupMsg('✓ All months exported');
-}
+function exportJSON() { exportFullBackup(); }
 function exportCSV(allMonths) {
   const exportTrades = allMonths ? getAllTrades() : trades;
   if(!exportTrades.length){showBackupMsg('No trades to export','var(--amber)');return;}
@@ -3238,19 +3236,7 @@ function exportCSV(allMonths) {
   a.download=filename; a.click(); URL.revokeObjectURL(url);
   showBackupMsg(`✓ ${exportTrades.length} trades exported`);
 }
-function importJSON(event) {
-  const file=event.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const data=JSON.parse(e.target.result);
-      if(Array.isArray(data)){if(!confirm(`Import ${data.length} trades into current month? This replaces existing data.`))return;trades=data;saveData();renderAll();showBackupMsg(`✓ ${data.length} trades imported`);}
-      else{const months=Object.keys(data).filter(k=>k.startsWith('btj-')||k.startsWith('live-')||k.startsWith('btj_note')||k.startsWith('btj_news')||k.startsWith('btj_emotion'));if(!months.length){showBackupMsg('Invalid file','var(--red)');return;}if(!confirm(`Restore ${months.length} month(s)? Existing data for those months will be overwritten.`))return;months.forEach(k=>localStorage.setItem(k,JSON.stringify(data[k])));loadData();showBackupMsg(`✓ ${months.length} month(s) restored`);}
-    }catch(err){showBackupMsg('✗ Invalid JSON','var(--red)');}
-    event.target.value='';
-  };
-  reader.readAsText(file);
-}
+function importJSON(event) { restoreFullBackup(event); }
 
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
 function renderAll() {
@@ -4710,6 +4696,187 @@ function pwOpenLightbox(photoId) {
   document.getElementById('pw-lb-img').src = ph.src;
   lb.style.display = 'flex';
 }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   FULL BACKUP / RESTORE  (.btj format)
+   Covers: all localStorage keys + IndexedDB screenshots
+   ══════════════════════════════════════════════════════════════════ */
+
+const BTJ_BACKUP_TS_KEY = 'btj_last_backup_ts';
+const BTJ_BACKUP_VERSION = 2;
+
+// ── Open IndexedDB ────────────────────────────────────────────────
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('btj_screenshots', 1);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('screenshots')) {
+        db.createObjectStore('screenshots', { keyPath: 'id' });
+      }
+    };
+  });
+}
+
+// ── Dump all IndexedDB records ────────────────────────────────────
+function dumpIndexedDB() {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx  = db.transaction('screenshots', 'readonly');
+    const st  = tx.objectStore('screenshots');
+    const req = st.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror   = () => resolve([]);   // non-fatal
+  }));
+}
+
+// ── Restore all IndexedDB records ────────────────────────────────
+function restoreIndexedDB(records) {
+  if (!records || !records.length) return Promise.resolve();
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction('screenshots', 'readwrite');
+    const st = tx.objectStore('screenshots');
+    records.forEach(r => st.put(r));
+    tx.oncomplete = resolve;
+    tx.onerror    = () => resolve();  // non-fatal
+  }));
+}
+
+// ── Collect all localStorage keys ────────────────────────────────
+function dumpLocalStorage() {
+  const PREFIXES = [
+    'btj-', 'live-',
+    'btj_note', 'btj_shots_', 'btj_rules_',
+    'btj_news_', 'btj_emotion_', 'btj_pw_',
+    'btj_accounts_', 'btj_active_account_',
+    'btj_prop_', 'btj_migration_'
+  ];
+  const EXACT = ['btj_theme', 'btj_mode'];
+  const data  = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (EXACT.includes(k) || PREFIXES.some(p => k.startsWith(p))) {
+      try { data[k] = JSON.parse(localStorage.getItem(k)); }
+      catch(e) { data[k] = localStorage.getItem(k); }
+    }
+  }
+  return data;
+}
+
+// ── EXPORT FULL BACKUP ────────────────────────────────────────────
+async function exportFullBackup() {
+  showBackupMsg('Collecting data…', 'var(--text2)');
+  try {
+    const lsData  = dumpLocalStorage();
+    const idbData = await dumpIndexedDB();
+
+    // Count for summary
+    const tradeKeys  = Object.keys(lsData).filter(k => k.startsWith('btj-') || k.startsWith('live-'));
+    const totalTrades = tradeKeys.reduce((n, k) => {
+      try { return n + (Array.isArray(lsData[k]) ? lsData[k].length : 0); } catch(e) { return n; }
+    }, 0);
+    const noteCount  = Object.keys(lsData).filter(k => k.startsWith('btj_note_data_')).length;
+    const imgCount   = idbData.length;
+
+    const backup = {
+      version:   BTJ_BACKUP_VERSION,
+      exportedAt: new Date().toISOString(),
+      summary:   { trades: totalTrades, noteBlocks: noteCount, images: imgCount, lsKeys: Object.keys(lsData).length },
+      localStorage: lsData,
+      indexedDB:    idbData
+    };
+
+    const json = JSON.stringify(backup);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `journal-backup-${new Date().toISOString().slice(0,10)}.btj`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    // Record backup timestamp
+    localStorage.setItem(BTJ_BACKUP_TS_KEY, Date.now().toString());
+    checkBackupReminder();
+
+    showBackupMsg(`✓ Backed up: ${totalTrades} trades, ${noteCount} notes, ${imgCount} images`);
+  } catch(err) {
+    showBackupMsg('✗ Backup failed: ' + err.message, 'var(--red)');
+  }
+}
+
+// ── RESTORE FULL BACKUP ───────────────────────────────────────────
+async function restoreFullBackup(event) {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+
+  showBackupMsg('Reading file…', 'var(--text2)');
+
+  const text = await file.text();
+  let backup;
+  try { backup = JSON.parse(text); }
+  catch(e) { showBackupMsg('✗ Invalid file', 'var(--red)'); return; }
+
+  // Accept both .btj v2 and legacy plain JSON export
+  const isFullBackup = backup.version && backup.localStorage;
+  const lsData  = isFullBackup ? backup.localStorage  : backup;
+  const idbData = isFullBackup ? (backup.indexedDB || []) : [];
+
+  const lsKeys = Object.keys(lsData).filter(k =>
+    k.startsWith('btj-') || k.startsWith('live-') ||
+    k.startsWith('btj_note') || k.startsWith('btj_shots_') ||
+    k.startsWith('btj_rules_') || k.startsWith('btj_news_') ||
+    k.startsWith('btj_emotion_') || k.startsWith('btj_pw_') ||
+    k.startsWith('btj_accounts_') || k.startsWith('btj_active_account_') ||
+    k.startsWith('btj_prop_') || ['btj_theme','btj_mode'].includes(k)
+  );
+
+  if (!lsKeys.length && !idbData.length) {
+    showBackupMsg('✗ No journal data found in file', 'var(--red)');
+    return;
+  }
+
+  const summary = isFullBackup && backup.summary
+    ? `${backup.summary.trades} trades, ${backup.summary.noteBlocks} notes, ${backup.summary.images} images`
+    : `${lsKeys.length} data keys`;
+
+  const dated = isFullBackup ? ` (from ${backup.exportedAt?.slice(0,10)})` : '';
+
+  if (!confirm(`Restore backup${dated}?\n\n${summary}\n\nThis will overwrite all existing journal data. Continue?`)) return;
+
+  showBackupMsg('Restoring…', 'var(--text2)');
+  try {
+    // Write localStorage
+    lsKeys.forEach(k => {
+      localStorage.setItem(k, typeof lsData[k] === 'string' ? lsData[k] : JSON.stringify(lsData[k]));
+    });
+
+    // Write IndexedDB
+    if (idbData.length) await restoreIndexedDB(idbData);
+
+    // Reload app state
+    loadData();
+    renderAll();
+checkBackupReminder();
+    checkBackupReminder();
+    showBackupMsg(`✓ Restored: ${summary}`);
+  } catch(err) {
+    showBackupMsg('✗ Restore error: ' + err.message, 'var(--red)');
+  }
+}
+
+// ── BACKUP REMINDER ───────────────────────────────────────────────
+function checkBackupReminder() {
+  const el = document.getElementById('backup-reminder');
+  if (!el) return;
+  const last = parseInt(localStorage.getItem(BTJ_BACKUP_TS_KEY) || '0', 10);
+  const days = (Date.now() - last) / (1000 * 60 * 60 * 24);
+  el.style.display = (last === 0 || days >= 7) ? 'block' : 'none';
+}
+
 </script>
 </body>
 </html>
