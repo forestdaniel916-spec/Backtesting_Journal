@@ -2222,10 +2222,19 @@ function renderCalendar() {
   const m=parseInt(document.getElementById('monthSel').value), y=parseInt(document.getElementById('yearSel').value);
   const lastDay=new Date(y,m,0).getDate(); let dow=new Date(y,m-1,1).getDay(); dow=dow===0?6:dow-1;
   const dayMap={};
-  const trades=getFilteredTrades();
-  trades.forEach(t=>{
-    if(!t.date) return; const [ty,tm,td]=t.date.split('-').map(Number);
-    if(ty===y&&tm===m){if(!dayMap[td])dayMap[td]={count:0,pnl:0};dayMap[td].count++;dayMap[td].pnl+=netPnl(t);}
+  // Use getAllTrades() so we catch trades regardless of which month key they're in,
+  // then filter by account and the displayed year/month ourselves.
+  const acct = getActiveAccount();
+  const calTrades = getAllTrades().filter(t => {
+    if (!t.date) return false;
+    const [ty,tm] = t.date.split('-').map(Number);
+    if (ty !== y || tm !== m) return false;
+    if (acct !== 'all' && t.account !== acct) return false;
+    return true;
+  });
+  calTrades.forEach(t=>{
+    const td = parseInt(t.date.split('-')[2]);
+    if(!dayMap[td])dayMap[td]={count:0,pnl:0};dayMap[td].count++;dayMap[td].pnl+=netPnl(t);
   });
   const tT=Object.values(dayMap).reduce((a,b)=>a+b.count,0);
   const tP=Object.values(dayMap).reduce((a,b)=>a+b.pnl,0);
