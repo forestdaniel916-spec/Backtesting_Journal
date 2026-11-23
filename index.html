@@ -845,7 +845,82 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
     </div>
   </div>
 
-  <!-- ── SECTION 3: Charts row ── -->
+  <!-- ── SECTION 3: Advanced metric tiles ── -->
+  <div style="margin-bottom:14px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Risk &amp; Performance</span><span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(34,197,94,0.5)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Profit Factor</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--green)" id="m-pf">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">gross win ÷ gross loss</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(167,139,250,0.5)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Expectancy</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--purple)" id="m-exp">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">avg $ per trade</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(34,197,94,0.4)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Avg Win</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--green)" id="m-avgwin">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px" id="m-avgwin-sub">— wins</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(239,68,68,0.4)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Avg Loss</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--red)" id="m-avgloss">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px" id="m-avgloss-sub">— losses</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(59,130,246,0.4)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Avg Hold</div>
+        <div style="font-size:20px;font-weight:700;color:#60a5fa" id="m-avg-hold">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">per trade</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(245,158,11,0.4)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Best Trade</div>
+        <div style="font-size:20px;font-weight:700;color:var(--green)" id="m-best">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">single trade max</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(239,68,68,0.3)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Worst Trade</div>
+        <div style="font-size:20px;font-weight:700;color:var(--red)" id="m-worst">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">single trade min</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(34,197,94,0.3)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Win Streak</div>
+        <div style="font-size:20px;font-weight:700;color:var(--green)" id="m-wstreak">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">best run</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-top:3px solid rgba(239,68,68,0.3)">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Loss Streak</div>
+        <div style="font-size:20px;font-weight:700;color:var(--red)" id="m-lstreak">—</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">worst run</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4: Max Drawdown + RR row ── -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-left:3px solid rgba(239,68,68,0.6)">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Max Drawdown</div>
+      <div style="font-size:22px;font-weight:700;color:var(--red)" id="m-maxdd">—</div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">peak-to-trough loss</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-left:3px solid rgba(245,158,11,0.6)">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Avg R:R Ratio</div>
+      <div style="font-size:22px;font-weight:700;color:var(--amber)" id="m-rr">—</div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">avg win ÷ avg loss</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;border-left:3px solid rgba(167,139,250,0.6)">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">Recovery Factor</div>
+      <div style="font-size:22px;font-weight:700;color:var(--purple)" id="m-recovery">—</div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:3px">net PnL ÷ max drawdown</div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: Charts row ── -->
   <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:12px">📊 Daily PnL</div>
@@ -857,13 +932,32 @@ input[type=range] { width:100%; accent-color:var(--purple); height:4px; }
     </div>
   </div>
 
-  <!-- ── SECTION 4: Equity Curve (full width, taller) ── -->
+  <!-- ── SECTION 6: Equity Curve (full width, taller) ── -->
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;background:linear-gradient(180deg,var(--bg2) 0%,rgba(34,197,94,0.02) 100%)">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono)">📈 Cumulative PnL Curve</div>
       <div style="font-size:11px;color:var(--text2);font-family:var(--font-mono)" id="m-curve-label"></div>
     </div>
     <div class="chart-wrap" style="height:220px"><canvas id="cumPnlChart"></canvas></div>
+  </div>
+
+  <!-- ── SECTION 7: Learning Curve charts ── -->
+  <div style="margin-bottom:14px">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:var(--font-mono);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <span>Learning Curve</span><span style="flex:1;height:1px;background:var(--border)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">📉 Rolling Win Rate</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:12px">5-trade rolling window — trend of your consistency</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="rollingWRChart"></canvas></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">📅 PnL by Day of Week</div>
+        <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:12px">which days you trade best</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="dowChart"></canvas></div>
+      </div>
+    </div>
   </div>
 
   <!-- ── SECTION 5: Per-account breakdown (shown when All Accounts) ── -->
@@ -2149,7 +2243,10 @@ function getMetrics() {
 
 function renderMetrics() {
   const m = getMetrics();
+  const ft = getFilteredTrades();
   const fmt = v=>(v>=0?'+':'')+' $'+Math.abs(v).toFixed(2);
+
+  // ── Hero KPIs ──
   const wrEl = document.getElementById('m-winrate');
   wrEl.textContent = m.wr!==null?m.wr.toFixed(1)+'%':'—';
   wrEl.className = 'stat-value c-blue';
@@ -2161,7 +2258,7 @@ function renderMetrics() {
   const balEl = document.getElementById('m-balance');
   balEl.textContent = '$'+m.balance.toFixed(2);
   balEl.className='stat-value '+(m.balance>m.starting?'c-green':m.balance<m.starting?'c-red':'');
-  document.getElementById('m-total').textContent=trades.length;
+  document.getElementById('m-total').textContent=ft.length;
   document.getElementById('m-wins').textContent=m.wins;
   document.getElementById('m-losses').textContent=m.losses;
   const avgEl=document.getElementById('m-avg');
@@ -2169,6 +2266,62 @@ function renderMetrics() {
   avgEl.className='stat-value sm '+(m.avg>0?'c-green':m.avg<0?'c-red':'');
   document.getElementById('sb-net').textContent='$'+m.balance.toFixed(2);
   document.getElementById('sb-net').style.color=m.balance>m.starting?'var(--green)':m.balance<m.starting?'var(--red)':'var(--text)';
+
+  // ── Advanced metrics ──
+  const winTrades = ft.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win');
+  const lossTrades = ft.filter(t=>t.outcome==='Loss'||t.outcome==='Partial Loss');
+  const winPnls = winTrades.map(t=>netPnl(t));
+  const lossPnls = lossTrades.map(t=>netPnl(t));
+  const grossWin = winPnls.reduce((a,b)=>a+b,0);
+  const grossLoss = Math.abs(lossPnls.reduce((a,b)=>a+b,0));
+  const avgWin = winPnls.length ? grossWin/winPnls.length : null;
+  const avgLoss = lossPnls.length ? Math.abs(lossPnls.reduce((a,b)=>a+b,0)/lossPnls.length) : null;
+  const pf = grossLoss>0 ? grossWin/grossLoss : null;
+  const exp = ft.length>0 ? m.total/ft.length : null;
+  const allPnls = ft.map(t=>netPnl(t));
+  const best = allPnls.length ? Math.max(...allPnls) : null;
+  const worst = allPnls.length ? Math.min(...allPnls) : null;
+
+  // Streaks
+  const sorted = ft.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  let wS=0,lS=0,cW=0,cL=0;
+  sorted.forEach(t=>{
+    const isW=t.outcome==='Win'||t.outcome==='Partial Win';
+    const isL=t.outcome==='Loss'||t.outcome==='Partial Loss';
+    if(isW){cW++;cL=0;wS=Math.max(wS,cW);}
+    else if(isL){cL++;cW=0;lS=Math.max(lS,cL);}
+    else{cW=0;cL=0;}
+  });
+
+  // Max drawdown (from equity curve)
+  let peak=0, maxDD=0, cumPnl=0;
+  sorted.forEach(t=>{cumPnl+=netPnl(t);if(cumPnl>peak)peak=cumPnl;const dd=peak-cumPnl;if(dd>maxDD)maxDD=dd;});
+  const recovery = maxDD>0 ? m.total/maxDD : null;
+  const rr = avgWin!==null && avgLoss!==null && avgLoss>0 ? avgWin/avgLoss : null;
+
+  // Avg hold time
+  const holdMins = ft.map(t=>parseHoldMins(t)).filter(v=>v!==null);
+  const avgHold = holdMins.length ? Math.round(holdMins.reduce((a,b)=>a+b,0)/holdMins.length) : null;
+
+  // ── Write to DOM ──
+  document.getElementById('m-pf').textContent = pf!==null ? pf.toFixed(2) : '—';
+  document.getElementById('m-pf').style.color = pf===null?'var(--text2)':pf>=1.5?'var(--green)':pf>=1?'var(--amber)':'var(--red)';
+  document.getElementById('m-exp').textContent = exp!==null ? (exp>=0?'+':'')+' $'+Math.abs(exp).toFixed(2) : '—';
+  document.getElementById('m-avgwin').textContent = avgWin!==null ? '+$'+avgWin.toFixed(2) : '—';
+  document.getElementById('m-avgwin-sub').textContent = winPnls.length+' win'+(winPnls.length!==1?'s':'');
+  document.getElementById('m-avgloss').textContent = avgLoss!==null ? '-$'+avgLoss.toFixed(2) : '—';
+  document.getElementById('m-avgloss-sub').textContent = lossPnls.length+' loss'+(lossPnls.length!==1?'es':'');
+  document.getElementById('m-avg-hold').textContent = avgHold!==null ? fmtMins(avgHold) : '—';
+  document.getElementById('m-best').textContent = best!==null ? (best>=0?'+':'')+' $'+best.toFixed(2) : '—';
+  document.getElementById('m-worst').textContent = worst!==null ? '$'+worst.toFixed(2) : '—';
+  document.getElementById('m-wstreak').textContent = wS||'—';
+  document.getElementById('m-lstreak').textContent = lS||'—';
+  document.getElementById('m-maxdd').textContent = maxDD>0 ? '-$'+maxDD.toFixed(2) : '—';
+  document.getElementById('m-rr').textContent = rr!==null ? rr.toFixed(2)+'R' : '—';
+  document.getElementById('m-rr').style.color = rr===null?'var(--text2)':rr>=2?'var(--green)':rr>=1?'var(--amber)':'var(--red)';
+  document.getElementById('m-recovery').textContent = recovery!==null ? recovery.toFixed(2) : '—';
+  document.getElementById('m-recovery').style.color = recovery===null?'var(--text2)':recovery>=1?'var(--green)':recovery>=0?'var(--amber)':'var(--red)';
+
   renderAccountCards();
   renderAccountBreakdown();
   renderPropTracker();
@@ -2213,6 +2366,52 @@ function renderCharts() {
   destroyChart('cum'); charts.cum=new Chart(document.getElementById('cumPnlChart'),{
     type:'line', data:{labels:sorted.map((_,i)=>'#'+(i+1)),datasets:[{data:[0,...cumData],borderColor:cum>=0?'#22c55e':'#ef4444',backgroundColor:cum>=0?'rgba(34,197,94,0.08)':'rgba(239,68,68,0.08)',fill:true,tension:0.35,pointRadius:2,borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.tick,font:c.font},grid:{display:false}},y:{ticks:{color:c.tick,font:c.font},grid:{color:c.grid}}}}
+  });
+
+  // ── Rolling Win Rate (5-trade window) ──
+  const W=5;
+  const rollingWR=[];
+  const rollingLabels=[];
+  if(sorted.length>=W){
+    for(let i=W-1;i<sorted.length;i++){
+      const window=sorted.slice(i-W+1,i+1);
+      const wins=window.filter(t=>t.outcome==='Win'||t.outcome==='Partial Win').length;
+      rollingWR.push(parseFloat((wins/W*100).toFixed(1)));
+      rollingLabels.push('#'+(i+1));
+    }
+  }
+  destroyChart('rollingWR');
+  if(rollingLabels.length>0){
+    charts.rollingWR=new Chart(document.getElementById('rollingWRChart'),{
+      type:'line',
+      data:{labels:rollingLabels,datasets:[
+        {data:rollingWR,borderColor:'#60a5fa',backgroundColor:'rgba(59,130,246,0.08)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+        {data:Array(rollingLabels.length).fill(50),borderColor:'rgba(245,158,11,0.4)',borderDash:[4,3],pointRadius:0,borderWidth:1,fill:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.datasetIndex===0?ctx.parsed.y+'% WR':null}}},
+        scales:{x:{ticks:{color:c.tick,font:c.font},grid:{display:false}},y:{min:0,max:100,ticks:{color:c.tick,font:c.font,callback:v=>v+'%'},grid:{color:c.grid}}}}
+    });
+  }
+
+  // ── PnL by Day of Week ──
+  const dowNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dowPnl=[0,0,0,0,0,0,0];
+  const dowCount=[0,0,0,0,0,0,0];
+  sorted.forEach(t=>{
+    if(!t.date)return;
+    const d=new Date(t.date+'T00:00:00');
+    let dow=d.getDay(); // 0=Sun
+    dow=dow===0?6:dow-1; // convert to Mon=0
+    dowPnl[dow]+=netPnl(t);
+    dowCount[dow]++;
+  });
+  const dowData=dowPnl.map(v=>parseFloat(v.toFixed(2)));
+  destroyChart('dow');
+  charts.dow=new Chart(document.getElementById('dowChart'),{
+    type:'bar',
+    data:{labels:dowNames,datasets:[{data:dowData,backgroundColor:dowData.map(v=>v>0?'rgba(34,197,94,0.75)':v<0?'rgba(239,68,68,0.75)':'rgba(100,116,139,0.4)'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const d=dowCount[ctx.dataIndex];return`$${ctx.parsed.y>=0?'+':''}${ctx.parsed.y.toFixed(2)} · ${d} trade${d!==1?'s':''}`;
+    }}}},scales:{x:{ticks:{color:c.tick,font:c.font},grid:{display:false}},y:{ticks:{color:c.tick,font:c.font},grid:{color:c.grid}}}}
   });
 }
 function destroyChart(k){if(charts[k]){charts[k].destroy();delete charts[k];}}
